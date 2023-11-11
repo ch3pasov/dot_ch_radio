@@ -2,3 +2,5 @@ secret.py
 my_account.session*
 *.mp3
 *.webm
+
+__pycache__/
