@@ -22,7 +22,7 @@ dot_ch_chat_id = secret.dot_ch_chat_id
 dot_ch_radio_id = secret.dot_ch_radio_id
 dot_ch_radio_access_hash = secret.dot_ch_radio_access_hash
 
-app = pyrogram.Client("my_account", api_id, api_hash)
+app = pyrogram.Client("secret/my_account", api_id, api_hash)
 
 app_calls = PyTgCalls(app)
 app_calls.start()
@@ -54,7 +54,6 @@ def get_youtube_stream():
 
 
 remote = get_youtube_stream()
-
 
 app_calls.change_stream(
     dot_ch_id,
