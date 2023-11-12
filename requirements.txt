@@ -3,3 +3,4 @@ pyrogram
 tgcrypto
 py-tgcalls
 ntgcalls
+yt-dlp
