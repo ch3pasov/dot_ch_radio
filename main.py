@@ -28,7 +28,7 @@ app_calls = PyTgCalls(app)
 app_calls.start()
 app_calls.join_group_call(
     dot_ch_id,
-    join_as=pyrogram.raw.types.InputPeerChannel(dot_ch_id=dot_ch_radio_id, access_hash=dot_ch_radio_access_hash)
+    join_as=pyrogram.raw.types.InputPeerChannel(channel_id=dot_ch_radio_id, access_hash=dot_ch_radio_access_hash)
 )
 
 print(1)
