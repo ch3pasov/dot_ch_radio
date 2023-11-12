@@ -17,18 +17,18 @@ import secret
 api_id = secret.api_id
 api_hash = secret.api_hash
 
-channel_id = secret.channel_id
-chat_id = secret.chat_id
-join_channel_id = secret.join_channel_id
-join_access_hash = secret.join_access_hash
+dot_ch_id = secret.dot_ch_id
+dot_ch_chat_id = secret.dot_ch_chat_id
+dot_ch_radio_id = secret.dot_ch_radio_id
+dot_ch_radio_access_hash = secret.dot_ch_radio_access_hash
 
 app = pyrogram.Client("my_account", api_id, api_hash)
 
 app_calls = PyTgCalls(app)
 app_calls.start()
 app_calls.join_group_call(
-    channel_id,
-    join_as=pyrogram.raw.types.InputPeerChannel(channel_id=join_channel_id, access_hash=join_access_hash)
+    dot_ch_id,
+    join_as=pyrogram.raw.types.InputPeerChannel(dot_ch_id=dot_ch_radio_id, access_hash=dot_ch_radio_access_hash)
 )
 
 print(1)
@@ -57,7 +57,7 @@ remote = get_youtube_stream()
 
 
 app_calls.change_stream(
-    channel_id,
+    dot_ch_id,
     AudioPiped(
         remote,
         audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
@@ -69,7 +69,7 @@ app_calls.change_stream(
 # async def handler(client: PyTgCalls, update: Update):
 #     print(update)
 #     await app_calls.change_stream(
-#         channel_id,
+#         dot_ch_id,
 #         AudioPiped(
 #             'audio_02.mp3',
 #             audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
@@ -93,11 +93,11 @@ async def raw(client, update, users, chats):
                 case pyrogram.raw.types.PeerChat:
                     return
                     participant_type = 'chat'
-                    participant_id = participant.peer.chat_id
+                    participant_id = participant.peer.dot_ch_chat_id
                 case pyrogram.raw.types.PeerChannel:
                     return
                     participant_type = 'channel'
-                    participant_id = participant.peer.channel_id
+                    participant_id = participant.peer.dot_ch_id
             assert participant_type == 'user'
 
             if participant.left:
@@ -141,7 +141,7 @@ except KeyboardInterrupt:
 finally:
     try:
         app_calls.leave_group_call(
-            channel_id
+            dot_ch_id
         )
         pass
     except KeyError:
