@@ -12,7 +12,7 @@ from pytgcalls.types import (
 )
 import asyncio
 # from random import randint
-import secret
+from secret import secret
 import logging
 import sys
 
