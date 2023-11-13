@@ -1,6 +1,6 @@
 secret.py
 common.log
-my_account.session*
+*_account.session*
 *.mp3
 *.webm
 
