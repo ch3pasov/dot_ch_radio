@@ -55,29 +55,29 @@ app_dj_calls.join_group_call(
 )
 
 
-# USE THIS IF YOU WANT SYNC WAY
-def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
-    # USE THIS IF YOU WANT ASYNC WAY
-    async def run_async(url=url):
-        proc = await asyncio.create_subprocess_exec(
-            'yt-dlp',
-            '-g',
-            '-f',
-            # 'best[height<=?720][width<=?1280]',
-            'ba',  # best audio
-            url,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-        )
-        stdout, stderr = await proc.communicate()
-        return stdout.decode().split('\n')[0]
-    return asyncio.get_event_loop().run_until_complete(run_async())
+# USE THIS IF YOU WANT ASYNC WAY
+async def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
+    proc = await asyncio.create_subprocess_exec(
+        'yt-dlp',
+        '-g',
+        '-f',
+        # 'best[height<=?720][width<=?1280]',
+        'ba',  # best audio
+        url,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await proc.communicate()
+    return stdout.decode().split('\n')[0]
+
+
+remote = asyncio.get_event_loop().run_until_complete(get_youtube_stream("https://youtu.be/miZHa7ZC6Z0"))
 
 
 app_dj_calls.change_stream(
     dot_ch_id,
     AudioPiped(
-        get_youtube_stream(),
+        remote,
         audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
     )
 )
@@ -85,25 +85,31 @@ app_dj_calls.change_stream(
 
 @app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
 async def pause_handler(client, message):
+    print(f"{message.from_user.id} calls pause")
     await app_robot.send_message(message.from_user.id, await app_dj_calls.pause_stream(dot_ch_id))
 
 
 @app_robot.on_message(pyrogram.filters.command(["resume"]) & pyrogram.filters.private)
 async def resume_handler(client, message):
+    print(f"{message.from_user.id} calls resume")
     await app_robot.send_message(message.from_user.id, await app_dj_calls.resume_stream(dot_ch_id))
 
 
 @app_robot.on_message(pyrogram.filters.command(["time"]) & pyrogram.filters.private)
 async def time_handler(client, message):
+    print(f"{message.from_user.id} calls time")
     await app_robot.send_message(message.from_user.id, await app_dj_calls.played_time(dot_ch_id))
 
 
 @app_robot.on_message(pyrogram.filters.command(["change_stream"]) & pyrogram.filters.private)
 async def change_stream_handler(client, message):
+    url = message.command[1]
+    print(f"{message.from_user.id} calls change_stream to {url}")
+    remote = await get_youtube_stream(url=url)
     await app_dj_calls.change_stream(
         dot_ch_id,
         AudioPiped(
-            get_youtube_stream(url=message.command[1]),
+            remote,
             audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
         )
     )
@@ -113,19 +119,14 @@ async def change_stream_handler(client, message):
     )
 
 
-# сюда буду писать кастомную вещь
-@app_robot.on_message(pyrogram.filters.command(["please"]) & pyrogram.filters.private)
-async def please_handler(client, message):
-    print(asyncio.get_event_loop())
-
-
 @app_dj_calls.on_stream_end()
 async def handler(client: PyTgCalls, update: Update):
-    print(update)
+    print("stream ended, changing to default")
+    remote = await get_youtube_stream("https://www.youtube.com/watch?v=jfKfPfyJRdk")
     await app_dj_calls.change_stream(
         dot_ch_id,
         AudioPiped(
-            get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'),
+            remote,
             audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
         )
     )
