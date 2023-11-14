@@ -195,13 +195,13 @@ async def radio_handler(client, message):
                 radio_stations[radio],
                 who_called=message.from_user.id
             )
+            await app_robot.send_message(
+                message.from_user.id,
+                "True?!"
+            )
     await app_robot.send_message(
         message.from_user.id,
         "**Available radio stations:**\n" + '\n'.join([key for key in radio_stations.keys()])
-    )
-    await app_robot.send_message(
-        message.from_user.id,
-        "True?!"
     )
 
 
