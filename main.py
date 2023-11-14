@@ -3,11 +3,11 @@ from pytgcalls import PyTgCalls
 from pytgcalls import idle
 from pytgcalls.types import (
     AudioPiped,
-    AudioVideoPiped,
+    # AudioVideoPiped,
     AudioParameters,
     AudioQuality,
-    VideoParameters,
-    VideoQuality,
+    # VideoParameters,
+    # VideoQuality,
     Update,
 )
 import asyncio
@@ -62,8 +62,8 @@ async def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
         'yt-dlp',
         '-g',
         '-f',
-        'best[height<=?720][width<=?1280]',
-        # 'ba',  # best audio
+        # 'best[height<=?720][width<=?1280]',
+        'ba',  # best audio
         url,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
@@ -102,26 +102,33 @@ async def time_handler(client, message):
     await app_robot.send_message(message.from_user.id, await app_dj_calls.played_time(dot_ch_id))
 
 
-@app_robot.on_message(pyrogram.filters.command(["change_stream"]) & pyrogram.filters.private)
-async def change_stream_handler(client, message):
-    url = message.command[1]
-    print(f"{message.from_user.id} calls change_stream to {url}")
+async def change_stream(url, who_called=''):
+    print(f"{who_called} calls change_stream to {url}")
     if re.search(r'http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?', url):
-        new_stream = await get_youtube_stream(url=url)
+        new_stream = asyncio.get_event_loop().run_until_complete(get_youtube_stream(url=url))
         print(new_stream)
     else:
         new_stream = url
     await app_dj_calls.change_stream(
         dot_ch_id,
-        # AudioPiped(
-        #     new_stream,
-        #     audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
-        # ),
-        AudioVideoPiped(
+        AudioPiped(
             new_stream,
             audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
-            video_parameters=VideoParameters.from_quality(VideoQuality.HD_720p),
-        )
+        ),
+        # AudioVideoPiped(
+        #     new_stream,
+        #     audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
+        #     video_parameters=VideoParameters.from_quality(VideoQuality.HD_720p),
+        # )
+    )
+
+
+@app_robot.on_message(pyrogram.filters.command(["change_stream"]) & pyrogram.filters.private)
+async def change_stream_handler(client, message):
+    url = message.command[1]
+    await change_stream(
+        url,
+        who_called=message.from_user.id
     )
     await app_robot.send_message(
         message.from_user.id,
@@ -129,18 +136,66 @@ async def change_stream_handler(client, message):
     )
 
 
+radio_stations = {
+    "lofi-girl": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
+    "sa-bounce-fm": "https://play.smolyakov.dev/stream/sa/bounce-fm",
+    "sa-csr": "https://play.smolyakov.dev/stream/sa/csr",
+    "sa-k-dst": "https://play.smolyakov.dev/stream/sa/k-dst",
+    "sa-k-jah": "https://play.smolyakov.dev/stream/sa/k-jah",
+    "sa-k-rose": "https://play.smolyakov.dev/stream/sa/k-rose",
+    "sa-master-sounds": "https://play.smolyakov.dev/stream/sa/master-sounds",
+    "sa-playback-fm": "https://play.smolyakov.dev/stream/sa/playback-fm",
+    "sa-radio-los-santos": "https://play.smolyakov.dev/stream/sa/radio-los-santos",
+    "sa-radio-x": "https://play.smolyakov.dev/stream/sa/radio-x",
+    "sa-sfur": "https://play.smolyakov.dev/stream/sa/sfur",
+    "sa-wctr": "https://play.smolyakov.dev/stream/sa/wctr",
+    "vc-emotion": "https://play.smolyakov.dev/stream/vc/emotion",
+    "vc-espant": "https://play.smolyakov.dev/stream/vc/espant",
+    "vc-fever": "https://play.smolyakov.dev/stream/vc/fever",
+    "vc-flash": "https://play.smolyakov.dev/stream/vc/flash",
+    "vc-kchat": "https://play.smolyakov.dev/stream/vc/kchat",
+    "vc-vcpr": "https://play.smolyakov.dev/stream/vc/vcpr",
+    "vc-vrock": "https://play.smolyakov.dev/stream/vc/vrock",
+    "vc-wave": "https://play.smolyakov.dev/stream/vc/wave",
+    "vc-wild": "https://play.smolyakov.dev/stream/vc/wild",
+    "3-head": "https://play.smolyakov.dev/stream/3/head",
+    "3-class": "https://play.smolyakov.dev/stream/3/class",
+    "3-kjah": "https://play.smolyakov.dev/stream/3/kjah",
+    "3-rise": "https://play.smolyakov.dev/stream/3/rise",
+    "3-lips": "https://play.smolyakov.dev/stream/3/lips",
+    "3-game": "https://play.smolyakov.dev/stream/3/game",
+    "3-msx": "https://play.smolyakov.dev/stream/3/msx",
+    "3-flash": "https://play.smolyakov.dev/stream/3/flash",
+    "3-chat": "https://play.smolyakov.dev/stream/3/chat",
+}
+
+
+@app_robot.on_message(pyrogram.filters.command(["radio"]) & pyrogram.filters.private)
+async def radio_handler(client, message):
+    if len(message.command) >= 2:
+        radio = message.command[1]
+        if radio in radio_stations:
+            return await change_stream(
+                radio_stations[radio],
+                who_called=message.from_user.id
+            )
+    await app_robot.send_message(
+        message.from_user.id,
+        "**Available radio stations:**\n" + '\n'.join([key for key in radio_stations.keys()])
+    )
+
+
 @app_dj_calls.on_stream_end()
 async def handler(client: PyTgCalls, update: Update):
-    print("песня либо закончилась, либо зависла")
     # print("stream ended, changing to default")
-    # remote = await get_youtube_stream("https://www.youtube.com/watch?v=jfKfPfyJRdk")
-    # await app_dj_calls.change_stream(
-    #     dot_ch_id,
-    #     AudioPiped(
-    #         remote,
-    #         audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
-    #     )
-    # )
+    remote = await get_youtube_stream(radio_stations['lofi-girl'])
+    await app_dj_calls.change_stream(
+        dot_ch_id,
+        AudioPiped(
+            remote,
+            audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
+        )
+    )
 
 
 # главный обработчик событий в войсчате
