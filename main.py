@@ -191,6 +191,7 @@ async def radio_handler(client, message):
     if len(message.command) >= 2:
         radio = message.command[1]
         if radio in radio_stations:
+            print(f"{message.from_user.id} calls radio to {radio}")
             return await change_stream(
                 radio_stations[radio],
                 who_called=message.from_user.id
