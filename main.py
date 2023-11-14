@@ -3,11 +3,11 @@ from pytgcalls import PyTgCalls
 from pytgcalls import idle
 from pytgcalls.types import (
     AudioPiped,
-    # AudioVideoPiped,
+    AudioVideoPiped,
     AudioParameters,
     AudioQuality,
-    # VideoParameters,
-    # VideoQuality,
+    VideoParameters,
+    VideoQuality,
     Update,
 )
 import asyncio
@@ -15,6 +15,7 @@ import asyncio
 from secret import secret
 import logging
 import sys
+import re
 
 formatter = logging.Formatter('%(asctime)s %(levelname)s [%(filename)s:%(lineno)s] %(message)s')
 handler_fancy_stdout = logging.StreamHandler(sys.stdout)
@@ -61,8 +62,8 @@ async def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
         'yt-dlp',
         '-g',
         '-f',
-        # 'best[height<=?720][width<=?1280]',
-        'ba',  # best audio
+        'best[height<=?720][width<=?1280]',
+        # 'ba',  # best audio
         url,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
@@ -105,12 +106,21 @@ async def time_handler(client, message):
 async def change_stream_handler(client, message):
     url = message.command[1]
     print(f"{message.from_user.id} calls change_stream to {url}")
-    remote = await get_youtube_stream(url=url)
+    if re.search(r'http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?', url):
+        new_stream = await get_youtube_stream(url=url)
+        print(new_stream)
+    else:
+        new_stream = url
     await app_dj_calls.change_stream(
         dot_ch_id,
-        AudioPiped(
-            remote,
+        # AudioPiped(
+        #     new_stream,
+        #     audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
+        # ),
+        AudioVideoPiped(
+            new_stream,
             audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
+            video_parameters=VideoParameters.from_quality(VideoQuality.HD_720p),
         )
     )
     await app_robot.send_message(
@@ -121,15 +131,16 @@ async def change_stream_handler(client, message):
 
 @app_dj_calls.on_stream_end()
 async def handler(client: PyTgCalls, update: Update):
-    print("stream ended, changing to default")
-    remote = await get_youtube_stream("https://www.youtube.com/watch?v=jfKfPfyJRdk")
-    await app_dj_calls.change_stream(
-        dot_ch_id,
-        AudioPiped(
-            remote,
-            audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
-        )
-    )
+    print("песня либо закончилась, либо зависла")
+    # print("stream ended, changing to default")
+    # remote = await get_youtube_stream("https://www.youtube.com/watch?v=jfKfPfyJRdk")
+    # await app_dj_calls.change_stream(
+    #     dot_ch_id,
+    #     AudioPiped(
+    #         remote,
+    #         audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
+    #     )
+    # )
 
 
 # главный обработчик событий в войсчате
