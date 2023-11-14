@@ -167,6 +167,22 @@ radio_stations = {
     "3-msx": "https://play.smolyakov.dev/stream/3/msx",
     "3-flash": "https://play.smolyakov.dev/stream/3/flash",
     "3-chat": "https://play.smolyakov.dev/stream/3/chat",
+    "evangelie-sinod": "https://radio.azbyka.ru/evangelie",
+    "evangelie-csya": "https://radio.azbyka.ru/chitaem-evangelie-csya",
+    "evangelie-sinod-muz": "https://radio.azbyka.ru/chitaem-evangelie-sinod-muz",
+    "psaltir-csya": "https://radio.azbyka.ru/psaltir",
+    "psaltir-rus": "https://radio.azbyka.ru/psaltir-rus",
+    "psaltir-rus-muz": "https://radio.azbyka.ru/psaltir-rus-muz",
+    "dorbrotolubie": "https://radio.azbyka.ru/dobrotolubie",
+    "lives": "https://radio.azbyka.ru/lives",
+    "azbyka-molitvy": "https://radio.azbyka.ru/azbyka-molitvy",
+    "grad-petrov": "https://grad-petrov.ru:8094/aac",
+    "radonezh": "https://proxy.radio.azbyka.ru/radonezh",
+    "vera": "https://radiovera.hostingradio.ru:8007/radiovera_128",
+    "blago": "https://live.radioblago.ru/live-1.mp3",
+    "ancient-faith-music": "https://ancientfaith.streamguys1.com/music",
+    "ancient-faith-talk": "https://ancientfaith.streamguys1.com/talk",
+    "gkpc": "https://proxy.radio.azbyka.ru/gkpc"
 }
 
 
