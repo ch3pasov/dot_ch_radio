@@ -183,6 +183,10 @@ async def radio_handler(client, message):
         message.from_user.id,
         "**Available radio stations:**\n" + '\n'.join([key for key in radio_stations.keys()])
     )
+    await app_robot.send_message(
+        message.from_user.id,
+        "True?!"
+    )
 
 
 @app_dj_calls.on_stream_end()
