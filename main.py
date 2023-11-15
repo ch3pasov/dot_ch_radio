@@ -12,8 +12,10 @@ from pytgcalls.types import (
 )
 import asyncio
 # from random import randint
-from volume import app
-from volume import tg_ids
+from volume.app import api_id, api_hash
+from volume.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
+import radio
+
 import logging
 import sys
 import re
@@ -32,14 +34,6 @@ root.addHandler(handler_logger)
 fancy_stdout = logging.getLogger(__name__)
 fancy_stdout.setLevel(logging.INFO)
 print = fancy_stdout.info
-
-api_id = app.api_id
-api_hash = app.api_hash
-
-dot_ch_id = tg_ids.dot_ch_id
-dot_ch_chat_id = tg_ids.dot_ch_chat_id
-dot_ch_radio_id = tg_ids.dot_ch_radio_id
-dot_ch_radio_access_hash = tg_ids.dot_ch_radio_access_hash
 
 print('login in robot account')
 app_robot = pyrogram.Client("volume/sessions/robot_account", api_id, api_hash)
@@ -125,80 +119,30 @@ async def change_stream_handler(client, message):
     )
 
 
-radio_stations = {
-    "lofi-girl": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-    "sa-bounce-fm": "https://play.smolyakov.dev/stream/sa/bounce-fm",
-    "sa-csr": "https://play.smolyakov.dev/stream/sa/csr",
-    "sa-k-dst": "https://play.smolyakov.dev/stream/sa/k-dst",
-    "sa-k-jah": "https://play.smolyakov.dev/stream/sa/k-jah",
-    "sa-k-rose": "https://play.smolyakov.dev/stream/sa/k-rose",
-    "sa-master-sounds": "https://play.smolyakov.dev/stream/sa/master-sounds",
-    "sa-playback-fm": "https://play.smolyakov.dev/stream/sa/playback-fm",
-    "sa-radio-los-santos": "https://play.smolyakov.dev/stream/sa/radio-los-santos",
-    "sa-radio-x": "https://play.smolyakov.dev/stream/sa/radio-x",
-    "sa-sfur": "https://play.smolyakov.dev/stream/sa/sfur",
-    "sa-wctr": "https://play.smolyakov.dev/stream/sa/wctr",
-    "vc-emotion": "https://play.smolyakov.dev/stream/vc/emotion",
-    "vc-espant": "https://play.smolyakov.dev/stream/vc/espant",
-    "vc-fever": "https://play.smolyakov.dev/stream/vc/fever",
-    "vc-flash": "https://play.smolyakov.dev/stream/vc/flash",
-    "vc-kchat": "https://play.smolyakov.dev/stream/vc/kchat",
-    "vc-vcpr": "https://play.smolyakov.dev/stream/vc/vcpr",
-    "vc-vrock": "https://play.smolyakov.dev/stream/vc/vrock",
-    "vc-wave": "https://play.smolyakov.dev/stream/vc/wave",
-    "vc-wild": "https://play.smolyakov.dev/stream/vc/wild",
-    "3-head": "https://play.smolyakov.dev/stream/3/head",
-    "3-class": "https://play.smolyakov.dev/stream/3/class",
-    "3-kjah": "https://play.smolyakov.dev/stream/3/kjah",
-    "3-rise": "https://play.smolyakov.dev/stream/3/rise",
-    "3-lips": "https://play.smolyakov.dev/stream/3/lips",
-    "3-game": "https://play.smolyakov.dev/stream/3/game",
-    "3-msx": "https://play.smolyakov.dev/stream/3/msx",
-    "3-flash": "https://play.smolyakov.dev/stream/3/flash",
-    "3-chat": "https://play.smolyakov.dev/stream/3/chat",
-    # "evangelie-sinod": "https://radio.azbyka.ru/evangelie",
-    # "evangelie-csya": "https://radio.azbyka.ru/chitaem-evangelie-csya",
-    # "evangelie-sinod-muz": "https://radio.azbyka.ru/chitaem-evangelie-sinod-muz",
-    # "psaltir-csya": "https://radio.azbyka.ru/psaltir",
-    # "psaltir-rus": "https://radio.azbyka.ru/psaltir-rus",
-    # "psaltir-rus-muz": "https://radio.azbyka.ru/psaltir-rus-muz",
-    # "dorbrotolubie": "https://radio.azbyka.ru/dobrotolubie",
-    # "lives": "https://radio.azbyka.ru/lives",
-    # "azbyka-molitvy": "https://radio.azbyka.ru/azbyka-molitvy",
-    # "grad-petrov": "https://grad-petrov.ru:8094/aac",
-    # "radonezh": "https://proxy.radio.azbyka.ru/radonezh",
-    # "vera": "https://radiovera.hostingradio.ru:8007/radiovera_128",
-    # "blago": "https://live.radioblago.ru/live-1.mp3",
-    # "ancient-faith-music": "https://ancientfaith.streamguys1.com/music",
-    # "ancient-faith-talk": "https://ancientfaith.streamguys1.com/talk",
-    # "gkpc": "https://proxy.radio.azbyka.ru/gkpc"
-}
-
-
-@app_robot.on_message(pyrogram.filters.command(["radio"]) & pyrogram.filters.private)
-async def radio_handler(client, message):
-    if len(message.command) >= 2:
-        radio = message.command[1]
-        if radio in radio_stations:
-            print(f"{message.from_user.id} calls radio to {radio}")
-            return await change_stream(
-                radio_stations[radio],
-                who_called=message.from_user.id
-            )
-            await app_robot.send_message(
-                message.from_user.id,
-                "True?!"
-            )
-    await app_robot.send_message(
-        message.from_user.id,
-        "**Available radio stations:**\n" + '\n'.join([key for key in radio_stations.keys()])
-    )
+# @app_robot.on_message(pyrogram.filters.command(["radio"]) & pyrogram.filters.private)
+# async def radio_handler(client, message):
+#     if len(message.command) >= 2:
+#         radio = message.command[1]
+#         if radio in radio_stations:
+#             print(f"{message.from_user.id} calls radio to {radio}")
+#             return await change_stream(
+#                 radio_stations[radio],
+#                 who_called=message.from_user.id
+#             )
+#             await app_robot.send_message(
+#                 message.from_user.id,
+#                 "True?!"
+#             )
+#     await app_robot.send_message(
+#         message.from_user.id,
+#         "**Available radio stations:**\n" + '\n'.join([key for key in radio_stations.keys()])
+#     )
 
 
 @app_dj_calls.on_stream_end()
 async def handler(client: PyTgCalls, update: Update):
     # print("stream ended, changing to default")
-    remote = await get_youtube_stream(radio_stations['lofi-girl'])
+    remote = await get_youtube_stream(radio.default_url)
     await app_dj_calls.change_stream(
         dot_ch_id,
         AudioPiped(
@@ -265,19 +209,15 @@ async def raw(client, update, users, chats):
                 #     )
 
 
-startup_url = "https://youtu.be/miZHa7ZC6Z0"
-shutdown_url = "https://youtu.be/XvoVObL4bYY"
-
-
 try:
-    asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
+    asyncio.get_event_loop().run_until_complete(change_stream(radio.startup_url, who_called=''))
     idle()
 except KeyboardInterrupt:
     print('Exiting...')
 finally:
     try:
         from time import sleep
-        asyncio.get_event_loop().run_until_complete(change_stream(shutdown_url, who_called=''))
+        asyncio.get_event_loop().run_until_complete(change_stream(radio.shutdown_url, who_called=''))
         sleep(5)
         app_dj_calls.leave_group_call(
             dot_ch_id
