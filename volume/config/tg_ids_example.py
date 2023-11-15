@@ -3,3 +3,7 @@ dot_ch_id = 0
 dot_ch_chat_id = 0
 dot_ch_radio_id = 0
 dot_ch_radio_access_hash = 0
+# а личку я прикрою. Пишите в чат @wallet_chat!
+admins = [
+    0
+]

@@ -6,6 +6,7 @@ tg_ids.py
 *.mp3
 *.webm
 
+*sandbox*
 backlog.txt
 
 __pycache__/

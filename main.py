@@ -12,9 +12,10 @@ from pytgcalls.types import (
 )
 import asyncio
 # from random import randint
-from volume.app import api_id, api_hash
-from volume.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
-import radio
+from volume.config.app import api_id, api_hash
+from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
+from volume.radio import default_url, startup_url, shutdown_url
+from decorators import admin_only
 
 import logging
 import sys
@@ -89,7 +90,7 @@ async def change_stream(url, who_called=''):
     print(f"{who_called} calls change_stream to {url}")
     if re.search(r'http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?', url):
         new_stream = await get_youtube_stream(url=url)
-        print(new_stream)
+        # print(new_stream)
     else:
         new_stream = url
     await app_dj_calls.change_stream(
@@ -107,6 +108,7 @@ async def change_stream(url, who_called=''):
 
 
 @app_robot.on_message(pyrogram.filters.command(["change_stream"]) & pyrogram.filters.private)
+@admin_only
 async def change_stream_handler(client, message):
     url = message.command[1]
     await change_stream(
@@ -142,7 +144,7 @@ async def change_stream_handler(client, message):
 @app_dj_calls.on_stream_end()
 async def handler(client: PyTgCalls, update: Update):
     # print("stream ended, changing to default")
-    remote = await get_youtube_stream(radio.default_url)
+    remote = await get_youtube_stream(default_url)
     await app_dj_calls.change_stream(
         dot_ch_id,
         AudioPiped(
@@ -210,14 +212,14 @@ async def raw(client, update, users, chats):
 
 
 try:
-    asyncio.get_event_loop().run_until_complete(change_stream(radio.startup_url, who_called=''))
+    asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
     idle()
 except KeyboardInterrupt:
     print('Exiting...')
 finally:
     try:
         from time import sleep
-        asyncio.get_event_loop().run_until_complete(change_stream(radio.shutdown_url, who_called=''))
+        asyncio.get_event_loop().run_until_complete(change_stream(shutdown_url, who_called=''))
         sleep(5)
         app_dj_calls.leave_group_call(
             dot_ch_id
