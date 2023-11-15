@@ -72,18 +72,6 @@ async def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
     return stdout.decode().split('\n')[0]
 
 
-remote = asyncio.get_event_loop().run_until_complete(get_youtube_stream("https://youtu.be/miZHa7ZC6Z0"))
-
-
-app_dj_calls.change_stream(
-    dot_ch_id,
-    AudioPiped(
-        remote,
-        audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
-    )
-)
-
-
 @app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
 async def pause_handler(client, message):
     print(f"{message.from_user.id} calls pause")
@@ -276,12 +264,20 @@ async def raw(client, update, users, chats):
                 #     )
 
 
+startup_url = "https://youtu.be/miZHa7ZC6Z0"
+shutdown_url = "https://youtu.be/XvoVObL4bYY"
+
+
 try:
+    asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
     idle()
 except KeyboardInterrupt:
     print('Exiting...')
 finally:
     try:
+        from time import sleep
+        asyncio.get_event_loop().run_until_complete(change_stream(shutdown_url, who_called=''))
+        sleep(5)
         app_dj_calls.leave_group_call(
             dot_ch_id
         )
