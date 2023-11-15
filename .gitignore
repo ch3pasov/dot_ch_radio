@@ -1,8 +1,11 @@
-secret.py
 common.log
+app.py
+tg_ids.py
+
 *_account.session*
 *.mp3
 *.webm
+
 backlog.txt
 
 __pycache__/

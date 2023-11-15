@@ -12,14 +12,15 @@ from pytgcalls.types import (
 )
 import asyncio
 # from random import randint
-from secret import secret
+from volume import app
+from volume import tg_ids
 import logging
 import sys
 import re
 
 formatter = logging.Formatter('%(asctime)s %(levelname)s [%(filename)s:%(lineno)s] %(message)s')
 handler_fancy_stdout = logging.StreamHandler(sys.stdout)
-handler_logger = logging.FileHandler("logs/common.log", mode='a')
+handler_logger = logging.FileHandler("volume/common.log", mode='a')
 handler_fancy_stdout.setFormatter(formatter)
 handler_logger.setFormatter(formatter)
 # Корневой логгер. Должен ловить все ошибки и писать в файл.
@@ -32,20 +33,20 @@ fancy_stdout = logging.getLogger(__name__)
 fancy_stdout.setLevel(logging.INFO)
 print = fancy_stdout.info
 
-api_id = secret.api_id
-api_hash = secret.api_hash
+api_id = app.api_id
+api_hash = app.api_hash
 
-dot_ch_id = secret.dot_ch_id
-dot_ch_chat_id = secret.dot_ch_chat_id
-dot_ch_radio_id = secret.dot_ch_radio_id
-dot_ch_radio_access_hash = secret.dot_ch_radio_access_hash
+dot_ch_id = tg_ids.dot_ch_id
+dot_ch_chat_id = tg_ids.dot_ch_chat_id
+dot_ch_radio_id = tg_ids.dot_ch_radio_id
+dot_ch_radio_access_hash = tg_ids.dot_ch_radio_access_hash
 
 print('login in robot account')
-app_robot = pyrogram.Client("secret/robot_account", api_id, api_hash)
+app_robot = pyrogram.Client("volume/sessions/robot_account", api_id, api_hash)
 app_robot.start()
 
 print('login in dj account')
-app_dj = pyrogram.Client("secret/dj_account", api_id, api_hash)
+app_dj = pyrogram.Client("volume/sessions/dj_account", api_id, api_hash)
 app_dj_calls = PyTgCalls(app_dj)
 app_dj_calls.start()
 
