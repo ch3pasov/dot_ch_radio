@@ -8,6 +8,7 @@ common_tree = {
         },
         "gta": {
             "name": "GTA радио",
+            "description": "Радио из игр серии GTA.\nPowered by https://play.smolyakov.dev",
             "children": {
                 "sa": {
                     "name": "GTA San Andreas",
