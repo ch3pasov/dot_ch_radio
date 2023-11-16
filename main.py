@@ -70,7 +70,8 @@ async def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
     return stdout.decode().split('\n')[0]
 
 
-async def change_stream(url, who_called=''):
+async def change_stream(url: str, who_called=''):
+    assert url.startswith('https://'), 'url must be https://...'
     print(f"{who_called} calls change_stream to {url}")
     if re.search(r'http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?', url):
         new_stream = await get_youtube_stream(url=url)
