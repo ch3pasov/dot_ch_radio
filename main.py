@@ -1,4 +1,5 @@
 import pyrogram
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pytgcalls import PyTgCalls
 from pytgcalls import idle
 from pytgcalls.types import (
@@ -14,7 +15,8 @@ import asyncio
 # from random import randint
 from volume.config.app import api_id, api_hash
 from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
-from volume.radio import default_url, startup_url, shutdown_url
+from volume.radio import default_url, startup_url, shutdown_url, radio_stations
+from get_hashdict import common_hashdict, root_path_hash
 from decorators import admin_only
 
 import logging
@@ -68,24 +70,6 @@ async def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
     return stdout.decode().split('\n')[0]
 
 
-@app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
-async def pause_handler(client, message):
-    print(f"{message.from_user.id} calls pause")
-    await app_robot.send_message(message.from_user.id, await app_dj_calls.pause_stream(dot_ch_id))
-
-
-@app_robot.on_message(pyrogram.filters.command(["resume"]) & pyrogram.filters.private)
-async def resume_handler(client, message):
-    print(f"{message.from_user.id} calls resume")
-    await app_robot.send_message(message.from_user.id, await app_dj_calls.resume_stream(dot_ch_id))
-
-
-@app_robot.on_message(pyrogram.filters.command(["time"]) & pyrogram.filters.private)
-async def time_handler(client, message):
-    print(f"{message.from_user.id} calls time")
-    await app_robot.send_message(message.from_user.id, await app_dj_calls.played_time(dot_ch_id))
-
-
 async def change_stream(url, who_called=''):
     print(f"{who_called} calls change_stream to {url}")
     if re.search(r'http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?', url):
@@ -107,6 +91,95 @@ async def change_stream(url, who_called=''):
     )
 
 
+async def open_common_hashdict(path_hash, message):
+    if path_hash in common_hashdict:
+        obj = common_hashdict[path_hash]
+        if "children" in obj:
+            children = obj["children"]
+            # print(children)
+            children_buttons = [
+                [
+                    InlineKeyboardButton(
+                        text=children[child],
+                        callback_data=child
+                    )
+                ] for child in children
+            ]
+            share_button = InlineKeyboardButton(
+                text="🔗",
+                switch_inline_query=obj["share"]
+            )
+            if "parent" in obj:
+                children_buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text="⬅️",
+                            callback_data=obj["parent"]
+                        ),
+                        share_button
+                    ]
+                )
+            else:
+                children_buttons.append(
+                    [
+                        share_button
+                    ]
+                )
+            reply_markup = InlineKeyboardMarkup(children_buttons)
+            await app_robot.edit_message_text(
+                message.chat.id,
+                message.id,
+                text=obj['name'],
+                reply_markup=reply_markup
+            )
+            return None
+        if "radio_url" in obj:
+            await change_stream(obj['radio_url'], who_called=message.from_user.id)
+            return "▶️"
+    else:
+        await open_common_hashdict(root_path_hash, message)
+        return "😬 битая кнопка"
+
+
+@app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private)
+async def start_handler(client, message):
+    new_message = await app_robot.send_message(
+        message.from_user.id,
+        text="Загрузка"
+    )
+    if len(message.command) >= 2:
+        return await open_common_hashdict(message.command[1], new_message)
+    return await open_common_hashdict(root_path_hash, new_message)
+
+
+@app_robot.on_callback_query()
+async def answer_library_id(client, callback_query, **kwargs):
+    answer = await open_common_hashdict(callback_query.data, callback_query.message)
+    if answer:
+        await callback_query.answer(answer)
+
+
+@app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
+@admin_only
+async def pause_handler(client, message):
+    print(f"{message.from_user.id} calls pause")
+    await app_robot.send_message(message.from_user.id, await app_dj_calls.pause_stream(dot_ch_id))
+
+
+@app_robot.on_message(pyrogram.filters.command(["resume"]) & pyrogram.filters.private)
+@admin_only
+async def resume_handler(client, message):
+    print(f"{message.from_user.id} calls resume")
+    await app_robot.send_message(message.from_user.id, await app_dj_calls.resume_stream(dot_ch_id))
+
+
+@app_robot.on_message(pyrogram.filters.command(["time"]) & pyrogram.filters.private)
+@admin_only
+async def time_handler(client, message):
+    print(f"{message.from_user.id} calls time")
+    await app_robot.send_message(message.from_user.id, await app_dj_calls.played_time(dot_ch_id))
+
+
 @app_robot.on_message(pyrogram.filters.command(["change_stream"]) & pyrogram.filters.private)
 @admin_only
 async def change_stream_handler(client, message):
@@ -121,24 +194,25 @@ async def change_stream_handler(client, message):
     )
 
 
-# @app_robot.on_message(pyrogram.filters.command(["radio"]) & pyrogram.filters.private)
-# async def radio_handler(client, message):
-#     if len(message.command) >= 2:
-#         radio = message.command[1]
-#         if radio in radio_stations:
-#             print(f"{message.from_user.id} calls radio to {radio}")
-#             return await change_stream(
-#                 radio_stations[radio],
-#                 who_called=message.from_user.id
-#             )
-#             await app_robot.send_message(
-#                 message.from_user.id,
-#                 "True?!"
-#             )
-#     await app_robot.send_message(
-#         message.from_user.id,
-#         "**Available radio stations:**\n" + '\n'.join([key for key in radio_stations.keys()])
-#     )
+@app_robot.on_message(pyrogram.filters.command(["radio"]) & pyrogram.filters.private)
+@admin_only
+async def radio_handler(client, message):
+    if len(message.command) >= 2:
+        radio = message.command[1]
+        if radio in radio_stations:
+            print(f"{message.from_user.id} calls radio to {radio}")
+            return await change_stream(
+                radio_stations[radio],
+                who_called=message.from_user.id
+            )
+            await app_robot.send_message(
+                message.from_user.id,
+                "True?!"
+            )
+    await app_robot.send_message(
+        message.from_user.id,
+        "**Available radio stations:**\n" + '\n'.join([key for key in radio_stations.keys()])
+    )
 
 
 @app_dj_calls.on_stream_end()
