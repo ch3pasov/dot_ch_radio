@@ -1,4 +1,4 @@
-from volume.radio import common_tree
+from volume.content import common_tree
 from volume.config.tg_ids import bot_username
 import hashlib
 

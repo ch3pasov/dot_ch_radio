@@ -1,16 +1,16 @@
 common_tree = {
-    "name": "root",
-    "description": "root",
+    "name": "Радио",
+    "description": "Привет! Тут ты можешь управлять радио, которое играет в https://t.me/ch_an?livestream",
     "children": {
         "lofi-girl": {
-            "name": "lofi hip hop radio 📚 - beats to relax/study to",
+            "name": "lofi-girl",
             "radio_url": "https://www.youtube.com/watch?v=jfKfPfyJRdk"
         },
         "gta": {
-            "name": "GTA",
+            "name": "GTA радио",
             "children": {
                 "sa": {
-                    "name": "San Andreas",
+                    "name": "GTA San Andreas",
                     "children": {
                         "bounce-fm": {
                             "name": "Bounce FM",
@@ -59,7 +59,7 @@ common_tree = {
                     }
                 },
                 "vc": {
-                    "name": "Vice City",
+                    "name": "GTA Vice City",
                     "children": {
                         "emotion": {
                             "name": "Emotion 98.3",
