@@ -1,10 +1,10 @@
 common_tree = {
     "name": "🌳 Корень",
-    "description": "👋 Добро пожаловать в корень дерева!",
+    "description": "👋 Добро пожаловать в корень дерева! Здесь начинается ваше путешествие по музыкальному миру и файлам.",
     "children": {
         "radio": {
             "name": "📻 Радио",
-            "description": "🎶 Привет! Тут ты можешь управлять радио, которое играет в https://t.me/ch_an?livestream",
+            "description": "🎶 В этой секции вы найдете различные радиостанции и музыкальные потоки, доступные для прослушивания в https://t.me/ch_an?livestream",
             "children": {
                 "go-to-radio": {
                     "name": "🔗 Перейти к радио",
@@ -16,10 +16,11 @@ common_tree = {
                 },
                 "gta": {
                     "name": "🚗 GTA радио",
-                    "description": "🎮 Радио из игр серии GTA.\nPowered by https://play.smolyakov.dev",
+                    "description": "🎮 Откройте для себя музыкальный мир серии игр GTA.\nPowered by https://play.smolyakov.dev",
                     "children": {
                         "sa": {
                             "name": "🌆 GTA San Andreas",
+                            "description": "🏜️ Исследуйте разнообразные музыкальные станции из игры GTA San Andreas.",
                             "children": {
                                 "bounce-fm": {
                                     "name": "🎶 Bounce FM",
@@ -69,6 +70,7 @@ common_tree = {
                         },
                         "vc": {
                             "name": "🏝️ GTA Vice City",
+                            "description": "🌴 Окунитесь в атмосферу 80-х с радиостанциями GTA Vice City.",
                             "children": {
                                 "emotion": {
                                     "name": "💖 Emotion 98.3",
@@ -110,6 +112,7 @@ common_tree = {
                         },
                         "3": {
                             "name": "🌃 GTA III",
+                            "description": "🌉 Откройте для себя музыкальное наследие GTA III с его уникальными радиостанциями.",
                             "children": {
                                 "head": {
                                     "name": "🎧 Head Radio",
@@ -155,6 +158,7 @@ common_tree = {
         },
         "my-folder": {
             "name": "📂 Моя папка",
+            "description": "📁 Здесь вы найдете личные файлы, изображения и аудиозаписи, сохраненные мной.",
             "children": {
                 "image.jpg": {
                     "name": "🖼️ image.png",
