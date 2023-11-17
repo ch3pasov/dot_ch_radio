@@ -30,8 +30,15 @@ while to_see:
     if 'children' in pointer:
         children_paths = dict([(f"{beautiful_path}/{child}", pointer['children'][child]['name']) for child in pointer['children']])
         to_see.extend(children_paths.keys())
-        children = dict([(stable_hash(f"{beautiful_path}/{child}"), pointer['children'][child]['name']) for child in pointer['children']])
-        common_hashdict[path_hash]["children"] = children
+        children_dict = {}
+        for child in pointer['children']:
+            child_hash = stable_hash(f"{beautiful_path}/{child}")
+            children_dict[child_hash] = {
+                "name": pointer['children'][child]['name']
+            }
+            if 'url' in pointer['children'][child]:
+                children_dict[child_hash]["url"] = pointer['children'][child]['url']
+        common_hashdict[path_hash]["children"] = children_dict
 
     # добавляем обязательный name и необязательные description, radio_url, ...
     for key in pointer:

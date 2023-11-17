@@ -95,56 +95,54 @@ async def change_stream(url: str, who_called=''):
 async def open_common_hashdict(path_hash, message, user_id):
     if path_hash in common_hashdict:
         obj = common_hashdict[path_hash]
-        if "children" in obj:
-            text = f'**{obj["name"]}**'
-            if "description" in obj:
-                text += f'\n{obj["description"]}'
-
-            children = obj["children"]
-            children_buttons = [
-                [
-                    InlineKeyboardButton(
-                        text=children[child],
-                        callback_data=child
-                    )
-                ] for child in children
-            ]
-            share_button = InlineKeyboardButton(
-                text="🔗",
-                switch_inline_query=obj["share"]
-            )
-            if "parent" in obj:
-                children_buttons.append(
-                    [
-                        InlineKeyboardButton(
-                            text="⬅️",
-                            callback_data=obj["parent"]
-                        ),
-                        share_button
-                    ]
-                )
-            else:
-                children_buttons.append(
-                    [
-                        share_button
-                    ]
-                )
-            reply_markup = InlineKeyboardMarkup(children_buttons)
-            await app_robot.edit_message_text(
-                message.chat.id,
-                message.id,
-                text=text,
-                reply_markup=reply_markup
-            )
-            return None
         if "radio_url" in obj:
             if user_id in [participant.user_id for participant in await app_dj_calls.get_participants(dot_ch_id)]:
                 await change_stream(obj['radio_url'], who_called=message.from_user.id)
                 return "▶️"
             return "🤷‍♂️Сначала зайди в радио!"
-    else:
-        await open_common_hashdict(root_path_hash, message, user_id)
-        return "😬 битая кнопка"
+        buttons = []
+        text = f'**{obj["name"]}**'
+        if "description" in obj:
+            text += f'\n{obj["description"]}'
+        if "children" in obj:
+            children = obj["children"]
+            for child in children:
+                kwargs = {"text": children[child]['name']}
+                if "url" in children[child]:
+                    kwargs["url"] = children[child]['url']
+                else:
+                    kwargs["callback_data"] = child
+                buttons.append([InlineKeyboardButton(**kwargs)])
+        share_button = InlineKeyboardButton(
+            text="🔗",
+            switch_inline_query=obj["share"]
+        )
+        if "parent" in obj:
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        text="⬅️",
+                        callback_data=obj["parent"]
+                    ),
+                    share_button
+                ]
+            )
+        else:
+            buttons.append(
+                [
+                    share_button
+                ]
+            )
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await app_robot.edit_message_text(
+            message.chat.id,
+            message.id,
+            text=text,
+            reply_markup=reply_markup
+        )
+        return None
+    await open_common_hashdict(root_path_hash, message, user_id)
+    return "😬 битая кнопка"
 
 
 @app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private)

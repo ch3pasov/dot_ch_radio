@@ -1,145 +1,168 @@
 common_tree = {
-    "name": "Радио",
-    "description": "Привет! Тут ты можешь управлять радио, которое играет в https://t.me/ch_an?livestream",
+    "name": "Корень",
+    "description": "Добро пожаловать в корень дерева!",
     "children": {
-        "lofi-girl": {
-            "name": "lofi-girl",
-            "radio_url": "https://www.youtube.com/watch?v=jfKfPfyJRdk"
-        },
-        "gta": {
-            "name": "GTA радио",
-            "description": "Радио из игр серии GTA.\nPowered by https://play.smolyakov.dev",
+        "radio": {
+            "name": "Радио",
+            "description": "Привет! Тут ты можешь управлять радио, которое играет в https://t.me/ch_an?livestream",
             "children": {
-                "sa": {
-                    "name": "GTA San Andreas",
-                    "children": {
-                        "bounce-fm": {
-                            "name": "Bounce FM",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/bounce-fm"
-                        },
-                        "csr": {
-                            "name": "CSR 103.9",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/csr"
-                        },
-                        "k-dst": {
-                            "name": "K-DST",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/k-dst"
-                        },
-                        "k-jah": {
-                            "name": "K-JAH West",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/k-jah"
-                        },
-                        "k-rose": {
-                            "name": "K-Rose",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/k-rose"
-                        },
-                        "master-sounds": {
-                            "name": "Master Sounds 98.3",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/master-sounds"
-                        },
-                        "playback-fm": {
-                            "name": "Playback FM",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/playback-fm"
-                        },
-                        "radio-los-santos": {
-                            "name": "Radio Los Santos",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/radio-los-santos"
-                        },
-                        "radio-x": {
-                            "name": "Radio X",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/radio-x"
-                        },
-                        "sfur": {
-                            "name": "SF-UR",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/sfur"
-                        },
-                        "wctr": {
-                            "name": "WCTR",
-                            "radio_url": "https://play.smolyakov.dev/stream/sa/wctr"
-                        }
-                    }
+                "go-to-radio": {
+                    "name": "Перейти к радио",
+                    "url": "https://t.me/ch_an?livestream"
                 },
-                "vc": {
-                    "name": "GTA Vice City",
-                    "children": {
-                        "emotion": {
-                            "name": "Emotion 98.3",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/emotion"
-                        },
-                        "espant": {
-                            "name": "Espantoso",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/espant"
-                        },
-                        "fever": {
-                            "name": "Fever 105",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/fever"
-                        },
-                        "flash": {
-                            "name": "Flash FM",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/flash"
-                        },
-                        "kchat": {
-                            "name": "K-Chat",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/kchat"
-                        },
-                        "vcpr": {
-                            "name": "VCPR",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/vcpr"
-                        },
-                        "vrock": {
-                            "name": "V-Rock",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/vrock"
-                        },
-                        "wave": {
-                            "name": "Wave 103",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/wave"
-                        },
-                        "wild": {
-                            "name": "Wildstyle",
-                            "radio_url": "https://play.smolyakov.dev/stream/vc/wild"
-                        }
-                    }
+                "lofi-girl": {
+                    "name": "lofi-girl",
+                    "radio_url": "https://www.youtube.com/watch?v=jfKfPfyJRdk"
                 },
-                "3": {
-                    "name": "GTA III",
+                "gta": {
+                    "name": "GTA радио",
+                    "description": "Радио из игр серии GTA.\nPowered by https://play.smolyakov.dev",
                     "children": {
-                        "head": {
-                            "name": "Head Radio",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/head"
+                        "sa": {
+                            "name": "GTA San Andreas",
+                            "children": {
+                                "bounce-fm": {
+                                    "name": "Bounce FM",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/bounce-fm"
+                                },
+                                "csr": {
+                                    "name": "CSR 103.9",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/csr"
+                                },
+                                "k-dst": {
+                                    "name": "K-DST",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/k-dst"
+                                },
+                                "k-jah": {
+                                    "name": "K-JAH West",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/k-jah"
+                                },
+                                "k-rose": {
+                                    "name": "K-Rose",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/k-rose"
+                                },
+                                "master-sounds": {
+                                    "name": "Master Sounds 98.3",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/master-sounds"
+                                },
+                                "playback-fm": {
+                                    "name": "Playback FM",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/playback-fm"
+                                },
+                                "radio-los-santos": {
+                                    "name": "Radio Los Santos",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/radio-los-santos"
+                                },
+                                "radio-x": {
+                                    "name": "Radio X",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/radio-x"
+                                },
+                                "sfur": {
+                                    "name": "SF-UR",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/sfur"
+                                },
+                                "wctr": {
+                                    "name": "WCTR",
+                                    "radio_url": "https://play.smolyakov.dev/stream/sa/wctr"
+                                }
+                            }
                         },
-                        "class": {
-                            "name": "Double Clef FM",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/class"
+                        "vc": {
+                            "name": "GTA Vice City",
+                            "children": {
+                                "emotion": {
+                                    "name": "Emotion 98.3",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/emotion"
+                                },
+                                "espant": {
+                                    "name": "Espantoso",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/espant"
+                                },
+                                "fever": {
+                                    "name": "Fever 105",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/fever"
+                                },
+                                "flash": {
+                                    "name": "Flash FM",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/flash"
+                                },
+                                "kchat": {
+                                    "name": "K-Chat",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/kchat"
+                                },
+                                "vcpr": {
+                                    "name": "VCPR",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/vcpr"
+                                },
+                                "vrock": {
+                                    "name": "V-Rock",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/vrock"
+                                },
+                                "wave": {
+                                    "name": "Wave 103",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/wave"
+                                },
+                                "wild": {
+                                    "name": "Wildstyle",
+                                    "radio_url": "https://play.smolyakov.dev/stream/vc/wild"
+                                }
+                            }
                         },
-                        "kjah": {
-                            "name": "K-JAH",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/kjah"
-                        },
-                        "rise": {
-                            "name": "Rise FM",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/rise"
-                        },
-                        "lips": {
-                            "name": "Lips 106",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/lips"
-                        },
-                        "game": {
-                            "name": "Game FM",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/game"
-                        },
-                        "msx": {
-                            "name": "MSX FM",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/msx"
-                        },
-                        "flash": {
-                            "name": "Flashback 95.6",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/flash"
-                        },
-                        "chat": {
-                            "name": "Chatterbox FM",
-                            "radio_url": "https://play.smolyakov.dev/stream/3/chat"
+                        "3": {
+                            "name": "GTA III",
+                            "children": {
+                                "head": {
+                                    "name": "Head Radio",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/head"
+                                },
+                                "class": {
+                                    "name": "Double Clef FM",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/class"
+                                },
+                                "kjah": {
+                                    "name": "K-JAH",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/kjah"
+                                },
+                                "rise": {
+                                    "name": "Rise FM",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/rise"
+                                },
+                                "lips": {
+                                    "name": "Lips 106",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/lips"
+                                },
+                                "game": {
+                                    "name": "Game FM",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/game"
+                                },
+                                "msx": {
+                                    "name": "MSX FM",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/msx"
+                                },
+                                "flash": {
+                                    "name": "Flashback 95.6",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/flash"
+                                },
+                                "chat": {
+                                    "name": "Chatterbox FM",
+                                    "radio_url": "https://play.smolyakov.dev/stream/3/chat"
+                                }
+                            }
                         }
                     }
+                }
+            }
+        },
+        "my-folder": {
+            "name": "Моя папка",
+            "children": {
+                "image.jpg": {
+                    "name": "image.png",
+                    "description": "[​​​​​​​​​​​](https://sun9-53.userapi.com/impg/i4Xv9-BTlp2a4Ma9k1EWPGFAgoT1HMYK8zpmdg/PvMmIRX1dp0.jpg?size=1620x2160&quality=95&sign=613bc2c4bb9235f2b826a4b3b58668bd&type=album)",
+                },
+                "audio.mp3": {
+                    "name": "audio.mp3",
+                    "description": "[​​​​​​​​​​​](https://muzmurka.xyz/audio/123282256225390/play.mp3)",
                 }
             }
         }
