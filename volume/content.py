@@ -164,27 +164,27 @@ common_tree = {
                             "children": {
                                 "evangelie-sinod": {
                                     "name": "✝️ Евангелие (Синодальный перевод)",
-                                    "url": "https://radio.azbyka.ru/evangelie"
+                                    "radio_url": "https://radio.azbyka.ru/evangelie"
                                 },
                                 "evangelie-csya": {
                                     "name": "✝️ Евангелие (Церковнославянский)",
-                                    "url": "https://radio.azbyka.ru/chitaem-evangelie-csya"
+                                    "radio_url": "https://radio.azbyka.ru/chitaem-evangelie-csya"
                                 },
                                 "evangelie-sinod-muz": {
                                     "name": "✝️ Евангелие (Синодальный музыкальный)",
-                                    "url": "https://radio.azbyka.ru/chitaem-evangelie-sinod-muz"
+                                    "radio_url": "https://radio.azbyka.ru/chitaem-evangelie-sinod-muz"
                                 },
                                 "psaltir-csya": {
                                     "name": "📜 Псалтирь (Церковнославянский)",
-                                    "url": "https://radio.azbyka.ru/psaltir"
+                                    "radio_url": "https://radio.azbyka.ru/psaltir"
                                 },
                                 "psaltir-rus": {
                                     "name": "📜 Псалтирь (Русский)",
-                                    "url": "https://radio.azbyka.ru/psaltir-rus"
+                                    "radio_url": "https://radio.azbyka.ru/psaltir-rus"
                                 },
                                 "psaltir-rus-muz": {
                                     "name": "📜 Псалтирь (Русский музыкальный)",
-                                    "url": "https://radio.azbyka.ru/psaltir-rus-muz"
+                                    "radio_url": "https://radio.azbyka.ru/psaltir-rus-muz"
                                 }
                             }
                         },
@@ -194,15 +194,15 @@ common_tree = {
                             "children": {
                                 "dorbrotolubie": {
                                     "name": "📚 Добротолюбие",
-                                    "url": "https://radio.azbyka.ru/dobrotolubie"
+                                    "radio_url": "https://radio.azbyka.ru/dobrotolubie"
                                 },
                                 "lives": {
                                     "name": "📘 Жития Святых",
-                                    "url": "https://radio.azbyka.ru/lives"
+                                    "radio_url": "https://radio.azbyka.ru/lives"
                                 },
                                 "azbyka-molitvy": {
                                     "name": "🔔 Азбука Молитвы",
-                                    "url": "https://radio.azbyka.ru/azbyka-molitvy"
+                                    "radio_url": "https://radio.azbyka.ru/azbyka-molitvy"
                                 }
                             }
                         },
@@ -212,19 +212,19 @@ common_tree = {
                             "children": {
                                 "grad-petrov": {
                                     "name": "🎙️ Град Петров",
-                                    "url": "https://grad-petrov.ru:8094/aac"
+                                    "radio_url": "https://grad-petrov.ru:8094/aac"
                                 },
                                 "radonezh": {
                                     "name": "⛪ Радонеж",
-                                    "url": "https://proxy.radio.azbyka.ru/radonezh"
+                                    "radio_url": "https://proxy.radio.azbyka.ru/radonezh"
                                 },
                                 "vera": {
                                     "name": "🌟 Радио Вера",
-                                    "url": "https://radiovera.hostingradio.ru:8007/radiovera_128"
+                                    "radio_url": "https://radiovera.hostingradio.ru:8007/radiovera_128"
                                 },
                                 "blago": {
                                     "name": "🕊️ Радио Благо",
-                                    "url": "https://live.radioblago.ru/live-1.mp3"
+                                    "radio_url": "https://live.radioblago.ru/live-1.mp3"
                                 }
                             }
                         },
@@ -235,17 +235,17 @@ common_tree = {
                                 "ancient-faith-music": {
                                     "name": "🇺🇸 Древняя Вера (Музыка) - США",
                                     "description": "Американская станция с духовной музыкой, сочетающая традиции и современность.",
-                                    "url": "https://ancientfaith.streamguys1.com/music"
+                                    "radio_url": "https://ancientfaith.streamguys1.com/music"
                                 },
                                 "ancient-faith-talk": {
                                     "name": "🇺🇸 Древняя Вера (Беседы) - США",
                                     "description": "Радиостанция из США с беседами на религиозные и духовные темы.",
-                                    "url": "https://ancientfaith.streamguys1.com/talk"
+                                    "radio_url": "https://ancientfaith.streamguys1.com/talk"
                                 },
                                 "gkpc": {
                                     "name": "🇬🇷 Глас Кафедрального Подворья - Греция",
                                     "description": "Греческая радиостанция, предлагающая уникальный взгляд на православие.",
-                                    "url": "https://proxy.radio.azbyka.ru/gkpc"
+                                    "radio_url": "https://proxy.radio.azbyka.ru/gkpc"
                                 }
                             }
                         }
