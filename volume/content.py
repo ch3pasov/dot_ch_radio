@@ -185,13 +185,7 @@ common_tree = {
                                 "psaltir-rus-muz": {
                                     "name": "📜 Псалтирь (Русский музыкальный)",
                                     "radio_url": "https://radio.azbyka.ru/psaltir-rus-muz"
-                                }
-                            }
-                        },
-                        "prayers": {
-                            "name": "🙏 Молитвы",
-                            "description": "🌟 Станции, транслирующие православные молитвы и духовные наставления.",
-                            "children": {
+                                },
                                 "dorbrotolubie": {
                                     "name": "📚 Добротолюбие",
                                     "radio_url": "https://radio.azbyka.ru/dobrotolubie"
@@ -200,6 +194,12 @@ common_tree = {
                                     "name": "📘 Жития Святых",
                                     "radio_url": "https://radio.azbyka.ru/lives"
                                 },
+                            }
+                        },
+                        "prayers": {
+                            "name": "🙏 Азбука Молитвы",
+                            "description": "Школа молитвы от портала «Азбука веры»: https://azbyka.ru/1/molitva. Powered by @azprayer",
+                            "children": {
                                 "azbyka-molitvy": {
                                     "name": "🔔 Азбука Молитвы",
                                     "radio_url": "https://radio.azbyka.ru/azbyka-molitvy"
@@ -233,12 +233,12 @@ common_tree = {
                             "description": "🎙️ Подборка православных радиостанций из-за рубежа, представляющих различные культуры и языки.",
                             "children": {
                                 "ancient-faith-music": {
-                                    "name": "🇺🇸 Древняя Вера (Музыка) - США",
+                                    "name": "🇺🇸 Ancient Faith (Музыка) - США",
                                     "description": "Американская станция с духовной музыкой, сочетающая традиции и современность.",
                                     "radio_url": "https://ancientfaith.streamguys1.com/music"
                                 },
                                 "ancient-faith-talk": {
-                                    "name": "🇺🇸 Древняя Вера (Беседы) - США",
+                                    "name": "🇺🇸 Ancient Faith (Беседы) - США",
                                     "description": "Радиостанция из США с беседами на религиозные и духовные темы.",
                                     "radio_url": "https://ancientfaith.streamguys1.com/talk"
                                 },
