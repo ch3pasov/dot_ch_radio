@@ -15,7 +15,7 @@ import asyncio
 # from random import randint
 from volume.config.app import api_id, api_hash
 from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
-from volume.content import default_url, startup_url, shutdown_url, radio_stations
+from volume.content import default_url, startup_url, shutdown_url
 from get_hashdict import common_hashdict, root_path_hash
 from decorators import admin_only
 
@@ -196,27 +196,6 @@ async def change_stream_handler(client, message):
     await app_robot.send_message(
         message.from_user.id,
         "True?!"
-    )
-
-
-@app_robot.on_message(pyrogram.filters.command(["radio"]) & pyrogram.filters.private)
-@admin_only
-async def radio_handler(client, message):
-    if len(message.command) >= 2:
-        radio = message.command[1]
-        if radio in radio_stations:
-            print(f"{message.from_user.id} calls radio to {radio}")
-            return await change_stream(
-                radio_stations[radio],
-                who_called=message.from_user.id
-            )
-            await app_robot.send_message(
-                message.from_user.id,
-                "True?!"
-            )
-    await app_robot.send_message(
-        message.from_user.id,
-        "**Available radio stations:**\n" + '\n'.join([key for key in radio_stations.keys()])
     )
 
 
