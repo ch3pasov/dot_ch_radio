@@ -153,6 +153,103 @@ common_tree = {
                             }
                         }
                     }
+                },
+                "orthodox-radio": {
+                    "name": "🕊️ Православное Радио",
+                    "description": "🙏 Подборка православных радиостанций, включающая чтения, молитвы и обучающие программы.",
+                    "children": {
+                        "readings": {
+                            "name": "📖 Чтения",
+                            "description": "📘 Радиостанции, вещающие чтения Евангелия и Псалтиря.",
+                            "children": {
+                                "evangelie-sinod": {
+                                    "name": "✝️ Евангелие (Синодальный перевод)",
+                                    "url": "https://radio.azbyka.ru/evangelie"
+                                },
+                                "evangelie-csya": {
+                                    "name": "✝️ Евангелие (Церковнославянский)",
+                                    "url": "https://radio.azbyka.ru/chitaem-evangelie-csya"
+                                },
+                                "evangelie-sinod-muz": {
+                                    "name": "✝️ Евангелие (Синодальный музыкальный)",
+                                    "url": "https://radio.azbyka.ru/chitaem-evangelie-sinod-muz"
+                                },
+                                "psaltir-csya": {
+                                    "name": "📜 Псалтирь (Церковнославянский)",
+                                    "url": "https://radio.azbyka.ru/psaltir"
+                                },
+                                "psaltir-rus": {
+                                    "name": "📜 Псалтирь (Русский)",
+                                    "url": "https://radio.azbyka.ru/psaltir-rus"
+                                },
+                                "psaltir-rus-muz": {
+                                    "name": "📜 Псалтирь (Русский музыкальный)",
+                                    "url": "https://radio.azbyka.ru/psaltir-rus-muz"
+                                }
+                            }
+                        },
+                        "prayers": {
+                            "name": "🙏 Молитвы",
+                            "description": "🌟 Станции, транслирующие православные молитвы и духовные наставления.",
+                            "children": {
+                                "dorbrotolubie": {
+                                    "name": "📚 Добротолюбие",
+                                    "url": "https://radio.azbyka.ru/dobrotolubie"
+                                },
+                                "lives": {
+                                    "name": "📘 Жития Святых",
+                                    "url": "https://radio.azbyka.ru/lives"
+                                },
+                                "azbyka-molitvy": {
+                                    "name": "🔔 Азбука Молитвы",
+                                    "url": "https://radio.azbyka.ru/azbyka-molitvy"
+                                }
+                            }
+                        },
+                        "education": {
+                            "name": "🎓 Образование",
+                            "description": "🏫 Радиостанции с обучающими программами и беседами на духовные темы.",
+                            "children": {
+                                "grad-petrov": {
+                                    "name": "🎙️ Град Петров",
+                                    "url": "https://grad-petrov.ru:8094/aac"
+                                },
+                                "radonezh": {
+                                    "name": "⛪ Радонеж",
+                                    "url": "https://proxy.radio.azbyka.ru/radonezh"
+                                },
+                                "vera": {
+                                    "name": "🌟 Радио Вера",
+                                    "url": "https://radiovera.hostingradio.ru:8007/radiovera_128"
+                                },
+                                "blago": {
+                                    "name": "🕊️ Радио Благо",
+                                    "url": "https://live.radioblago.ru/live-1.mp3"
+                                }
+                            }
+                        },
+                        "foreigns": {
+                            "name": "🌍 Иностранные Радиостанции",
+                            "description": "🎙️ Подборка православных радиостанций из-за рубежа, представляющих различные культуры и языки.",
+                            "children": {
+                                "ancient-faith-music": {
+                                    "name": "🇺🇸 Древняя Вера (Музыка) - США",
+                                    "description": "Американская станция с духовной музыкой, сочетающая традиции и современность.",
+                                    "url": "https://ancientfaith.streamguys1.com/music"
+                                },
+                                "ancient-faith-talk": {
+                                    "name": "🇺🇸 Древняя Вера (Беседы) - США",
+                                    "description": "Радиостанция из США с беседами на религиозные и духовные темы.",
+                                    "url": "https://ancientfaith.streamguys1.com/talk"
+                                },
+                                "gkpc": {
+                                    "name": "🇬🇷 Глас Кафедрального Подворья - Греция",
+                                    "description": "Греческая радиостанция, предлагающая уникальный взгляд на православие.",
+                                    "url": "https://proxy.radio.azbyka.ru/gkpc"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -177,52 +274,3 @@ startup_url = "https://youtu.be/miZHa7ZC6Z0"
 shutdown_url = "https://youtu.be/XvoVObL4bYY"
 
 default_url = "https://www.youtube.com/watch?v=jfKfPfyJRdk"
-
-radio_stations = {
-    "lofi-girl": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-    "sa-bounce-fm": "https://play.smolyakov.dev/stream/sa/bounce-fm",
-    "sa-csr": "https://play.smolyakov.dev/stream/sa/csr",
-    "sa-k-dst": "https://play.smolyakov.dev/stream/sa/k-dst",
-    "sa-k-jah": "https://play.smolyakov.dev/stream/sa/k-jah",
-    "sa-k-rose": "https://play.smolyakov.dev/stream/sa/k-rose",
-    "sa-master-sounds": "https://play.smolyakov.dev/stream/sa/master-sounds",
-    "sa-playback-fm": "https://play.smolyakov.dev/stream/sa/playback-fm",
-    "sa-radio-los-santos": "https://play.smolyakov.dev/stream/sa/radio-los-santos",
-    "sa-radio-x": "https://play.smolyakov.dev/stream/sa/radio-x",
-    "sa-sfur": "https://play.smolyakov.dev/stream/sa/sfur",
-    "sa-wctr": "https://play.smolyakov.dev/stream/sa/wctr",
-    "vc-emotion": "https://play.smolyakov.dev/stream/vc/emotion",
-    "vc-espant": "https://play.smolyakov.dev/stream/vc/espant",
-    "vc-fever": "https://play.smolyakov.dev/stream/vc/fever",
-    "vc-flash": "https://play.smolyakov.dev/stream/vc/flash",
-    "vc-kchat": "https://play.smolyakov.dev/stream/vc/kchat",
-    "vc-vcpr": "https://play.smolyakov.dev/stream/vc/vcpr",
-    "vc-vrock": "https://play.smolyakov.dev/stream/vc/vrock",
-    "vc-wave": "https://play.smolyakov.dev/stream/vc/wave",
-    "vc-wild": "https://play.smolyakov.dev/stream/vc/wild",
-    "3-head": "https://play.smolyakov.dev/stream/3/head",
-    "3-class": "https://play.smolyakov.dev/stream/3/class",
-    "3-kjah": "https://play.smolyakov.dev/stream/3/kjah",
-    "3-rise": "https://play.smolyakov.dev/stream/3/rise",
-    "3-lips": "https://play.smolyakov.dev/stream/3/lips",
-    "3-game": "https://play.smolyakov.dev/stream/3/game",
-    "3-msx": "https://play.smolyakov.dev/stream/3/msx",
-    "3-flash": "https://play.smolyakov.dev/stream/3/flash",
-    "3-chat": "https://play.smolyakov.dev/stream/3/chat",
-    "evangelie-sinod": "https://radio.azbyka.ru/evangelie",
-    "evangelie-csya": "https://radio.azbyka.ru/chitaem-evangelie-csya",
-    "evangelie-sinod-muz": "https://radio.azbyka.ru/chitaem-evangelie-sinod-muz",
-    "psaltir-csya": "https://radio.azbyka.ru/psaltir",
-    "psaltir-rus": "https://radio.azbyka.ru/psaltir-rus",
-    "psaltir-rus-muz": "https://radio.azbyka.ru/psaltir-rus-muz",
-    "dorbrotolubie": "https://radio.azbyka.ru/dobrotolubie",
-    "lives": "https://radio.azbyka.ru/lives",
-    "azbyka-molitvy": "https://radio.azbyka.ru/azbyka-molitvy",
-    "grad-petrov": "https://grad-petrov.ru:8094/aac",
-    "radonezh": "https://proxy.radio.azbyka.ru/radonezh",
-    "vera": "https://radiovera.hostingradio.ru:8007/radiovera_128",
-    "blago": "https://live.radioblago.ru/live-1.mp3",
-    "ancient-faith-music": "https://ancientfaith.streamguys1.com/music",
-    "ancient-faith-talk": "https://ancientfaith.streamguys1.com/talk",
-    "gkpc": "https://proxy.radio.azbyka.ru/gkpc"
-}
