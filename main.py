@@ -1,5 +1,6 @@
 import pyrogram
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.enums.chat_action import ChatAction
 from pytgcalls import PyTgCalls
 from pytgcalls import idle
 from pytgcalls.types import (
@@ -12,10 +13,10 @@ from pytgcalls.types import (
     Update,
 )
 import asyncio
-# from random import randint
+from random import random
 from volume.config.app import api_id, api_hash
 from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
-from volume.content import default_url, startup_url, shutdown_url
+from volume.content import default_url, startup_url, shutdown_url, wanted_not_found
 from get_hashdict import common_hashdict, root_path_hash
 from decorators import admin_only
 
@@ -158,10 +159,18 @@ async def start_handler(client, message):
 
 
 @app_robot.on_callback_query()
-async def answer_library_id(client, callback_query, **kwargs):
+async def answer_common_hashdict(client, callback_query, **kwargs):
     answer = await open_common_hashdict(callback_query.data, callback_query.message, callback_query.from_user.id)
     if answer:
         await callback_query.answer(answer)
+
+
+@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.photo)
+async def answer_wanted_search(client, message):
+    await asyncio.sleep(1+random())
+    await app_robot.send_chat_action(message.chat.id, ChatAction.TYPING)
+    await asyncio.sleep(2+6*random())
+    await app_robot.send_message(message.chat.id, wanted_not_found)
 
 
 @app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)

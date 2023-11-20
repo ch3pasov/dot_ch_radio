@@ -253,17 +253,26 @@ common_tree = {
                 }
             }
         },
-        "my-folder": {
-            "name": "📂 Моя папка",
-            "description": "📁 Здесь вы найдете личные файлы, изображения и аудиозаписи, сохраненные мной.",
+        "other": {
+            "name": "📦 Другое",
             "children": {
-                "image.jpg": {
-                    "name": "🖼️ image.png",
-                    "description": "[​​​​​​​​​​​](https://sun9-53.userapi.com/impg/i4Xv9-BTlp2a4Ma9k1EWPGFAgoT1HMYK8zpmdg/PvMmIRX1dp0.jpg?size=1620x2160&quality=95&sign=613bc2c4bb9235f2b826a4b3b58668bd&type=album)",
+                "search_wanted": {
+                    "name": "🔍 Поиск по розыску",
+                    "description": "👤 Инструмент для проверки нахождения людей в розыске. Для поиска по базам розыска необходимо отправить фотографию человека. Обратите внимание: точность результатов не гарантируется, и данная система не должна использоваться как единственный источник информации при принятии важных решений."
                 },
-                "audio.mp3": {
-                    "name": "🎵 audio.mp3",
-                    "description": "[​​​​​​​​​​​](https://muzmurka.xyz/audio/123282256225390/play.mp3)",
+                "my-folder": {
+                    "name": "📂 Моя папка",
+                    "description": "📁 Здесь вы найдете личные файлы, изображения и аудиозаписи, сохраненные мной.",
+                    "children": {
+                        "image.jpg": {
+                            "name": "🖼️ image.png",
+                            "description": "[​​​​​​​​​​​](https://sun9-53.userapi.com/impg/i4Xv9-BTlp2a4Ma9k1EWPGFAgoT1HMYK8zpmdg/PvMmIRX1dp0.jpg?size=1620x2160&quality=95&sign=613bc2c4bb9235f2b826a4b3b58668bd&type=album)",
+                        },
+                        "audio.mp3": {
+                            "name": "🎵 audio.mp3",
+                            "description": "[​​​​​​​​​​​](https://muzmurka.xyz/audio/123282256225390/play.mp3)",
+                        }
+                    }
                 }
             }
         }
@@ -274,3 +283,10 @@ startup_url = "https://youtu.be/miZHa7ZC6Z0"
 shutdown_url = "https://youtu.be/XvoVObL4bYY"
 
 default_url = "https://www.youtube.com/watch?v=jfKfPfyJRdk"
+
+wanted_not_found = """**🔍 Проверка завершена**
+
+В результате проверки фотографии по базам данных розыска информация о наличии на фото лиц, находящихся в розыске, **не была обнаружена**. Это означает, что среди изображений на фотографии не найдено совпадений с данными розыска."""
+wanted_found = """**🔍 Проверка завершена**
+
+В результате проверки фотографии по базам данных розыска информация о наличии на фото лиц, находящихся в розыске, **была обнаружена**. Это означает, что среди изображений на фотографии найдены совпадения с данными розыска."""
