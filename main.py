@@ -93,16 +93,36 @@ async def change_stream(url: str, who_called=''):
     )
 
 
+async def get_bashkir_haiku():
+    return 1
+    pass
+
+
 async def open_common_hashdict(deep_link, message, user_id):
+    # refresh
+    if deep_link.startswith("refresh=1=id="):
+        message = await app_robot.edit_message_text(
+            message.chat.id,
+            message.id,
+            text="refreshing...",
+        )
+        await asyncio.sleep(1)
+        return await open_common_hashdict(deep_link[10:], message, user_id)
+
+    # id=
     path_hash = deep_link[3:]
     if not deep_link.startswith("id="):
+        # aliases
         path_hash = "ERROR"
         if deep_link in alias_dict:
             path_hash = alias_dict[deep_link]
+
+    # error
     if path_hash not in common_hashdict:
         await open_common_hashdict("", message, user_id)
         return "😬 битая кнопка"
 
+    # common case
     obj = common_hashdict[path_hash]
     if "radio_url" in obj:
         if user_id in [participant.user_id for participant in await app_dj_calls.get_participants(dot_ch_id)]:
@@ -113,6 +133,10 @@ async def open_common_hashdict(deep_link, message, user_id):
     text = f'**{obj["name"]}**'
     if "description" in obj:
         text += f'\n{obj["description"]}'
+    if "custom" in obj:
+        match obj["custom"]:
+            case "bashkir_haiku":
+                text += f'\n{await get_bashkir_haiku()}'
     if "children" in obj:
         children = obj["children"]
         for child in children:
@@ -122,6 +146,15 @@ async def open_common_hashdict(deep_link, message, user_id):
             else:
                 kwargs["callback_data"] = f"id={child}"
             buttons.append([InlineKeyboardButton(**kwargs)])
+    if obj.get("refresh", 0):
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="🔄",
+                    callback_data=f"refresh=1=id={path_hash}"
+                )
+            ]
+        )
     share_button = InlineKeyboardButton(
         text="🔗",
         switch_inline_query=obj["share"]
@@ -160,6 +193,7 @@ async def start_handler(client, message):
         text="Загрузка"
     )
     deep_link = ""
+    print(message.command)
     if len(message.command) >= 2:
         deep_link = message.command[1]
     return await open_common_hashdict(deep_link, new_message, user_id)
