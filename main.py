@@ -23,6 +23,7 @@ from decorators import admin_only
 import logging
 import sys
 import re
+import aiohttp
 
 formatter = logging.Formatter('%(asctime)s %(levelname)s [%(filename)s:%(lineno)s] %(message)s')
 handler_fancy_stdout = logging.StreamHandler(sys.stdout)
@@ -93,9 +94,34 @@ async def change_stream(url: str, who_called=''):
     )
 
 
+async def aiohttp_get(url, type='text'):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            match type:
+                case 'text':
+                    return await resp.text()
+                case 'json':
+                    return await resp.json()
+                case _:
+                    raise ValueError("Unknown type")
+
+
 async def get_bashkir_haiku():
-    return 1
-    pass
+    return "\n".join(
+        (await aiohttp_get('http://nevmenandr.net/cgi-bin/haiku.html', 'text')).split("\n")[119:122]
+    ).replace("</span></td></tr>", "").replace('<tr><td></td><td><span style="color: #363636; font: normal 1.8em/1.36 Georgia">', "")
+
+
+async def get_weather(location):
+    lat = location.latitude
+    lon = location.longitude
+    weather_data = await aiohttp_get(f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=ru&appid=OPENWEATHER_API_KEY_REMOVED', 'json')
+
+    temperature = weather_data['main']['temp']
+    temperature_feels = weather_data['main']['feels_like']
+    wind_speed = weather_data['wind']['speed']
+
+    return f"В {weather_data['name']} {str(temperature)}℃\nОщущается как {temperature_feels}℃\nСкорость ветра {wind_speed}м/с"
 
 
 async def open_common_hashdict(deep_link, message, user_id):
@@ -160,11 +186,12 @@ async def open_common_hashdict(deep_link, message, user_id):
         switch_inline_query=obj["share"]
     )
     if "parent" in obj:
+        parent = obj["parent"]
         buttons.append(
             [
                 InlineKeyboardButton(
                     text="⬅️",
-                    callback_data=obj["parent"]
+                    callback_data=f"id={parent}"
                 ),
                 share_button
             ]
@@ -214,6 +241,18 @@ async def answer_wanted_search(client, message):
     await app_robot.send_message(message.chat.id, wanted_not_found)
 
 
+@app_robot.on_message(pyrogram.filters.private & (pyrogram.filters.location | pyrogram.filters.venue))
+async def answer_location(client, message):
+    match message.media:
+        case pyrogram.enums.MessageMediaType.VENUE:
+            location = message.venue.location
+        case pyrogram.enums.MessageMediaType.LOCATION:
+            location = message.location
+        case _:
+            raise ValueError("Unknown media type")
+    await app_robot.send_message(message.chat.id, await get_weather(location))
+
+
 @app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
 @admin_only
 async def pause_handler(client, message):
@@ -247,6 +286,30 @@ async def change_stream_handler(client, message):
         message.from_user.id,
         "True?!"
     )
+
+
+@app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)
+@admin_only
+async def test_handler(client, message):
+    # reply_markup = pyrogram.types.ReplyKeyboardMarkup(
+    #     [
+    #         [
+    #             pyrogram.types.KeyboardButton("📍", request_location=True),
+    #         ],
+    #     ],
+    #     resize_keyboard=True,
+    #     one_time_keyboard=True,
+    #     placeholder="🖖🏻🖖🏻🖖🏻🖖🏻🖖🏻"
+    # )
+    # reply_markup = pyrogram.types.ForceReply(
+    #     selective=True,
+    #     placeholder="🖖🏻🖖🏻🖖🏻🖖🏻🖖🏻"
+    # )
+    # await message.reply_text(
+    #     "test",
+    #     reply_markup=reply_markup
+    # )
+    pass
 
 
 @app_dj_calls.on_stream_end()
