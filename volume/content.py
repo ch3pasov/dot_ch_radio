@@ -272,8 +272,7 @@ common_tree = {
                 "weather": {
                     "name": "🌤️ Погода",
                     "description": "🌡️ Показывает погоду в указанном городе. Для получения погоды скинь гео 🌚.",
-                    "alias": "weather",
-                    "ask_geo": 1
+                    "alias": "weather"
                 },
                 "my-folder": {
                     "name": "📂 Моя папка",
