@@ -8,6 +8,7 @@ def stable_hash(string):
 
 
 common_hashdict = {}
+alias_dict = {}
 root_path_hash = stable_hash("")
 to_see = [""]
 while to_see:
@@ -15,8 +16,6 @@ while to_see:
     path_hash = stable_hash(beautiful_path)
 
     common_hashdict[path_hash] = {}
-
-    common_hashdict[path_hash]["share"] = f"t.me/{bot_username}?start={path_hash}"
 
     pointer = common_tree
     for step in beautiful_path.split("/")[1:]:
@@ -26,6 +25,12 @@ while to_see:
     if "/" in beautiful_path:
         parent_hash = stable_hash(beautiful_path.rsplit("/", 1)[0])
         common_hashdict[path_hash]["parent"] = parent_hash
+
+    common_hashdict[path_hash]["share"] = f"t.me/{bot_username}?start=id={path_hash}"
+    if "alias" in pointer:
+        alias = pointer["alias"]
+        alias_dict[alias] = path_hash
+        common_hashdict[path_hash]["share"] = f"t.me/{bot_username}?start={alias}"
 
     if 'children' in pointer:
         children_paths = dict([(f"{beautiful_path}/{child}", pointer['children'][child]['name']) for child in pointer['children']])

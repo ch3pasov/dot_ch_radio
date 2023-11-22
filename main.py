@@ -17,7 +17,7 @@ from random import random
 from volume.config.app import api_id, api_hash
 from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
 from volume.content import default_url, startup_url, shutdown_url, wanted_not_found
-from get_hashdict import common_hashdict, root_path_hash
+from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 
 import logging
@@ -93,57 +93,63 @@ async def change_stream(url: str, who_called=''):
     )
 
 
-async def open_common_hashdict(path_hash, message, user_id):
-    if path_hash in common_hashdict:
-        obj = common_hashdict[path_hash]
-        if "radio_url" in obj:
-            if user_id in [participant.user_id for participant in await app_dj_calls.get_participants(dot_ch_id)]:
-                await change_stream(obj['radio_url'], who_called=message.from_user.id)
-                return "▶️"
-            return "🤷‍♂️Сначала зайди в радио!"
-        buttons = []
-        text = f'**{obj["name"]}**'
-        if "description" in obj:
-            text += f'\n{obj["description"]}'
-        if "children" in obj:
-            children = obj["children"]
-            for child in children:
-                kwargs = {"text": children[child]['name']}
-                if "url" in children[child]:
-                    kwargs["url"] = children[child]['url']
-                else:
-                    kwargs["callback_data"] = child
-                buttons.append([InlineKeyboardButton(**kwargs)])
-        share_button = InlineKeyboardButton(
-            text="🔗",
-            switch_inline_query=obj["share"]
+async def open_common_hashdict(deep_link, message, user_id):
+    path_hash = deep_link[3:]
+    if not deep_link.startswith("id="):
+        path_hash = "ERROR"
+        if deep_link in alias_dict:
+            path_hash = alias_dict[deep_link]
+    if path_hash not in common_hashdict:
+        await open_common_hashdict("", message, user_id)
+        return "😬 битая кнопка"
+
+    obj = common_hashdict[path_hash]
+    if "radio_url" in obj:
+        if user_id in [participant.user_id for participant in await app_dj_calls.get_participants(dot_ch_id)]:
+            await change_stream(obj['radio_url'], who_called=message.from_user.id)
+            return "▶️"
+        return "🤷‍♂️Сначала зайди в радио!"
+    buttons = []
+    text = f'**{obj["name"]}**'
+    if "description" in obj:
+        text += f'\n{obj["description"]}'
+    if "children" in obj:
+        children = obj["children"]
+        for child in children:
+            kwargs = {"text": children[child]['name']}
+            if "url" in children[child]:
+                kwargs["url"] = children[child]['url']
+            else:
+                kwargs["callback_data"] = f"id={child}"
+            buttons.append([InlineKeyboardButton(**kwargs)])
+    share_button = InlineKeyboardButton(
+        text="🔗",
+        switch_inline_query=obj["share"]
+    )
+    if "parent" in obj:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    text="⬅️",
+                    callback_data=obj["parent"]
+                ),
+                share_button
+            ]
         )
-        if "parent" in obj:
-            buttons.append(
-                [
-                    InlineKeyboardButton(
-                        text="⬅️",
-                        callback_data=obj["parent"]
-                    ),
-                    share_button
-                ]
-            )
-        else:
-            buttons.append(
-                [
-                    share_button
-                ]
-            )
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await app_robot.edit_message_text(
-            message.chat.id,
-            message.id,
-            text=text,
-            reply_markup=reply_markup
+    else:
+        buttons.append(
+            [
+                share_button
+            ]
         )
-        return None
-    await open_common_hashdict(root_path_hash, message, user_id)
-    return "😬 битая кнопка"
+    reply_markup = InlineKeyboardMarkup(buttons)
+    await app_robot.edit_message_text(
+        message.chat.id,
+        message.id,
+        text=text,
+        reply_markup=reply_markup
+    )
+    return None
 
 
 @app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private)
@@ -153,9 +159,10 @@ async def start_handler(client, message):
         user_id,
         text="Загрузка"
     )
+    deep_link = ""
     if len(message.command) >= 2:
-        return await open_common_hashdict(message.command[1], new_message, user_id)
-    return await open_common_hashdict(root_path_hash, new_message, user_id)
+        deep_link = message.command[1]
+    return await open_common_hashdict(deep_link, new_message, user_id)
 
 
 @app_robot.on_callback_query()
