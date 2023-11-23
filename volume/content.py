@@ -298,6 +298,10 @@ common_tree = {
                             "name": "📄 Хорошие новости №11.pdf",
                             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/%D0%A5%D0%BE%D1%80%D0%BE%D1%88%D0%B8%D0%B5%20%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8%20%E2%84%9611.pdf)",
                         },
+                        "CNOLM_Win.zip": {
+                            "name": "📦 CNOLM_Win.zip",
+                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/CNOLM_Win.zip)",
+                        },
                     }
                 }
             }
