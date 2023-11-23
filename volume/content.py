@@ -300,7 +300,13 @@ common_tree = {
                         },
                         "CNOLM_Win.zip": {
                             "name": "📦 CNOLM_Win.zip",
-                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/CNOLM_Win.zip)",
+                            "description": "**📦 [CNOLM_Win.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/CNOLM_Win.zip)**[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/cnolm.jpg)",
+                            "hide_name": 1,
+                        },
+                        "Presentation защита ВКР.zip": {
+                            "name": "📦 Presentation защита ВКР.zip",
+                            "description": "**[📦 Presentation защита ВКР.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/Presentation%20%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0%20%D0%92%D0%9A%D0%A0.zip)**",
+                            "hide_name": 1,
                         },
                     }
                 }

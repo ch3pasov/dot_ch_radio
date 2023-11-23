@@ -156,7 +156,9 @@ async def open_common_hashdict(deep_link, message, user_id):
             return "▶️"
         return "🤷‍♂️Сначала зайди в радио!"
     buttons = []
-    text = f'**{obj["name"]}**'
+    text = ""
+    if not obj.get("hide_name", 0):
+        text += f'**{obj["name"]}**'
     if "description" in obj:
         text += f'\n{obj["description"]}'
     if "custom" in obj:
@@ -220,7 +222,6 @@ async def start_handler(client, message):
         text="Загрузка"
     )
     deep_link = ""
-    print(message.command)
     if len(message.command) >= 2:
         deep_link = message.command[1]
     return await open_common_hashdict(deep_link, new_message, user_id)
