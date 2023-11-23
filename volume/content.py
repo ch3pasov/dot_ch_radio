@@ -292,7 +292,7 @@ common_tree = {
                         },
                         "Naya.mp4": {
                             "name": "🎥 Naya.mp4",
-                            "description": "[​​​​​​​​​​​](https:https://storage.yandexcloud.net/dot-ch-bot-bucket/Naya.mp4)",
+                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Naya.mp4)",
                         },
                         "Хорошие новости №11.pdf": {
                             "name": "📄 Хорошие новости №11.pdf",
