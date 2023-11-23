@@ -278,14 +278,26 @@ common_tree = {
                     "name": "📂 Моя папка",
                     "description": "📁 Здесь вы найдете личные файлы, изображения и аудиозаписи, сохраненные мной.",
                     "children": {
-                        "image.jpg": {
-                            "name": "🖼️ image.png",
-                            "description": "[​​​​​​​​​​​](https://sun9-53.userapi.com/impg/i4Xv9-BTlp2a4Ma9k1EWPGFAgoT1HMYK8zpmdg/PvMmIRX1dp0.jpg?size=1620x2160&quality=95&sign=613bc2c4bb9235f2b826a4b3b58668bd&type=album)",
+                        "photo.jpg": {
+                            "name": "🖼️ photo.png",
+                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo.jpg)",
+                        },
+                        "photo2.jpg": {
+                            "name": "🖼️ photo2.png",
+                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo2.jpg)",
                         },
                         "audio.mp3": {
                             "name": "🎵 audio.mp3",
                             "description": "[​​​​​​​​​​​](https://muzmurka.xyz/audio/123282256225390/play.mp3)",
-                        }
+                        },
+                        "Naya.mp4": {
+                            "name": "🎥 Naya.mp4",
+                            "description": "[​​​​​​​​​​​](https:https://storage.yandexcloud.net/dot-ch-bot-bucket/Naya.mp4)",
+                        },
+                        "Хорошие новости №11.pdf": {
+                            "name": "📄 Хорошие новости №11.pdf",
+                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/%D0%A5%D0%BE%D1%80%D0%BE%D1%88%D0%B8%D0%B5%20%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8%20%E2%84%9611.pdf)",
+                        },
                     }
                 }
             }
