@@ -7,15 +7,22 @@ def stable_hash(string):
     return hashlib.md5(string.encode()).hexdigest()
 
 
+children_params = ["url", "beta_access"]
+inherited_params = ["beta_access"]
+
 common_hashdict = {}
 alias_dict = {}
 root_path_hash = stable_hash("")
-to_see = [""]
+
+to_see = [{"path": "", "inherited": {}}]
 while to_see:
-    beautiful_path = to_see.pop(0)
+    to_see_now = to_see.pop(0)
+    print(to_see_now)
+    beautiful_path = to_see_now["path"]
     path_hash = stable_hash(beautiful_path)
 
-    common_hashdict[path_hash] = {}
+    inherited = to_see_now["inherited"]
+    common_hashdict[path_hash] = inherited.copy()
 
     pointer = common_tree
     for step in beautiful_path.split("/")[1:]:
@@ -34,15 +41,27 @@ while to_see:
 
     if 'children' in pointer:
         children_paths = dict([(f"{beautiful_path}/{child}", pointer['children'][child]['name']) for child in pointer['children']])
-        to_see.extend(children_paths.keys())
+        inherit_to_children = inherited.copy()
+        for inherited_param in inherited_params:
+            if inherited_param in pointer:
+                inherit_to_children[inherited_param] = pointer[inherited_param]
+
+        to_see.extend([{"path": key, "inherited": inherit_to_children} for key in children_paths.keys()])
         children_dict = {}
         for child in pointer['children']:
             child_hash = stable_hash(f"{beautiful_path}/{child}")
             children_dict[child_hash] = {
                 "name": pointer['children'][child]['name']
             }
-            if 'url' in pointer['children'][child]:
-                children_dict[child_hash]["url"] = pointer['children'][child]['url']
+
+            for inherited_children_param in list(set(inherited_params) & set(children_params)):
+                if inherited_children_param in inherited:
+                    children_dict[child_hash][inherited_children_param] = inherited[inherited_children_param]
+                if inherited_children_param in pointer:
+                    children_dict[child_hash][inherited_children_param] = pointer[inherited_children_param]
+            for children_param in children_params:
+                if children_param in pointer['children'][child]:
+                    children_dict[child_hash][children_param] = pointer['children'][child][children_param]
         common_hashdict[path_hash]["children"] = children_dict
 
     # добавляем обязательный name и необязательные description, radio_url, ...

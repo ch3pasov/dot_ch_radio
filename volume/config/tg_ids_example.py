@@ -8,3 +8,6 @@ bot_username = "dot_ch_bot"
 admins = [
     0
 ]
+beta_testers = [
+    0
+]

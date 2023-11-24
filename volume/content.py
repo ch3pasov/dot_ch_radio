@@ -286,9 +286,9 @@ common_tree = {
                             "name": "🖼️ photo2.png",
                             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo2.jpg)",
                         },
-                        "audio.mp3": {
-                            "name": "🎵 audio.mp3",
-                            "description": "[​​​​​​​​​​​](https://muzmurka.xyz/audio/123282256225390/play.mp3)",
+                        "audio_01.mp3": {
+                            "name": "🎵 audio_01.mp3",
+                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/audio_01.mp3)",
                         },
                         "Naya.mp4": {
                             "name": "🎥 Naya.mp4",
@@ -308,8 +308,50 @@ common_tree = {
                             "description": "**[📦 Presentation защита ВКР.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/Presentation%20%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0%20%D0%92%D0%9A%D0%A0.zip)**",
                             "hide_name": 1,
                         },
-                    }
-                }
+                    },
+                },
+                "secret-place": {
+                    "name": "🔒 NDA папка",
+                    "beta_access": 1,
+                    "description": "👀 Если вы её видите, то вам это разрешили",
+                    "children": {
+                        "clique": {
+                            "name": "👥 Клика",
+                            "description": "👥 Секретная клика",
+                            "children": {
+                                "clique1": {
+                                    "name": "👥 Клика 1",
+                                    "description": "👥 Секретная клика 1",
+                                    "children": {
+                                        "clique1.1": {
+                                            "name": "👥 Клика 1.1",
+                                            "description": "👥 Секретная клика 1.1",
+                                            "beta_access": 0,
+                                            "children": {
+                                                "clique1.1.1": {
+                                                    "name": "👥 Клика 1.1.1",
+                                                    "description": "👥 Секретная клика 1.1.1",
+                                                },
+                                                "clique1.1.2": {
+                                                    "name": "👥 Клика 1.1.2",
+                                                    "description": "👥 Секретная клика 1.1.2",
+                                                },
+                                            },
+                                        },
+                                        "clique1.2": {
+                                            "name": "👥 Клика 1.2",
+                                            "description": "👥 Секретная клика 1.2",
+                                        },
+                                    },
+                                },
+                                "clique2": {
+                                    "name": "👥 Клика 2",
+                                    "description": "👥 Секретная клика 2",
+                                },
+                            },
+                        },
+                    },
+                },
             }
         }
     }
