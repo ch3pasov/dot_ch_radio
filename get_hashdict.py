@@ -12,7 +12,6 @@ inherited_params = ["beta_access"]
 
 common_hashdict = {}
 alias_dict = {}
-root_path_hash = stable_hash("")
 
 to_see = [{"path": "", "inherited": {}}]
 while to_see:

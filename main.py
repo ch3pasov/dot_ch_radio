@@ -15,7 +15,7 @@ from pytgcalls.types import (
 import asyncio
 from random import random
 from volume.config.app import api_id, api_hash
-from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
+from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash, beta_testers
 from volume.content import default_url, startup_url, shutdown_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
@@ -148,8 +148,14 @@ async def open_common_hashdict(deep_link, message, user_id):
         await open_common_hashdict("", message, user_id)
         return "😬 битая кнопка"
 
-    # common case
     obj = common_hashdict[path_hash]
+    # beta access
+    if obj.get("beta_access", 0):
+        if user_id not in beta_testers:
+            await open_common_hashdict("", message, user_id)
+            return "🤷‍♂️Не знаю как ты это открыл, но тебе сюда нельзя."
+
+    # common case
     if "radio_url" in obj:
         if user_id in [participant.user_id for participant in await app_dj_calls.get_participants(dot_ch_id)]:
             await change_stream(obj['radio_url'], who_called=message.from_user.id)
@@ -168,6 +174,9 @@ async def open_common_hashdict(deep_link, message, user_id):
     if "children" in obj:
         children = obj["children"]
         for child in children:
+            if children[child].get("beta_access", 0):
+                if user_id not in beta_testers:
+                    continue
             kwargs = {"text": children[child]['name']}
             if "url" in children[child]:
                 kwargs["url"] = children[child]['url']
