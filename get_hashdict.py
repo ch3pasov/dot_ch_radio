@@ -16,7 +16,6 @@ alias_dict = {}
 to_see = [{"path": "", "inherited": {}}]
 while to_see:
     to_see_now = to_see.pop(0)
-    print(to_see_now)
     beautiful_path = to_see_now["path"]
     path_hash = stable_hash(beautiful_path)
 
