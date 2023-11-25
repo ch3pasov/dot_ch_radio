@@ -393,19 +393,13 @@ async def raw(client, update, users, chats):
 
 
 try:
-    from time import sleep
-    while True:
-        try:
-            asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
-            idle()
-        except (ConnectionError, TimeoutError) as e:
-            print(f'ConnectionError: {e}. Trying to reconnect...')
-            sleep(5)
-            continue
+    asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
+    idle()
 except KeyboardInterrupt:
     print('Exiting...')
 finally:
     try:
+        from time import sleep
         asyncio.get_event_loop().run_until_complete(change_stream(shutdown_url, who_called=''))
         sleep(5)
         app_dj_calls.leave_group_call(
