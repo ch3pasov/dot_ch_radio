@@ -318,41 +318,11 @@ common_tree = {
                         "clique": {
                             "name": "👥 Клика",
                             "description": "👥 Секретная клика",
-                            "children": {
-                                "clique1": {
-                                    "name": "👥 Клика 1",
-                                    "description": "👥 Секретная клика 1",
-                                    "children": {
-                                        "clique1.1": {
-                                            "name": "👥 Клика 1.1",
-                                            "description": "👥 Секретная клика 1.1",
-                                            "beta_access": 0,
-                                            "children": {
-                                                "clique1.1.1": {
-                                                    "name": "👥 Клика 1.1.1",
-                                                    "description": "👥 Секретная клика 1.1.1",
-                                                },
-                                                "clique1.1.2": {
-                                                    "name": "👥 Клика 1.1.2",
-                                                    "description": "👥 Секретная клика 1.1.2",
-                                                },
-                                            },
-                                        },
-                                        "clique1.2": {
-                                            "name": "👥 Клика 1.2",
-                                            "description": "👥 Секретная клика 1.2",
-                                        },
-                                    },
-                                },
-                                "clique2": {
-                                    "name": "👥 Клика 2",
-                                    "description": "👥 Секретная клика 2",
-                                },
-                            },
-                        },
-                    },
+                            "alias": "clique"
+                        }
+                    }
                 },
-            }
+            },
         }
     }
 }
