@@ -3,6 +3,7 @@ app.py
 tg_ids.py
 
 *_account.session*
+*.db
 *.mp3
 *.webm
 
