@@ -4,12 +4,13 @@ from pyrogram.enums.chat_action import ChatAction
 import asyncio
 from random import random
 from volume.config.tg_ids import dot_ch_id, beta_testers
-from volume.content import startup_url, shutdown_url, wanted_not_found
+from volume.content import startup_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather
-from global_vars import app_dj, app_robot, print
+from programs.clique import get_clique_members
+from global_vars import app_robot, print
 
 
 async def open_common_hashdict(deep_link, message, user_id):
@@ -55,10 +56,6 @@ async def open_common_hashdict(deep_link, message, user_id):
         text += f'**{obj["name"]}**'
     if "description" in obj:
         text += f'\n{obj["description"]}'
-    if "custom" in obj:
-        match obj["custom"]:
-            case "bashkir_haiku":
-                text += f'\n{await get_bashkir_haiku()}'
     if "children" in obj:
         children = obj["children"]
         for child in children:
@@ -101,12 +98,21 @@ async def open_common_hashdict(deep_link, message, user_id):
                 share_button
             ]
         )
+    disable_web_page_preview = obj.get("disable_web_page_preview", 0)
+    if "custom" in obj:
+        match obj["custom"]:
+            case "bashkir_haiku":
+                text += f'\n{await get_bashkir_haiku()}'
+            case "clique_list":
+                text += f'\n{get_clique_members()}'
+
     reply_markup = InlineKeyboardMarkup(buttons)
     await app_robot.edit_message_text(
         message.chat.id,
         message.id,
         text=text,
-        reply_markup=reply_markup
+        reply_markup=reply_markup,
+        disable_web_page_preview=disable_web_page_preview
     )
     return None
 
@@ -177,63 +183,6 @@ async def test_handler(client, message):
     pass
 
 
-# главный обработчик событий в войсчате
-@app_dj.on_raw_update()
-async def raw(client, update, users, chats):
-    # print(type(update))
-    # print(dir(update))
-    if type(update) is pyrogram.raw.types.update_group_call_participants.UpdateGroupCallParticipants:
-        call = update.call
-        for participant in update.participants:
-            # print(participant)
-            match type(participant.peer):
-                case pyrogram.raw.types.PeerUser:
-                    participant_type = 'user'
-                    participant_id = participant.peer.user_id
-                case pyrogram.raw.types.PeerChat:
-                    return
-                    participant_type = 'chat'
-                    participant_id = participant.peer.dot_ch_chat_id
-                case pyrogram.raw.types.PeerChannel:
-                    return
-                    participant_type = 'channel'
-                    participant_id = participant.peer.dot_ch_id
-            assert participant_type == 'user'
-
-            if participant.left:
-                print(f'{participant_type} {participant_id} left')
-            if participant.just_joined:
-                print(f'{participant_type} {participant_id} just joined')
-                peer = await app_dj.resolve_peer(participant_id)
-                await app_dj.invoke(
-                    pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                        call=call,
-                        participant=peer,
-                        muted=False
-                    )
-                )
-            if participant.raise_hand_rating:
-                print(f'{participant_type} {participant_id} raise hand with rating {participant.raise_hand_rating}')
-                # peer = await app_dj.resolve_peer(participant_id)
-                # await asyncio.sleep(5)
-                # if randint(0, 1):
-                #     await app_dj.invoke(
-                #         pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                #             call=call,
-                #             participant=peer,
-                #             raise_hand=False
-                #         )
-                #     )
-                # else:
-                #     await app_dj.invoke(
-                #         pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                #             call=call,
-                #             participant=peer,
-                #             muted=False
-                #         )
-                #     )
-
-
 try:
     asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
     pyrogram.idle()
@@ -241,9 +190,6 @@ except KeyboardInterrupt:
     print('Exiting...')
 finally:
     try:
-        from time import sleep
-        asyncio.get_event_loop().run_until_complete(change_stream(shutdown_url, who_called=''))
-        sleep(5)
         asyncio.get_event_loop().run_until_complete(leave_group_call(dot_ch_id))
         pass
     except KeyError:

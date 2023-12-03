@@ -10,11 +10,11 @@ from pytgcalls.types import (
 )
 from volume.config.debug import disable_radio
 from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
-from volume.content import default_url
+from volume.content import default_url, shutdown_url
 
 from decorators import admin_only
 
-from global_vars import app_robot, app_dj
+from global_vars import app_robot, app_dj, print
 
 import asyncio
 import pyrogram
@@ -69,6 +69,8 @@ if not disable_radio:
         return await app_dj_calls.get_participants(chat_id)
 
     async def leave_group_call(chat_id):
+        await change_stream(shutdown_url, who_called='')
+        await asyncio.sleep(5)
         await app_dj_calls.leave_group_call(chat_id)
 
     @app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
@@ -113,6 +115,62 @@ if not disable_radio:
                 audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
             )
         )
+
+    # главный обработчик событий в войсчате
+    @app_dj.on_raw_update()
+    async def raw(client, update, users, chats):
+        # print(type(update))
+        # print(dir(update))
+        if type(update) is pyrogram.raw.types.update_group_call_participants.UpdateGroupCallParticipants:
+            call = update.call
+            for participant in update.participants:
+                # print(participant)
+                match type(participant.peer):
+                    case pyrogram.raw.types.PeerUser:
+                        participant_type = 'user'
+                        participant_id = participant.peer.user_id
+                    case pyrogram.raw.types.PeerChat:
+                        return
+                        participant_type = 'chat'
+                        participant_id = participant.peer.dot_ch_chat_id
+                    case pyrogram.raw.types.PeerChannel:
+                        return
+                        participant_type = 'channel'
+                        participant_id = participant.peer.dot_ch_id
+                assert participant_type == 'user'
+
+                if participant.left:
+                    print(f'{participant_type} {participant_id} left')
+                if participant.just_joined:
+                    print(f'{participant_type} {participant_id} just joined')
+                    peer = await app_dj.resolve_peer(participant_id)
+                    await app_dj.invoke(
+                        pyrogram.raw.functions.phone.EditGroupCallParticipant(
+                            call=call,
+                            participant=peer,
+                            muted=False
+                        )
+                    )
+                if participant.raise_hand_rating:
+                    print(f'{participant_type} {participant_id} raise hand with rating {participant.raise_hand_rating}')
+                    # peer = await app_dj.resolve_peer(participant_id)
+                    # await asyncio.sleep(5)
+                    # if randint(0, 1):
+                    #     await app_dj.invoke(
+                    #         pyrogram.raw.functions.phone.EditGroupCallParticipant(
+                    #             call=call,
+                    #             participant=peer,
+                    #             raise_hand=False
+                    #         )
+                    #     )
+                    # else:
+                    #     await app_dj.invoke(
+                    #         pyrogram.raw.functions.phone.EditGroupCallParticipant(
+                    #             call=call,
+                    #             participant=peer,
+                    #             muted=False
+                    #         )
+                    #     )
 else:
     async def start_radio():
         print("Radio is disabled")

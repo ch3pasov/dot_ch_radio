@@ -316,9 +316,18 @@ common_tree = {
                     "description": "👀 Если вы её видите, то вам это разрешили",
                     "children": {
                         "clique": {
-                            "name": "👥 Клика",
-                            "description": "👥 Секретная клика",
-                            "alias": "clique"
+                            "name": "Клика",
+                            "description": "[㊙️] Клика (Секрет Клика) — это группа людей, объединенных общими интересами, целями и взглядами на мир. Вступить в неё можно только по приглашению.",
+                            "alias": "clique",
+                            "custom": "clique_list",
+                            "disable_web_page_preview": 1,
+                            "children": {
+                                "clique_join": {
+                                    "name": "👥 Вступить в клику",
+                                    "alias": "clique_join",
+                                    "custom": "clique_join",
+                                },
+                            }
                         }
                     }
                 },
