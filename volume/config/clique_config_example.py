@@ -1,8 +1,10 @@
-initiation_phrase_regex = r"^Я вступаю в \[㊙️\] Клику:\nt\.me\/dot_ch_bot\?start=clique\n$"
-description_phrase = r"^\[㊙️\] Клика: t\.me\/dot_ch_bot\?start=clique$"
+initiation_phrase = 'Я вступаю в [㊙️] Клику:\nt.me/dot_ch_bot?start=clique'
+initiation_phrase_regex = "^" + initiation_phrase.replace("[", r"\[").replace("]", r"\]").replace(".", r"\.").replace("/", r"\/").replace("?", r"\?") + "$"
+description_phrase = '[㊙️] Клика: t.me/dot_ch_bot?start=clique'
+description_phrase_regex = "^" + description_phrase.replace("[", r"\[").replace("]", r"\]").replace(".", r"\.").replace("/", r"\/").replace("?", r"\?") + "$"
 link_word = "㊙️"
 join_link = "https://t.me/dot_ch_bot?start=clique_join"
 minimum_channel_members_count = 10
 maximum_inactive_days = 90
-clique_folder_id = 3
-clique_folder_name = "[㊙️]"
+clique_folder_id = 2
+clique_folder_name = "[ТЕСТ][㊙️]"
