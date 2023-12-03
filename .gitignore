@@ -2,6 +2,7 @@ common.log
 app.py
 tg_ids.py
 debug.py
+clique_config.py
 
 *_account.session*
 *.db

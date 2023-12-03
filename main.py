@@ -9,7 +9,7 @@ from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather
-from programs.clique import get_clique_members
+from programs.clique import get_clique_members, get_clique_folder_link_button
 from global_vars import app_robot, print
 
 
@@ -105,6 +105,7 @@ async def open_common_hashdict(deep_link, message, user_id):
                 text += f'\n{await get_bashkir_haiku()}'
             case "clique_list":
                 text += f'\n{get_clique_members()}'
+                buttons = get_clique_folder_link_button() + buttons
 
     reply_markup = InlineKeyboardMarkup(buttons)
     await app_robot.edit_message_text(
