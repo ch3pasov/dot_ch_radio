@@ -10,6 +10,7 @@ from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather
 from programs.clique import get_clique_members, get_clique_folder_link_button
+from programs.moneydrop import start_post_moneydrop_handlers
 from global_vars import app_robot, print
 
 
@@ -186,6 +187,7 @@ async def test_handler(client, message):
 
 try:
     asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
+    asyncio.get_event_loop().run_until_complete(start_post_moneydrop_handlers())
     pyrogram.idle()
 except KeyboardInterrupt:
     print('Exiting...')

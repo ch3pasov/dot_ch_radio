@@ -24,3 +24,4 @@ app_robot.start()
 
 print('login in dj account')
 app_dj = pyrogram.Client("volume/sessions/dj_account", api_id, api_hash)
+app_dj.start()

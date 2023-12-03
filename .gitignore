@@ -1,8 +1,5 @@
 common.log
-app.py
-tg_ids.py
-debug.py
-clique_config.py
+config
 
 *_account.session*
 *.db
