@@ -113,7 +113,6 @@ if not disable_radio:
                 audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
             )
         )
-
 else:
     async def start_radio():
         print("Radio is disabled")

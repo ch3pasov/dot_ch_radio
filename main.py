@@ -7,42 +7,9 @@ from volume.config.tg_ids import dot_ch_id, beta_testers
 from volume.content import startup_url, shutdown_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
-
 from programs.radio import change_stream, get_participants, leave_group_call
-
+from programs.other import get_bashkir_haiku, get_weather
 from global_vars import app_dj, app_robot, print
-
-import aiohttp
-
-
-async def aiohttp_get(url, type='text'):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as resp:
-            match type:
-                case 'text':
-                    return await resp.text()
-                case 'json':
-                    return await resp.json()
-                case _:
-                    raise ValueError("Unknown type")
-
-
-async def get_bashkir_haiku():
-    return "\n".join(
-        (await aiohttp_get('http://nevmenandr.net/cgi-bin/haiku.html', 'text')).split("\n")[119:122]
-    ).replace("</span></td></tr>", "").replace('<tr><td></td><td><span style="color: #363636; font: normal 1.8em/1.36 Georgia">', "")
-
-
-async def get_weather(location):
-    lat = location.latitude
-    lon = location.longitude
-    weather_data = await aiohttp_get(f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=ru&appid=OPENWEATHER_API_KEY_REMOVED', 'json')
-
-    temperature = weather_data['main']['temp']
-    temperature_feels = weather_data['main']['feels_like']
-    wind_speed = weather_data['wind']['speed']
-
-    return f"В {weather_data['name']} {str(temperature)}℃\nОщущается как {temperature_feels}℃\nСкорость ветра {wind_speed}м/с"
 
 
 async def open_common_hashdict(deep_link, message, user_id):
