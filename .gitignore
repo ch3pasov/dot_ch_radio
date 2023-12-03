@@ -1,6 +1,7 @@
 common.log
 app.py
 tg_ids.py
+debug.py
 
 *_account.session*
 *.db
