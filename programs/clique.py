@@ -3,6 +3,8 @@ from pyrogram.types import InlineKeyboardButton
 import pyrogram
 import datetime
 
+from volume.config.clique_config import clique_folder_id, clique_folder_name
+
 connection = sqlite3.connect('/Users/anatoliy-ch/Documents/projects/dot_ch_radio/volume/database/common.db')
 
 
@@ -59,8 +61,8 @@ async def update_clique_folder(connection, app_dj):
         pyrogram.raw.functions.messages.UpdateDialogFilter(
             id=2,
             filter=pyrogram.raw.types.DialogFilterChatlist(
-                id=2,
-                title='[㊙️]',
+                id=clique_folder_id,
+                title=clique_folder_name,
                 pinned_peers=[],
                 include_peers=channel_peers,
                 emoticon='👤',
@@ -75,7 +77,7 @@ async def update_clique_folder(connection, app_dj):
             await app_dj.invoke(
                 pyrogram.raw.functions.messages.GetDialogFilters()
             )
-        )[1:] if obj.title == '[㊙️]'
+        )[1:] if obj.id == clique_folder_id
     ][0]
 
     # получение всех пригласительных ссылок
