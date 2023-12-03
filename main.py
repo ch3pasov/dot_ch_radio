@@ -1,97 +1,18 @@
 import pyrogram
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums.chat_action import ChatAction
-from pytgcalls import PyTgCalls
-from pytgcalls import idle
-from pytgcalls.types import (
-    AudioPiped,
-    # AudioVideoPiped,
-    AudioParameters,
-    AudioQuality,
-    # VideoParameters,
-    # VideoQuality,
-    Update,
-)
 import asyncio
 from random import random
-from volume.config.app import api_id, api_hash
-from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash, beta_testers
-from volume.content import default_url, startup_url, shutdown_url, wanted_not_found
+from volume.config.tg_ids import dot_ch_id, beta_testers
+from volume.content import startup_url, shutdown_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 
-import logging
-import sys
-import re
+from programs.radio import change_stream, get_participants, leave_group_call
+
+from global_vars import app_dj, app_robot, print
+
 import aiohttp
-
-formatter = logging.Formatter('%(asctime)s %(levelname)s [%(filename)s:%(lineno)s] %(message)s')
-handler_fancy_stdout = logging.StreamHandler(sys.stdout)
-handler_logger = logging.FileHandler("volume/common.log", mode='a')
-handler_fancy_stdout.setFormatter(formatter)
-handler_logger.setFormatter(formatter)
-# Корневой логгер. Должен ловить все ошибки и писать в файл.
-root = logging.getLogger()
-root.setLevel(logging.WARNING)
-root.addHandler(handler_fancy_stdout)
-root.addHandler(handler_logger)
-# Логгер для красивого принта. Почему он работает, не смотря на то, что root отлавливает только WARNING — не знаю.
-fancy_stdout = logging.getLogger(__name__)
-fancy_stdout.setLevel(logging.INFO)
-print = fancy_stdout.info
-
-print('login in robot account')
-app_robot = pyrogram.Client("volume/sessions/robot_account", api_id, api_hash)
-app_robot.start()
-
-print('login in dj account')
-app_dj = pyrogram.Client("volume/sessions/dj_account", api_id, api_hash)
-app_dj_calls = PyTgCalls(app_dj)
-app_dj_calls.start()
-
-
-app_dj_calls.join_group_call(
-    dot_ch_id,
-    join_as=pyrogram.raw.types.InputPeerChannel(channel_id=dot_ch_radio_id, access_hash=dot_ch_radio_access_hash)
-)
-
-
-# USE THIS IF YOU WANT ASYNC WAY
-async def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
-    proc = await asyncio.create_subprocess_exec(
-        'yt-dlp',
-        '-g',
-        '-f',
-        # 'best[height<=?720][width<=?1280]',
-        'ba',  # best audio
-        url,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-    )
-    stdout, stderr = await proc.communicate()
-    return stdout.decode().split('\n')[0]
-
-
-async def change_stream(url: str, who_called=''):
-    assert url.startswith('https://'), 'url must be https://...'
-    print(f"{who_called} calls change_stream to {url}")
-    if re.search(r'http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?', url):
-        new_stream = await get_youtube_stream(url=url)
-        # print(new_stream)
-    else:
-        new_stream = url
-    await app_dj_calls.change_stream(
-        dot_ch_id,
-        AudioPiped(
-            new_stream,
-            audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
-        ),
-        # AudioVideoPiped(
-        #     new_stream,
-        #     audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
-        #     video_parameters=VideoParameters.from_quality(VideoQuality.HD_720p),
-        # )
-    )
 
 
 async def aiohttp_get(url, type='text'):
@@ -157,7 +78,7 @@ async def open_common_hashdict(deep_link, message, user_id):
 
     # common case
     if "radio_url" in obj:
-        if user_id in [participant.user_id for participant in await app_dj_calls.get_participants(dot_ch_id)]:
+        if user_id in [participant.user_id for participant in await get_participants(dot_ch_id)]:
             await change_stream(obj['radio_url'], who_called=message.from_user.id)
             return "▶️"
         return "🤷‍♂️Сначала зайди в радио!"
@@ -236,8 +157,10 @@ async def start_handler(client, message):
     return await open_common_hashdict(deep_link, new_message, user_id)
 
 
-@app_robot.on_callback_query(pyrogram.filters.private)
+@app_robot.on_callback_query()
 async def answer_common_hashdict(client, callback_query, **kwargs):
+    if not callback_query.from_user.id == callback_query.message.chat.id:
+        return
     answer = await open_common_hashdict(callback_query.data, callback_query.message, callback_query.from_user.id)
     if answer:
         await callback_query.answer(answer)
@@ -263,41 +186,6 @@ async def answer_location(client, message):
     await app_robot.send_message(message.chat.id, await get_weather(location))
 
 
-@app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
-@admin_only
-async def pause_handler(client, message):
-    print(f"{message.from_user.id} calls pause")
-    await app_robot.send_message(message.from_user.id, await app_dj_calls.pause_stream(dot_ch_id))
-
-
-@app_robot.on_message(pyrogram.filters.command(["resume"]) & pyrogram.filters.private)
-@admin_only
-async def resume_handler(client, message):
-    print(f"{message.from_user.id} calls resume")
-    await app_robot.send_message(message.from_user.id, await app_dj_calls.resume_stream(dot_ch_id))
-
-
-@app_robot.on_message(pyrogram.filters.command(["time"]) & pyrogram.filters.private)
-@admin_only
-async def time_handler(client, message):
-    print(f"{message.from_user.id} calls time")
-    await app_robot.send_message(message.from_user.id, await app_dj_calls.played_time(dot_ch_id))
-
-
-@app_robot.on_message(pyrogram.filters.command(["change_stream"]) & pyrogram.filters.private)
-@admin_only
-async def change_stream_handler(client, message):
-    url = message.command[1]
-    await change_stream(
-        url,
-        who_called=message.from_user.id
-    )
-    await app_robot.send_message(
-        message.from_user.id,
-        "True?!"
-    )
-
-
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)
 @admin_only
 async def test_handler(client, message):
@@ -320,19 +208,6 @@ async def test_handler(client, message):
     #     reply_markup=reply_markup
     # )
     pass
-
-
-@app_dj_calls.on_stream_end()
-async def handler(client: PyTgCalls, update: Update):
-    # print("stream ended, changing to default")
-    remote = await get_youtube_stream(default_url)
-    await app_dj_calls.change_stream(
-        dot_ch_id,
-        AudioPiped(
-            remote,
-            audio_parameters=AudioParameters.from_quality(AudioQuality.HIGH),
-        )
-    )
 
 
 # главный обработчик событий в войсчате
@@ -394,7 +269,7 @@ async def raw(client, update, users, chats):
 
 try:
     asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
-    idle()
+    pyrogram.idle()
 except KeyboardInterrupt:
     print('Exiting...')
 finally:
@@ -402,9 +277,7 @@ finally:
         from time import sleep
         asyncio.get_event_loop().run_until_complete(change_stream(shutdown_url, who_called=''))
         sleep(5)
-        app_dj_calls.leave_group_call(
-            dot_ch_id
-        )
+        asyncio.get_event_loop().run_until_complete(leave_group_call(dot_ch_id))
         pass
     except KeyError:
         # странная ошибка из-за того, что я залогинился через канал
