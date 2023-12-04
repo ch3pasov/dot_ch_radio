@@ -1,26 +1,26 @@
-from pytgcalls import PyTgCalls
-from pytgcalls.types import (
-    AudioPiped,
-    # AudioVideoPiped,
-    AudioParameters,
-    AudioQuality,
-    # VideoParameters,
-    # VideoQuality,
-    Update,
-)
 from volume.config.debug import disable_radio
-from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
-from volume.content import default_url, shutdown_url
-
-from decorators import admin_only
-
-from global_vars import app_robot, app_dj, print
-
-import asyncio
-import pyrogram
-import re
 
 if not disable_radio:
+    from pytgcalls import PyTgCalls
+    from pytgcalls.types import (
+        AudioPiped,
+        # AudioVideoPiped,
+        AudioParameters,
+        AudioQuality,
+        # VideoParameters,
+        # VideoQuality,
+        Update,
+    )
+    from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
+    from volume.content import default_url, shutdown_url
+
+    from decorators import admin_only
+
+    from global_vars import app_robot, app_dj, print
+
+    import asyncio
+    import pyrogram
+    import re
     app_dj_calls = PyTgCalls(app_dj)
     app_dj_calls.start()
 
