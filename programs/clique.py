@@ -3,7 +3,7 @@ from pyrogram.types import InlineKeyboardButton
 import pyrogram
 import datetime
 
-from volume.config.clique_config import clique_folder_id, clique_folder_name
+from volume.config.clique_config import clique_folder_id, clique_folder_name, initiation_phrase, description_phrase, minimum_channel_members_count, maximum_inactive_days
 
 connection = sqlite3.connect('/Users/anatoliy-ch/Documents/projects/dot_ch_radio/volume/database/common.db')
 
@@ -128,3 +128,23 @@ async def update_clique_folder(connection, app_dj):
     cursor.execute(sql, (clique_folder_new_invite_url,))
     cursor.close()
     connection.commit()
+
+
+instuction = f"""
+Чтобы ваш канал вступил в ㊙️ Клику, нужно выполнить следующие условия:
+**1.** В канале должно быть не менее {minimum_channel_members_count} подписчиков.
+
+**2.** В канале должно быть не менее 1 сообщения за последние {maximum_inactive_days} дней.
+
+**3.** В канале должно быть не менее 1 сообщения в промежутке от {maximum_inactive_days} до {maximum_inactive_days*2} дней назад.
+
+**4.** В описании канала должна быть фраза (скопируйте её):
+`{description_phrase}`
+
+**5.** В канале должен быть пост-инициация. Можете написать что угодно, но в тексте должна быть волшебная фраза (скопируйте её, обратите внимание на ссылку внутри эмодзи):
+`{initiation_phrase}`
+"""
+
+
+def get_clique_join_instruction():
+    return instuction

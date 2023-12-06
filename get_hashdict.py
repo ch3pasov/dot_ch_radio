@@ -7,7 +7,7 @@ def stable_hash(string):
     return hashlib.md5(string.encode()).hexdigest()
 
 
-children_params = ["url", "beta_access"]
+children_params = ["url", "beta_access", "switch_inline_query_current_chat"]
 inherited_params = ["beta_access"]
 
 common_hashdict = {}

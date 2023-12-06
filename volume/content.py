@@ -326,6 +326,12 @@ common_tree = {
                                     "name": "👥 Вступить в клику",
                                     "alias": "clique_join",
                                     "custom": "clique_join",
+                                    "children": {
+                                        "clique_join_instruction": {
+                                            "name": "📝 Указать ссылку на пост-инициацию",
+                                            "switch_inline_query_current_chat": "Ссылка на пост-инициацию: "
+                                        }
+                                    }
                                 },
                             }
                         }

@@ -9,7 +9,7 @@ from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather
-from programs.clique import get_clique_members, get_clique_folder_link_button
+from programs.clique import get_clique_members, get_clique_folder_link_button, get_clique_join_instruction
 from programs.moneydrop import start_post_moneydrop_handlers
 from global_vars import app_robot, print
 
@@ -45,6 +45,9 @@ async def open_common_hashdict(deep_link, message, user_id):
             await open_common_hashdict("", message, user_id)
             return "🤷‍♂️Не знаю как ты это открыл, но тебе сюда нельзя."
 
+    if "url" in obj or "switch_inline_query_current_chat" in obj:
+        await open_common_hashdict("", message, user_id)
+        return "🤷‍♂️Не знаю как ты открыл кнопку-ссылку, но ты не пройдёшь."
     # common case
     if "radio_url" in obj:
         if user_id in [participant.user_id for participant in await get_participants(dot_ch_id)]:
@@ -66,6 +69,8 @@ async def open_common_hashdict(deep_link, message, user_id):
             kwargs = {"text": children[child]['name']}
             if "url" in children[child]:
                 kwargs["url"] = children[child]['url']
+            elif "switch_inline_query_current_chat" in children[child]:
+                kwargs["switch_inline_query_current_chat"] = children[child]['switch_inline_query_current_chat']
             else:
                 kwargs["callback_data"] = f"id={child}"
             buttons.append([InlineKeyboardButton(**kwargs)])
@@ -107,7 +112,8 @@ async def open_common_hashdict(deep_link, message, user_id):
             case "clique_list":
                 text += f'\n{get_clique_members()}'
                 buttons = get_clique_folder_link_button() + buttons
-
+            case "clique_join":
+                text += f'\n{get_clique_join_instruction()}'
     reply_markup = InlineKeyboardMarkup(buttons)
     await app_robot.edit_message_text(
         message.chat.id,
