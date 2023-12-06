@@ -2,13 +2,15 @@ import sqlite3
 from pyrogram.types import InlineKeyboardButton
 import pyrogram
 import datetime
+import re
 
 from volume.config.clique_config import clique_folder_id, clique_folder_name, initiation_phrase, description_phrase, minimum_channel_members_count, maximum_inactive_days
+from global_vars import app_dj, print
 
 connection = sqlite3.connect('/Users/anatoliy-ch/Documents/projects/dot_ch_radio/volume/database/common.db')
 
 
-def get_clique_members():
+def get_clique_members_message():
     out = ""
     cursor = connection.cursor()
     cursor.execute("SELECT channel_emoji, channel_name, channel_username FROM clique_members ORDER BY initiation_unixtime DESC")
@@ -40,7 +42,7 @@ def get_clique_folder_link_button():
     ]
 
 
-async def update_clique_folder(connection, app_dj):
+async def update_clique_folder(connection):
     """
     Обновляет папку с каналами в телеграме, а также загружает в БД новую пригласительную ссылку.
     """
@@ -132,19 +134,125 @@ async def update_clique_folder(connection, app_dj):
 
 instuction = f"""
 Чтобы ваш канал вступил в ㊙️ Клику, нужно выполнить следующие условия:
-**1.** В канале должно быть не менее {minimum_channel_members_count} подписчиков.
-
-**2.** В канале должно быть не менее 1 сообщения за последние {maximum_inactive_days} дней.
-
-**3.** В канале должно быть не менее 1 сообщения в промежутке от {maximum_inactive_days} до {maximum_inactive_days*2} дней назад.
-
-**4.** В описании канала должна быть фраза (скопируйте её):
+**1.** Канал должен быть открытым (иметь публичный юзернейм).
+**2.** В канале должно быть не менее {minimum_channel_members_count} подписчиков.
+**3.** В канале должно быть не менее 1 сообщения за последние {maximum_inactive_days} дней.
+**4.** В канале должно быть не менее 1 сообщения в промежутке от {maximum_inactive_days} до {maximum_inactive_days*2} дней назад.
+**5.** В описании канала должна быть фраза отдельной строчкой (скопируйте её):
 `{description_phrase}`
-
-**5.** В канале должен быть пост-инициация. Можете написать что угодно, но в тексте должна быть волшебная фраза (скопируйте её, обратите внимание на ссылку внутри эмодзи):
+**6.** В канале должен быть текстовый пост-инициация, без картинок. Можете написать что угодно, но в тексте должна быть волшебная фраза отдельной строчкой (скопируйте её):
 `{initiation_phrase}`
+
+Если ваш канал соответствует всем условиям и вы готовы вступить в Клику, то нажмите на кнопку ниже и приложите ссылку на пост-инициацию (пример: https://t.me/ch_an/121).
 """
 
 
 def get_clique_join_instruction():
     return instuction
+
+
+def validate_channel_description(channel):
+    if channel.description is None:
+        return False
+    if re.search("^"+re.escape(description_phrase.replace("/", "\\/"))+"$", channel.description, re.MULTILINE):
+        return True
+    return False
+
+
+def validate_initiate_message(message):
+    if re.search("^"+re.escape(initiation_phrase).replace("/", "\\/")+"$", message.text, re.MULTILINE):
+        return True
+    return False
+
+
+async def clique_registration_try(client, message, verbose=True):
+    initiation_url = message.matches[0].group(1)
+    print(f"registration attempt from {message.from_user.id}, {initiation_url}")
+
+    initiation_url_match = re.search(r"^https:\/\/t\.me\/([^\/]+)\/(\d+)$", initiation_url)
+
+    if not initiation_url_match:
+        print("bad initiation url")
+        return await client.send_message(message.chat.id, 'Ссылка должна соответствовать шаблону https://t.me/channel_username/123456789.')
+
+    cursor = connection.cursor()
+    cursor.execute("SELECT channel_username, owner_id FROM clique_members ORDER BY initiation_unixtime DESC")
+    data = cursor.fetchall()
+    existed_channel_usernames = [row[0] for row in data]
+    existed_owner_ids = [row[1] for row in data]
+    cursor.close()
+
+    channel_username = initiation_url_match.group(1)
+    initiation_message_id = initiation_url_match.group(2)
+    owner_id = message.from_user.id
+
+    if channel_username in existed_channel_usernames:
+        print("channel already exists in clique")
+        return await client.send_message(message.chat.id, "Канал уже зарегистрирован в Клике.")
+    if owner_id in existed_owner_ids:
+        print("owner already exists in clique")
+        return await client.send_message(message.chat.id, "Вы уже зарегистрированы в Клике.")
+
+    try:
+        chat = await client.get_chat(channel_username)
+    except pyrogram.errors.exceptions.bad_request_400.UsernameNotOccupied:
+        print("username not occupied")
+        return await client.send_message(message.chat.id, "Канала с таким именем не существует.")
+    except pyrogram.errors.exceptions.bad_request_400.UsernameInvalid:
+        print("username invalid")
+        return await client.send_message(message.chat.id, "Неверный формат юзернейма канала.")
+    except KeyError:
+        print("username invalid (KeyError)")
+        return await client.send_message(message.chat.id, "Из-за бага в pyrogram нельзя указать неосновной юзернейм канала. Например, для канала @ch_an/@dot_ch нужно указать @ch_an.")
+    if chat.type != pyrogram.enums.ChatType.CHANNEL:
+        print("not a channel")
+        return await client.send_message(message.chat.id, "Это не канал.")
+    channel = chat
+    channel_id = channel.id
+
+    channel_members_count = channel.members_count
+    if channel_members_count < minimum_channel_members_count:
+        print("not enough members")
+        return await client.send_message(message.chat.id, f"В канале должно быть не менее {minimum_channel_members_count} подписчиков.")
+
+    last_one_message = [gen async for gen in app_dj.get_chat_history(channel_id, limit=1)]
+    if len(last_one_message) == 0:
+        print("no messages")
+        return await client.send_message(message.chat.id, "В канале должно быть не менее 1 сообщения.")
+    last_message_date = last_one_message[0].date
+    if last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days):
+        print(f"last message is too old: {last_message_date}")
+        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения за последние {maximum_inactive_days} дней.")
+    old_last_one_message = [gen async for gen in app_dj.get_chat_history(channel_id, limit=1, offset_date=datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days*2))]
+    if len(old_last_one_message) == 0:
+        print("no old messages")
+        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения старше {maximum_inactive_days} дней.")
+    old_last_message_date = old_last_one_message[0].date
+    if old_last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days*2):
+        print(f"old last message is too old: {old_last_message_date}")
+        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения в промежутке от {maximum_inactive_days} до {maximum_inactive_days*2} дней назад.")
+
+    if not validate_channel_description(channel):
+        print("bad description")
+        return await client.send_message(message.chat.id, "В описании канала должна быть фраза отдельной строчкой (скопируйте её):\n`"+description_phrase+"`")
+
+    try:
+        initiation_message = await client.get_messages(channel_id, initiation_message_id)
+    except pyrogram.errors.exceptions.bad_request_400.MessageIdsEmpty:
+        print("message not found")
+        return await client.send_message(message.chat.id, "Сообщения с таким номером не существует")
+    except OverflowError:
+        print("too big message id")
+        return await client.send_message(message.chat.id, "Слишком большой айдишник")
+    if message.empty:
+        print("empty message")
+        return await client.send_message(message.chat.id, "Сообщение пустое")
+    if not message.text:
+        print("not text message")
+        return await client.send_message(message.chat.id, "Сообщение не текстовое")
+    if initiation_message.forward_from_chat is not None:
+        print("forwarded message")
+        return await client.send_message(message.chat.id, "Пост-инициация не должна быть форвардом.")
+    if validate_initiate_message(initiation_message) is False:
+        print("bad initiation message")
+        return await client.send_message(message.chat.id, "В пост-инициации должна быть волшебная фраза отдельной строчкой (скопируйте её):\n`"+initiation_phrase+"`")

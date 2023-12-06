@@ -3,13 +3,13 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums.chat_action import ChatAction
 import asyncio
 from random import random
-from volume.config.tg_ids import dot_ch_id, beta_testers
-from volume.content import startup_url, wanted_not_found
+from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
+from volume.content import startup_url, wanted_not_found, clique_join_query_beginning
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather
-from programs.clique import get_clique_members, get_clique_folder_link_button, get_clique_join_instruction
+from programs.clique import get_clique_members_message, get_clique_folder_link_button, get_clique_join_instruction, clique_registration_try
 from programs.moneydrop import start_post_moneydrop_handlers
 from global_vars import app_robot, print
 
@@ -110,7 +110,7 @@ async def open_common_hashdict(deep_link, message, user_id):
             case "bashkir_haiku":
                 text += f'\n{await get_bashkir_haiku()}'
             case "clique_list":
-                text += f'\n{get_clique_members()}'
+                text += f'\n{get_clique_members_message()}'
                 buttons = get_clique_folder_link_button() + buttons
             case "clique_join":
                 text += f'\n{get_clique_join_instruction()}'
@@ -125,7 +125,7 @@ async def open_common_hashdict(deep_link, message, user_id):
     return None
 
 
-@app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private)
+@app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private & pyrogram.filters.incoming)
 async def start_handler(client, message):
     user_id = message.from_user.id
     new_message = await app_robot.send_message(
@@ -147,7 +147,7 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
         await callback_query.answer(answer)
 
 
-@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.photo)
+@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.photo & pyrogram.filters.incoming)
 async def answer_wanted_search(client, message):
     await asyncio.sleep(1+random())
     await app_robot.send_chat_action(message.chat.id, ChatAction.TYPING)
@@ -155,7 +155,7 @@ async def answer_wanted_search(client, message):
     await app_robot.send_message(message.chat.id, wanted_not_found)
 
 
-@app_robot.on_message(pyrogram.filters.private & (pyrogram.filters.location | pyrogram.filters.venue))
+@app_robot.on_message(pyrogram.filters.private & (pyrogram.filters.location | pyrogram.filters.venue) & pyrogram.filters.incoming)
 async def answer_location(client, message):
     match message.media:
         case pyrogram.enums.MessageMediaType.VENUE:
@@ -165,6 +165,11 @@ async def answer_location(client, message):
         case _:
             raise ValueError("Unknown media type")
     await app_robot.send_message(message.chat.id, await get_weather(location))
+
+
+@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.text & pyrogram.filters.incoming & pyrogram.filters.regex(f"^@{bot_username} {clique_join_query_beginning}(.+)$"))
+async def answer_message(client, message):
+    return await clique_registration_try(client, message)
 
 
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)

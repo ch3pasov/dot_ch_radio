@@ -1,3 +1,5 @@
+clique_join_query_beginning = "Ссылка на пост-инициацию: "
+
 common_tree = {
     "name": "🌳 Корень",
     "description": "👋 Добро пожаловать в корень дерева! Здесь начинается ваше путешествие по музыкальному миру и файлам.",
@@ -326,10 +328,11 @@ common_tree = {
                                     "name": "👥 Вступить в клику",
                                     "alias": "clique_join",
                                     "custom": "clique_join",
+                                    "disable_web_page_preview": 1,
                                     "children": {
-                                        "clique_join_instruction": {
-                                            "name": "📝 Указать ссылку на пост-инициацию",
-                                            "switch_inline_query_current_chat": "Ссылка на пост-инициацию: "
+                                        "clique_join_button": {
+                                            "name": "📝 Я вступаю в ㊙️ Клику",
+                                            "switch_inline_query_current_chat": clique_join_query_beginning
                                         }
                                     }
                                 },
