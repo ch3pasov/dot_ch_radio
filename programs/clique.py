@@ -154,7 +154,7 @@ def get_clique_join_instruction():
 def validate_channel_description(channel):
     if channel.description is None:
         return False
-    if re.search("^"+re.escape(description_phrase.replace("/", "\\/"))+"$", channel.description, re.MULTILINE):
+    if re.search("^"+re.escape(description_phrase)+"$", channel.description, re.MULTILINE):
         return True
     return False
 
@@ -166,12 +166,12 @@ def validate_initiate_message(message):
 
 
 async def clique_registration_try(client, message, verbose=True):
-    initiation_url = message.matches[0].group(1)
-    print(f"registration attempt from {message.from_user.id}, {initiation_url}")
+    initiation_link = message.matches[0].group(1)
+    print(f"registration attempt from {message.from_user.id}, {initiation_link}")
 
-    initiation_url_match = re.search(r"^https:\/\/t\.me\/([^\/]+)\/(\d+)$", initiation_url)
+    initiation_link_match = re.search(r"^https:\/\/t\.me\/([^\/]+)\/(\d+)$", initiation_link)
 
-    if not initiation_url_match:
+    if not initiation_link_match:
         print("bad initiation url")
         return await client.send_message(message.chat.id, 'Ссылка должна соответствовать шаблону https://t.me/channel_username/123456789.')
 
@@ -182,8 +182,8 @@ async def clique_registration_try(client, message, verbose=True):
     existed_owner_ids = [row[1] for row in data]
     cursor.close()
 
-    channel_username = initiation_url_match.group(1)
-    initiation_message_id = initiation_url_match.group(2)
+    channel_username = initiation_link_match.group(1)
+    initiation_message_id = initiation_link_match.group(2)
     owner_id = message.from_user.id
 
     if channel_username in existed_channel_usernames:
@@ -215,29 +215,44 @@ async def clique_registration_try(client, message, verbose=True):
         print("not enough members")
         return await client.send_message(message.chat.id, f"В канале должно быть не менее {minimum_channel_members_count} подписчиков.")
 
-    last_one_message = [gen async for gen in app_dj.get_chat_history(channel_id, limit=1)]
-    if len(last_one_message) == 0:
-        print("no messages")
-        return await client.send_message(message.chat.id, "В канале должно быть не менее 1 сообщения.")
-    last_message_date = last_one_message[0].date
-    if last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days):
-        print(f"last message is too old: {last_message_date}")
-        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения за последние {maximum_inactive_days} дней.")
-    old_last_one_message = [gen async for gen in app_dj.get_chat_history(channel_id, limit=1, offset_date=datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days*2))]
-    if len(old_last_one_message) == 0:
-        print("no old messages")
-        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения старше {maximum_inactive_days} дней.")
-    old_last_message_date = old_last_one_message[0].date
-    if old_last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days*2):
-        print(f"old last message is too old: {old_last_message_date}")
-        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения в промежутке от {maximum_inactive_days} до {maximum_inactive_days*2} дней назад.")
+    # last_one_message = [gen async for gen in app_dj.get_chat_history(channel_username, limit=1)]
+    # if len(last_one_message) == 0:
+    #     print("no messages")
+    #     return await client.send_message(message.chat.id, "В канале должно быть не менее 1 сообщения.")
+    # last_message = last_one_message[0]
+    # if last_message.service:
+    #     if last_message.service == pyrogram.enums.MessageServiceType.CHANNEL_CHAT_CREATED:
+    #         print("channel is too new")
+    #         return await client.send_message(message.chat.id, "Последнее сообщение в канале — о том, что канал создан.")
+    # last_message_date = last_message.date
+    # if last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days):
+    #     print(f"last message is too old: {last_message_date}")
+    #     return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения за последние {maximum_inactive_days} дней.")
+    # old_last_one_message = [gen async for gen in app_dj.get_chat_history(channel_username, limit=1, offset_date=datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days))]
+    # if len(old_last_one_message) == 0:
+    #     print("no old messages")
+    #     return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения старше {maximum_inactive_days} дней.")
+    # old_last_message = old_last_one_message[0]
+    # if old_last_message.service:
+    #     if old_last_message.service == pyrogram.enums.MessageServiceType.CHANNEL_CHAT_CREATED:
+    #         print("channel is too new")
+    #         return await client.send_message(message.chat.id, f"Единственное сообщение старше {maximum_inactive_days} дней — о том, что канал создан.")
+    # old_last_message_date = old_last_message.date
+    # if old_last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days*2):
+    #     print(f"old last message is too old: {old_last_message_date}")
+    #     return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения в промежутке от {maximum_inactive_days} до {maximum_inactive_days*2} дней назад.")
 
     if not validate_channel_description(channel):
         print("bad description")
         return await client.send_message(message.chat.id, "В описании канала должна быть фраза отдельной строчкой (скопируйте её):\n`"+description_phrase+"`")
 
     try:
-        initiation_message = await client.get_messages(channel_id, initiation_message_id)
+        # print(client)
+        # print(f"'{channel_username}'")
+        # print(f"'{initiation_message_id}'")
+
+        # крашится на этом месте
+        initiation_message = await client.get_messages(channel_username, initiation_message_id)
     except pyrogram.errors.exceptions.bad_request_400.MessageIdsEmpty:
         print("message not found")
         return await client.send_message(message.chat.id, "Сообщения с таким номером не существует")
@@ -256,3 +271,8 @@ async def clique_registration_try(client, message, verbose=True):
     if validate_initiate_message(initiation_message) is False:
         print("bad initiation message")
         return await client.send_message(message.chat.id, "В пост-инициации должна быть волшебная фраза отдельной строчкой (скопируйте её):\n`"+initiation_phrase+"`")
+
+    channel_name = channel.title
+    channel_emoji = "㊙️"
+    initiation_unixtime = int(initiation_message.date.timestamp())
+    print(initiation_link, initiation_unixtime, channel_id, owner_id, channel_username, initiation_message_id, channel_emoji, channel_name, channel_members_count)
