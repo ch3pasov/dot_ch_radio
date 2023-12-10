@@ -219,32 +219,32 @@ async def clique_registration_try(client, message, verbose=True):
         print("not enough members")
         return await client.send_message(message.chat.id, f"В канале должно быть не менее {minimum_channel_members_count} подписчиков.")
 
-    # last_one_message = [gen async for gen in app_dj.get_chat_history(channel_username, limit=1)]
-    # if len(last_one_message) == 0:
-    #     print("no messages")
-    #     return await client.send_message(message.chat.id, "В канале должно быть не менее 1 сообщения.")
-    # last_message = last_one_message[0]
-    # if last_message.service:
-    #     if last_message.service == pyrogram.enums.MessageServiceType.CHANNEL_CHAT_CREATED:
-    #         print("channel is too new")
-    #         return await client.send_message(message.chat.id, "Последнее сообщение в канале — о том, что канал создан.")
-    # last_message_date = last_message.date
-    # if last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days):
-    #     print(f"last message is too old: {last_message_date}")
-    #     return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения за последние {maximum_inactive_days} дней.")
-    # old_last_one_message = [gen async for gen in app_dj.get_chat_history(channel_username, limit=1, offset_date=datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days))]
-    # if len(old_last_one_message) == 0:
-    #     print("no old messages")
-    #     return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения старше {maximum_inactive_days} дней.")
-    # old_last_message = old_last_one_message[0]
-    # if old_last_message.service:
-    #     if old_last_message.service == pyrogram.enums.MessageServiceType.CHANNEL_CHAT_CREATED:
-    #         print("channel is too new")
-    #         return await client.send_message(message.chat.id, f"Единственное сообщение старше {maximum_inactive_days} дней — о том, что канал создан.")
-    # old_last_message_date = old_last_message.date
-    # if old_last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days*2):
-    #     print(f"old last message is too old: {old_last_message_date}")
-    #     return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения в промежутке от {maximum_inactive_days} до {maximum_inactive_days*2} дней назад.")
+    last_one_message = [gen async for gen in app_dj.get_chat_history(channel_username, limit=1)]
+    if len(last_one_message) == 0:
+        print("no messages")
+        return await client.send_message(message.chat.id, "В канале должно быть не менее 1 сообщения.")
+    last_message = last_one_message[0]
+    if last_message.service:
+        if last_message.service == pyrogram.enums.MessageServiceType.CHANNEL_CHAT_CREATED:
+            print("channel is too new")
+            return await client.send_message(message.chat.id, "Последнее сообщение в канале — о том, что канал создан.")
+    last_message_date = last_message.date
+    if last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days):
+        print(f"last message is too old: {last_message_date}")
+        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения за последние {maximum_inactive_days} дней.")
+    old_last_one_message = [gen async for gen in app_dj.get_chat_history(channel_username, limit=1, offset_date=datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days))]
+    if len(old_last_one_message) == 0:
+        print("no old messages")
+        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения старше {maximum_inactive_days} дней.")
+    old_last_message = old_last_one_message[0]
+    if old_last_message.service:
+        if old_last_message.service == pyrogram.enums.MessageServiceType.CHANNEL_CHAT_CREATED:
+            print("channel is too new")
+            return await client.send_message(message.chat.id, f"Единственное сообщение старше {maximum_inactive_days} дней — о том, что канал создан.")
+    old_last_message_date = old_last_message.date
+    if old_last_message_date < datetime.datetime.now() - datetime.timedelta(days=maximum_inactive_days*2):
+        print(f"old last message is too old: {old_last_message_date}")
+        return await client.send_message(message.chat.id, f"В канале должно быть не менее 1 сообщения в промежутке от {maximum_inactive_days} до {maximum_inactive_days*2} дней назад.")
 
     if not validate_channel_description(channel):
         print("bad description")
