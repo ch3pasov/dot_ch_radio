@@ -2,7 +2,7 @@ common.log
 config
 
 *_account.session*
-*.db
+*.db*
 *.mp3
 *.webm
 

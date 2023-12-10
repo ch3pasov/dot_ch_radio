@@ -50,12 +50,11 @@ async def update_clique_folder(connection):
     # собираю из базы список всех каналов
 
     cursor.execute("""
-    SELECT channel_id FROM clique_members
+    SELECT channel_username FROM clique_members
     ORDER BY initiation_unixtime DESC
     """)
     rows = cursor.fetchall()
-    channels = rows[0]
-    channel_peers = [await app_dj.resolve_peer(channel_id) for channel_id in channels]
+    channel_peers = [await app_dj.resolve_peer(row[0]) for row in rows]
 
     # обновление состава папки
 
@@ -273,13 +272,20 @@ async def clique_registration_try(client, message, verbose=True):
 
     channel_name = channel.title
     channel_emoji = "㊙️"
+    is_beta = 0
     initiation_unixtime = int(initiation_message.date.timestamp())
-    print(initiation_link)
-    print(initiation_unixtime)
-    print(channel_id)
-    print(owner_id)
-    print(channel_username)
-    print(initiation_message_id)
-    print(channel_emoji)
-    print(channel_name)
-    print(channel_members_count)
+
+    cursor = connection.cursor()
+    sql = '''
+    INSERT INTO clique_members (initiation_link, channel_id, owner_id, channel_username, initiation_message_id, initiation_unixtime, channel_emoji, channel_name, channel_members_count, is_beta)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    '''
+    cursor.execute(sql, (initiation_link, channel_id, owner_id, channel_username, initiation_message_id, initiation_unixtime, channel_emoji, channel_name, channel_members_count, is_beta))
+
+    await update_clique_folder(connection)
+
+    connection.commit()
+    cursor.close()
+
+    await client.send_message(message.chat.id, "🥳")
+    await client.send_message(message.chat.id, "Добро пожаловать в ㊙️ Клику!")
