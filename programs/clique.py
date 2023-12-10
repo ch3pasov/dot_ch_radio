@@ -60,7 +60,7 @@ async def update_clique_folder(connection):
 
     await app_dj.invoke(
         pyrogram.raw.functions.messages.UpdateDialogFilter(
-            id=2,
+            id=clique_folder_id,
             filter=pyrogram.raw.types.DialogFilterChatlist(
                 id=clique_folder_id,
                 title=clique_folder_name,
