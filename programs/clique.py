@@ -175,16 +175,20 @@ async def clique_registration_try(client, message, verbose=True):
         print("bad initiation url")
         return await client.send_message(message.chat.id, 'Ссылка должна соответствовать шаблону https://t.me/channel_username/123456789.')
 
+    channel_username = initiation_link_match.group(1)
+    initiation_message_id = int(initiation_link_match.group(2))
+    owner_id = message.from_user.id
+
+    if initiation_message_id == 0:
+        print("message id is zero")
+        return await client.send_message(message.chat.id, "ID сообщения не бывает равен 0.")
+
     cursor = connection.cursor()
     cursor.execute("SELECT channel_username, owner_id FROM clique_members ORDER BY initiation_unixtime DESC")
     data = cursor.fetchall()
     existed_channel_usernames = [row[0] for row in data]
     existed_owner_ids = [row[1] for row in data]
     cursor.close()
-
-    channel_username = initiation_link_match.group(1)
-    initiation_message_id = initiation_link_match.group(2)
-    owner_id = message.from_user.id
 
     if channel_username in existed_channel_usernames:
         print("channel already exists in clique")
@@ -247,11 +251,6 @@ async def clique_registration_try(client, message, verbose=True):
         return await client.send_message(message.chat.id, "В описании канала должна быть фраза отдельной строчкой (скопируйте её):\n`"+description_phrase+"`")
 
     try:
-        # print(client)
-        # print(f"'{channel_username}'")
-        # print(f"'{initiation_message_id}'")
-
-        # крашится на этом месте
         initiation_message = await client.get_messages(channel_username, initiation_message_id)
     except pyrogram.errors.exceptions.bad_request_400.MessageIdsEmpty:
         print("message not found")
@@ -259,10 +258,10 @@ async def clique_registration_try(client, message, verbose=True):
     except OverflowError:
         print("too big message id")
         return await client.send_message(message.chat.id, "Слишком большой айдишник")
-    if message.empty:
+    if initiation_message.empty:
         print("empty message")
         return await client.send_message(message.chat.id, "Сообщение пустое")
-    if not message.text:
+    if not initiation_message.text:
         print("not text message")
         return await client.send_message(message.chat.id, "Сообщение не текстовое")
     if initiation_message.forward_from_chat is not None:
@@ -275,4 +274,12 @@ async def clique_registration_try(client, message, verbose=True):
     channel_name = channel.title
     channel_emoji = "㊙️"
     initiation_unixtime = int(initiation_message.date.timestamp())
-    print(initiation_link, initiation_unixtime, channel_id, owner_id, channel_username, initiation_message_id, channel_emoji, channel_name, channel_members_count)
+    print(initiation_link)
+    print(initiation_unixtime)
+    print(channel_id)
+    print(owner_id)
+    print(channel_username)
+    print(initiation_message_id)
+    print(channel_emoji)
+    print(channel_name)
+    print(channel_members_count)

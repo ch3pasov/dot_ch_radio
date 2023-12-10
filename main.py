@@ -6,7 +6,7 @@ from random import random
 from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
 from volume.content import startup_url, wanted_not_found, clique_join_query_beginning
 from get_hashdict import common_hashdict, alias_dict
-from decorators import admin_only
+from decorators import admin_only, beta_testers_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather
 from programs.clique import get_clique_members_message, get_clique_folder_link_button, get_clique_join_instruction, clique_registration_try
@@ -128,7 +128,7 @@ async def open_common_hashdict(deep_link, message, user_id):
 @app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private & pyrogram.filters.incoming)
 async def start_handler(client, message):
     user_id = message.from_user.id
-    new_message = await app_robot.send_message(
+    new_message = await client.send_message(
         user_id,
         text="Загрузка"
     )
@@ -150,9 +150,9 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
 @app_robot.on_message(pyrogram.filters.private & pyrogram.filters.photo & pyrogram.filters.incoming)
 async def answer_wanted_search(client, message):
     await asyncio.sleep(1+random())
-    await app_robot.send_chat_action(message.chat.id, ChatAction.TYPING)
+    await client.send_chat_action(message.chat.id, ChatAction.TYPING)
     await asyncio.sleep(2+6*random())
-    await app_robot.send_message(message.chat.id, wanted_not_found)
+    await client.send_message(message.chat.id, wanted_not_found)
 
 
 @app_robot.on_message(pyrogram.filters.private & (pyrogram.filters.location | pyrogram.filters.venue) & pyrogram.filters.incoming)
@@ -164,10 +164,11 @@ async def answer_location(client, message):
             location = message.location
         case _:
             raise ValueError("Unknown media type")
-    await app_robot.send_message(message.chat.id, await get_weather(location))
+    await client.send_message(message.chat.id, await get_weather(location))
 
 
 @app_robot.on_message(pyrogram.filters.private & pyrogram.filters.text & pyrogram.filters.incoming & pyrogram.filters.regex(f"^@{bot_username} {clique_join_query_beginning}(.+)$"))
+@beta_testers_only
 async def answer_message(client, message):
     return await clique_registration_try(client, message)
 
@@ -175,6 +176,7 @@ async def answer_message(client, message):
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)
 @admin_only
 async def test_handler(client, message):
+    print(message)
     # reply_markup = pyrogram.types.ReplyKeyboardMarkup(
     #     [
     #         [
