@@ -3,13 +3,12 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums.chat_action import ChatAction
 import asyncio
 from random import random
-from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
-from volume.content import startup_url, wanted_not_found, clique_join_query_beginning
+from volume.config.tg_ids import dot_ch_id, beta_testers
+from volume.content import startup_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
-from decorators import admin_only, beta_testers_only
+from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather
-from programs.clique import get_clique_members_message, get_clique_folder_link_button, get_clique_join_instruction, clique_registration_try
 from programs.moneydrop import start_post_moneydrop_handlers
 from global_vars import app_robot, print
 
@@ -109,11 +108,6 @@ async def open_common_hashdict(deep_link, message, user_id):
         match obj["custom"]:
             case "bashkir_haiku":
                 text += f'\n{await get_bashkir_haiku()}'
-            case "clique_list":
-                text += f'\n{get_clique_members_message()}'
-                buttons = get_clique_folder_link_button() + buttons
-            case "clique_join":
-                text += f'\n{get_clique_join_instruction()}'
     reply_markup = InlineKeyboardMarkup(buttons)
     await app_robot.edit_message_text(
         message.chat.id,
@@ -165,12 +159,6 @@ async def answer_location(client, message):
         case _:
             raise ValueError("Unknown media type")
     await client.send_message(message.chat.id, await get_weather(location))
-
-
-@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.text & pyrogram.filters.incoming & pyrogram.filters.regex(f"^@{bot_username} {clique_join_query_beginning}(.+)$"))
-@beta_testers_only
-async def answer_message(client, message):
-    return await clique_registration_try(client, message)
 
 
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)

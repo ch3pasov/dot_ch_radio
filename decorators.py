@@ -1,4 +1,4 @@
-from volume.config.tg_ids import admins, beta_testers
+from volume.config.tg_ids import admins
 
 
 def _only(allowlist):
@@ -13,4 +13,4 @@ def _only(allowlist):
 
 
 admin_only = _only(admins)
-beta_testers_only = _only(beta_testers)
+# beta_testers_only = _only(beta_testers)

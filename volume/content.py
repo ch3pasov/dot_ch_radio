@@ -1,5 +1,3 @@
-clique_join_query_beginning = "Ссылка на пост-инициацию: "
-
 common_tree = {
     "name": "🌳 Корень",
     "description": "👋 Добро пожаловать в корень дерева! Здесь начинается ваше путешествие по музыкальному миру и файлам.",
@@ -318,25 +316,8 @@ common_tree = {
                     "description": "👀 Если вы её видите, то вам это разрешили",
                     "children": {
                         "clique": {
-                            "name": "Клика",
-                            "description": "㊙️ Клика ||(Секрет Клика)|| — это группа людей-авторов телеграм-каналов, объединенных желанием перекрёстного опыления и секретным чатиком 🌚.\n**Полный состав Клики:**",
-                            "alias": "clique",
-                            "custom": "clique_list",
-                            "disable_web_page_preview": 1,
-                            "children": {
-                                "clique_join": {
-                                    "name": "👥 Вступить в клику",
-                                    "alias": "clique_join",
-                                    "custom": "clique_join",
-                                    "disable_web_page_preview": 1,
-                                    "children": {
-                                        "clique_join_button": {
-                                            "name": "📝 Я вступаю в ㊙️ Клику",
-                                            "switch_inline_query_current_chat": clique_join_query_beginning
-                                        }
-                                    }
-                                },
-                            }
+                            "name": "㊙️ Клика",
+                            "url": "https://t.me/sCliqueBot",
                         }
                     }
                 },
