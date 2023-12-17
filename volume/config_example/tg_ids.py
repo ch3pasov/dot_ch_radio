@@ -7,6 +7,6 @@ dot_ch_radio_access_hash = 0
 admins = [
     0
 ]
-# beta_testers = [
-#     0
-# ]
+beta_testers = [
+    0
+]
