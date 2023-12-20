@@ -35,12 +35,11 @@ async def get_weather(location):
 minecaft_server_info = """Присоединяйтесь к нашему Minecraft серверу!
 
 Адрес сервера: `{minecraft_server}`
-**Статус сервера**
-{status}
+Статус сервера: {status}
 """
-status_online = """__Онлайн__
+status_online = """**Онлайн**
 {description}
-Версия: {version_name}
+Версия **{version_name}**
 Игроков: **{players_online}/{players_max}**
 {players_list}
 """
@@ -56,7 +55,7 @@ async def get_minecraft_server_info():
             version_name=response['version'],
             players_online=response['players']['online'],
             players_max=response['players']['max'],
-            players_list='\n'.join(response['players']['list']) if 'list' in response['players'] else '',
+            players_list='\n'.join([f"[​​​​​​​​​​​{player}](https://crafty.gg/players/{player})" for player in response['players']['list']]) if 'list' in response['players'] else '',
             description=response['motd']['clean'][0]
         )
     return minecaft_server_info.format(
