@@ -39,9 +39,10 @@ minecaft_server_info = """Присоединяйтесь к нашему Minecra
 {status}
 """
 status_online = """__Онлайн__
+{description}
 Версия: {version_name}
-Игроков: {players_online}/{players_max}
-MOTD: {description}
+Игроков: **{players_online}/{players_max}**
+{players_list}
 """
 status_offline = """__Оффлайн__"""
 
