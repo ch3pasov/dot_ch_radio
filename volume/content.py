@@ -324,6 +324,7 @@ common_tree = {
                             "custom": "minecraft_server",
                             "refresh": 1,
                             "alias": "minecraft_server",
+                            "disable_web_page_preview": 1
                         }
                     }
                 },
