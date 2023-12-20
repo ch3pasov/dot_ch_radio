@@ -35,7 +35,7 @@ async def get_weather(location):
 minecaft_server_info = """Присоединяйтесь к нашему Minecraft серверу!
 
 Адрес сервера: `{minecraft_server}`
-Карта сервера: {minecraft_server}:8100
+Карта сервера: http://{minecraft_server}:8100
 Статус сервера: {status}
 """
 status_online = """**Онлайн**
