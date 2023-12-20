@@ -55,7 +55,7 @@ async def get_minecraft_server_info():
             version_name=response['version'],
             players_online=response['players']['online'],
             players_max=response['players']['max'],
-            players_list='\n'.join([f"- [​​​​​​​​​​​{player}](https://crafty.gg/players/{player})" for player in response['players']['list']]) if 'list' in response['players'] else '',
+            players_list='\n'.join([f"- [{player}](https://crafty.gg/players/{player})" for player in response['players']['list']]) if 'list' in response['players'] else '',
             description=response['motd']['clean'][0]
         )
     return minecaft_server_info.format(
