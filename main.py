@@ -8,7 +8,7 @@ from volume.content import startup_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
-from programs.other import get_bashkir_haiku, get_weather
+from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info
 from programs.moneydrop import start_post_moneydrop_handlers
 from global_vars import app_robot, print
 
@@ -108,6 +108,8 @@ async def open_common_hashdict(deep_link, message, user_id):
         match obj["custom"]:
             case "bashkir_haiku":
                 text += f'\n{await get_bashkir_haiku()}'
+            case "minecraft_server":
+                text += f'\n{await get_minecraft_server_info()}'
     reply_markup = InlineKeyboardMarkup(buttons)
     await app_robot.edit_message_text(
         message.chat.id,

@@ -318,6 +318,12 @@ common_tree = {
                         "clique": {
                             "name": "㊙️ Клика",
                             "url": "https://t.me/sCliqueBot",
+                        },
+                        "minecraft-server": {
+                            "name": "⛏️ Анатолий Ч. | minecraft-сервер",
+                            "custom": "minecraft_server",
+                            "refresh": 1,
+                            "alias": "minecraft_server",
                         }
                     }
                 },
