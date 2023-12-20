@@ -1,6 +1,6 @@
 import aiohttp
 from mcstatus import JavaServer
-from config.minecraft_config import minecraft_server
+from volume.config.minecraft_config import minecraft_server
 
 
 async def aiohttp_get(url, type='text'):
