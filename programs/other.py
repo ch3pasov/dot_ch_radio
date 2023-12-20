@@ -1,5 +1,4 @@
 import aiohttp
-from mcstatus import JavaServer
 from volume.config.minecraft_config import minecraft_server
 
 
@@ -48,22 +47,18 @@ status_offline = """__Оффлайн__"""
 
 
 async def get_minecraft_server_info():
-    try:
-        status_raw = (await JavaServer.async_lookup("minecraft.anatoliy.ch")).status()
-        status = status_online.format(
-            version_name=status_raw.version.name,
-            players_online=status_raw.players.online,
-            players_max=status_raw.players.max,
-            description=status_raw.description
-        )
-    except ConnectionRefusedError:
+    response = await aiohttp_get(f'https://api.mcsrvstat.us/2/{minecraft_server}', 'json')
+    if not response['online']:
         status = status_offline
+    else:
+        status = status_online.format(
+            version_name=response['version'],
+            players_online=response['players']['online'],
+            players_max=response['players']['max'],
+            players_list='\n'.join(response['players']['list']) if 'list' in response['players'] else '',
+            description=response['motd']['clean'][0]
+        )
     return minecaft_server_info.format(
         minecraft_server=minecraft_server,
         status=status
     )
-
-"""Очень крутое API, но хочу запрашивать данные сам"""
-# async def get_minecraft_server_info():
-#     server_data = await aiohttp_get('https://api.mcsrvstat.us/2/minecraft.anatoliy.ch', 'json')
-#     pass
