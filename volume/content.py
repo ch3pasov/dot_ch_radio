@@ -255,6 +255,13 @@ common_tree = {
                 }
             }
         },
+        "minecraft-server": {
+            "name": "⛏️ Анатолий Ч. | minecraft-сервер",
+            "custom": "minecraft_server",
+            "refresh": 1,
+            "alias": "minecraft_server",
+            "disable_web_page_preview": 1
+        },
         "other": {
             "name": "📦 Другое",
             "children": {
@@ -319,13 +326,6 @@ common_tree = {
                             "name": "㊙️ Клика",
                             "url": "https://t.me/sCliqueBot",
                         },
-                        "minecraft-server": {
-                            "name": "⛏️ Анатолий Ч. | minecraft-сервер",
-                            "custom": "minecraft_server",
-                            "refresh": 1,
-                            "alias": "minecraft_server",
-                            "disable_web_page_preview": 1
-                        }
                     }
                 },
             },
