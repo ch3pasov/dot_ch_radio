@@ -1,5 +1,5 @@
 import aiohttp
-from volume.config.minecraft_config import minecraft_server
+from volume.config.minecraft_config import server_url, map_url
 
 
 async def aiohttp_get(url, type='text'):
@@ -34,8 +34,8 @@ async def get_weather(location):
 
 minecaft_server_info = """Присоединяйтесь к нашему Minecraft серверу!
 
-Адрес сервера: `{minecraft_server}`
-Карта сервера: http://{minecraft_server}:8100
+Адрес сервера: `{server_url}` (java)
+Карта сервера: {map_url}
 Статус сервера: {status}
 """
 status_online = """**Онлайн**
@@ -48,7 +48,7 @@ status_offline = """__Оффлайн__"""
 
 
 async def get_minecraft_server_info():
-    response = await aiohttp_get(f'https://api.mcsrvstat.us/2/{minecraft_server}', 'json')
+    response = await aiohttp_get(f'https://api.mcsrvstat.us/2/{server_url}', 'json')
     if not response['online']:
         status = status_offline
     else:
@@ -60,6 +60,7 @@ async def get_minecraft_server_info():
             description=response['motd']['clean'][0]
         )
     return minecaft_server_info.format(
-        minecraft_server=minecraft_server,
+        server_url=server_url,
+        map_url=map_url,
         status=status
     )
