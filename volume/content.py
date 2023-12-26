@@ -285,36 +285,54 @@ common_tree = {
                     "name": "📂 Моя папка",
                     "description": "📁 Здесь вы найдете личные файлы, изображения и аудиозаписи, сохраненные мной.",
                     "children": {
-                        "photo.jpg": {
-                            "name": "🖼️ photo.png",
-                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo.jpg)",
+                        "shortcuts": {
+                            "name": "🚀 Скрипты Shortcuts",
+                            "description": "🔧 Здесь собраны мои скрипты для программы [Shortcuts](https://apps.apple.com/us/app/shortcuts/id915249334), помогающие автоматизировать повседневные задачи.",
+                            "beta_access": 1,
+                            "disable_web_page_preview": 1,
+                            "children": {
+                                "hotspot-qr": {
+                                    "name": "📶 Hotspot QR.shortcut",
+                                    "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/cnolm.jpg)\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
+                                    "hide_name": 1
+                                }
+                            }
                         },
-                        "photo2.jpg": {
-                            "name": "🖼️ photo2.png",
-                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo2.jpg)",
-                        },
-                        "audio_01.mp3": {
-                            "name": "🎵 audio_01.mp3",
-                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/audio_01.mp3)",
-                        },
-                        "Naya.mp4": {
-                            "name": "🎥 Naya.mp4",
-                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Naya.mp4)",
-                        },
-                        "Хорошие новости №11.pdf": {
-                            "name": "📄 Хорошие новости №11.pdf",
-                            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/%D0%A5%D0%BE%D1%80%D0%BE%D1%88%D0%B8%D0%B5%20%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8%20%E2%84%9611.pdf)",
-                        },
-                        "CNOLM_Win.zip": {
-                            "name": "📦 CNOLM_Win.zip",
-                            "description": "**📦 [CNOLM_Win.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/CNOLM_Win.zip)**[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/cnolm.jpg)",
-                            "hide_name": 1,
-                        },
-                        "Presentation защита ВКР.zip": {
-                            "name": "📦 Presentation защита ВКР.zip",
-                            "description": "**[📦 Presentation защита ВКР.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/Presentation%20%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0%20%D0%92%D0%9A%D0%A0.zip)**",
-                            "hide_name": 1,
-                        },
+                        "other": {
+                            "name": "Другое",
+                            "children": {
+                                "photo.jpg": {
+                                    "name": "🖼️ photo.png",
+                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo.jpg)",
+                                },
+                                "photo2.jpg": {
+                                    "name": "🖼️ photo2.png",
+                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo2.jpg)",
+                                },
+                                "audio_01.mp3": {
+                                    "name": "🎵 audio_01.mp3",
+                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/audio_01.mp3)",
+                                },
+                                "Naya.mp4": {
+                                    "name": "🎥 Naya.mp4",
+                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Naya.mp4)",
+                                },
+                                "Хорошие новости №11.pdf": {
+                                    "name": "📄 Хорошие новости №11.pdf",
+                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/%D0%A5%D0%BE%D1%80%D0%BE%D1%88%D0%B8%D0%B5%20%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8%20%E2%84%9611.pdf)",
+                                },
+                                "CNOLM_Win.zip": {
+                                    "name": "📦 CNOLM_Win.zip",
+                                    "description": "**📦 [CNOLM_Win.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/CNOLM_Win.zip)**[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/cnolm.jpg)",
+                                    "hide_name": 1,
+                                },
+                                "Presentation защита ВКР.zip": {
+                                    "name": "📦 Presentation защита ВКР.zip",
+                                    "description": "**[📦 Presentation защита ВКР.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/Presentation%20%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0%20%D0%92%D0%9A%D0%A0.zip)**",
+                                    "hide_name": 1,
+                                },
+                            }
+                        }
                     },
                 },
                 "secret-place": {
