@@ -293,7 +293,7 @@ common_tree = {
                             "children": {
                                 "hotspot-qr": {
                                     "name": "📶 Hotspot QR.shortcut",
-                                    "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/cnolm.jpg)\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
+                                    "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
                                     "hide_name": 1
                                 }
                             }
