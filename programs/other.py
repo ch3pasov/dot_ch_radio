@@ -37,6 +37,8 @@ minecaft_server_info = """Присоединяйтесь к нашему Minecra
 Адрес сервера: `{server_url}` (java)
 Карта спавна: {map_url}
 Статус сервера: {status}
+Общаться можно тут: @wallet_chat
+И тут: https://t.me/ch_an?livestream
 """
 status_online = """**Онлайн**
 {description}
@@ -44,7 +46,7 @@ status_online = """**Онлайн**
 Игроков: **{players_online}/{players_max}**
 {players_list}
 """
-status_offline = """__Оффлайн__"""
+status_offline = """**Оффлайн**"""
 
 
 async def get_minecraft_server_info():
