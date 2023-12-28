@@ -36,9 +36,10 @@ minecaft_server_info = """Присоединяйтесь к нашему Minecra
 
 Адрес сервера: `{server_url}` (java)
 Карта спавна: {map_url}
-Статус сервера: {status}
 Общаться можно тут: @wallet_chat
 И тут: https://t.me/ch_an?livestream
+
+Статус сервера: {status}
 """
 status_online = """**Онлайн**
 {description}
