@@ -84,7 +84,8 @@ async def open_common_hashdict(deep_link, message, user_id):
         )
     share_button = InlineKeyboardButton(
         text="🔗",
-        switch_inline_query=obj["share"]
+        # switch_inline_query=obj["share"]
+        url=f"https://t.me/share/url?url={obj['share']}"
     )
     if "parent" in obj:
         parent = obj["parent"]
