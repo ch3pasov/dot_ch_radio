@@ -63,6 +63,5 @@ async def get_minecraft_server_info():
     return minecaft_server_info.format(
         server_url=server_url,
         bedrock_proxy_url=bedrock_proxy_url,
-        map_url=map_url,
         status=status
     )
