@@ -1,5 +1,5 @@
 import aiohttp
-from volume.config.minecraft_config import server_url, map_url
+from volume.config.minecraft_config import server_url, bedrock_proxy_url, map_url
 
 
 async def aiohttp_get(url, type='text'):
@@ -34,7 +34,8 @@ async def get_weather(location):
 
 minecaft_server_info = """Присоединяйтесь к нашему Minecraft серверу!
 
-Адрес сервера: `{server_url}` (java)
+Адрес java-сервера: `{server_url}`
+Прокси для bedrock: `{bedrock_proxy_url}`
 Карта спавна: {map_url}
 Общаться можно тут: @wallet_chat
 И тут: https://t.me/ch_an?livestream
@@ -64,6 +65,7 @@ async def get_minecraft_server_info():
         )
     return minecaft_server_info.format(
         server_url=server_url,
+        bedrock_proxy_url=bedrock_proxy_url,
         map_url=map_url,
         status=status
     )
