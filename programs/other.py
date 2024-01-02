@@ -1,5 +1,5 @@
 import aiohttp
-from volume.config.minecraft_config import server_url, bedrock_proxy_url, map_url
+from volume.config.minecraft_config import server_url, bedrock_proxy_url
 
 
 async def aiohttp_get(url, type='text'):
