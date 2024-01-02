@@ -36,9 +36,6 @@ minecaft_server_info = """Присоединяйтесь к нашему Minecra
 
 Адрес java-сервера: `{server_url}`
 Прокси для bedrock: `{bedrock_proxy_url}`
-Карта спавна: {map_url}
-Общаться можно тут: @wallet_chat
-И тут: https://t.me/ch_an?livestream
 
 Статус сервера: {status}
 """

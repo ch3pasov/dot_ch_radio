@@ -1,2 +1,2 @@
-server_url = "minecraft.anatoliy.ch"
-map_url = "map.anatoliy.ch"
+server_url = "minecraft.anatoliy.ch:2024"
+bedrock_proxy_url = "mc.tgr.rs:2024"

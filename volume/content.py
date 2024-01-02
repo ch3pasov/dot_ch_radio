@@ -260,7 +260,25 @@ common_tree = {
             "custom": "minecraft_server",
             "refresh": 1,
             "alias": "minecraft_server",
-            "disable_web_page_preview": 1
+            "disable_web_page_preview": 1,
+            "children": {
+                "server-map": {
+                    "name": "🗺️ Карта сервера",
+                    "url": "https://map.anatoliy.ch"
+                },
+                "server-login": {
+                    "name": "🔑 Вход на сервер",
+                    "url": "https://t.me/mc_ch_bot"
+                },
+                "server-chat": {
+                    "name": "💬 Чат сервера",
+                    "url": "https://t.me/wallet_chat"
+                },
+                "server_voicechat": {
+                    "name": "🎙️ Голосовой чат сервера",
+                    "url": "https://t.me/ch_an?livestream"
+                }
+            }
         },
         "other": {
             "name": "📦 Другое",
