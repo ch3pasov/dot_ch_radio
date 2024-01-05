@@ -24,8 +24,6 @@ async def open_common_hashdict(deep_link, message, user_id):
         await asyncio.sleep(1)
         return await open_common_hashdict(deep_link[10:], message, user_id)
 
-    print(f"'{deep_link}'")
-
     if deep_link == "":
         return await open_common_hashdict("root", message, user_id)
 
