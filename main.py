@@ -132,7 +132,7 @@ async def start_handler(client, message):
         user_id,
         text="Загрузка"
     )
-    deep_link = ""
+    deep_link = "root"
     if len(message.command) >= 2:
         deep_link = message.command[1]
     return await open_common_hashdict(deep_link, new_message, user_id)
