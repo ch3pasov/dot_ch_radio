@@ -24,6 +24,9 @@ async def open_common_hashdict(deep_link, message, user_id):
         await asyncio.sleep(1)
         return await open_common_hashdict(deep_link[10:], message, user_id)
 
+    if deep_link == "":
+        open_common_hashdict("root", message, user_id)
+
     # id=
     path_hash = deep_link[3:]
     if not deep_link.startswith("id="):
