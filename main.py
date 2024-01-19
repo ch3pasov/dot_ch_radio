@@ -9,7 +9,7 @@ from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info
-from programs.moneydrop import start_post_moneydrop_handlers, get_money
+from programs.moneydrop import start_post_moneydrop_handlers, vasilii_game
 from global_vars import app_robot, print
 
 
@@ -125,17 +125,21 @@ async def open_common_hashdict(deep_link, message, user_id):
     return None
 
 
-@app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private & pyrogram.filters.incoming)
-async def start_handler(client, message):
-    user_id = message.from_user.id
-    new_message = await client.send_message(
+async def open_common_hashdict_create(deep_link, user_id):
+    new_message = await app_robot.send_message(
         user_id,
         text="Загрузка"
     )
+    return await open_common_hashdict(deep_link, new_message, user_id)
+
+
+@app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private & pyrogram.filters.incoming)
+async def start_handler(client, message):
+    user_id = message.from_user.id
     deep_link = "root"
     if len(message.command) >= 2:
         deep_link = message.command[1]
-    return await open_common_hashdict(deep_link, new_message, user_id)
+    return await open_common_hashdict_create(deep_link, user_id)
 
 
 @app_robot.on_callback_query()
@@ -154,6 +158,7 @@ async def answer_wanted_search(client, message):
     await client.send_chat_action(message.chat.id, ChatAction.TYPING)
     await asyncio.sleep(2+6*random())
     await client.send_message(message.chat.id, wanted_not_found)
+    await open_common_hashdict_create("search_wanted", message.chat.id)
 
 
 # геопин
@@ -167,6 +172,7 @@ async def answer_location(client, message):
         case _:
             raise ValueError("Unknown media type")
     await client.send_message(message.chat.id, await get_weather(location))
+    await open_common_hashdict_create("weather", message.chat.id)
 
 
 # на сообщение от бота с inline-клавиатурой (для отлова wallet)
@@ -175,9 +181,8 @@ async def answer_wallet(client, message):
     if message.via_bot.id != 1985737506:  # @wallet
         return
     check_id = message.reply_markup.inline_keyboard[0][0].url.split("=")[-1]
-    check_sum = await get_money(check_id)
-    pass
-    check_sum
+    await vasilii_game(message, check_id)
+    await open_common_hashdict_create("vasilii_game", message.chat.id)
 
 
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)
