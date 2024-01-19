@@ -9,7 +9,7 @@ from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info
-from programs.moneydrop import start_post_moneydrop_handlers
+from programs.moneydrop import start_post_moneydrop_handlers, get_money
 from global_vars import app_robot, print
 
 
@@ -147,6 +147,7 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
         await callback_query.answer(answer)
 
 
+# фотографии
 @app_robot.on_message(pyrogram.filters.private & pyrogram.filters.photo & pyrogram.filters.incoming)
 async def answer_wanted_search(client, message):
     await asyncio.sleep(1+random())
@@ -155,6 +156,7 @@ async def answer_wanted_search(client, message):
     await client.send_message(message.chat.id, wanted_not_found)
 
 
+# геопин
 @app_robot.on_message(pyrogram.filters.private & (pyrogram.filters.location | pyrogram.filters.venue) & pyrogram.filters.incoming)
 async def answer_location(client, message):
     match message.media:
@@ -165,6 +167,17 @@ async def answer_location(client, message):
         case _:
             raise ValueError("Unknown media type")
     await client.send_message(message.chat.id, await get_weather(location))
+
+
+# на сообщение от бота с inline-клавиатурой (для отлова wallet)
+@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.via_bot & pyrogram.filters.inline_keyboard & pyrogram.filters.incoming)
+async def answer_wallet(client, message):
+    if message.via_bot.id != 1985737506:  # @wallet
+        return
+    check_id = message.reply_markup.inline_keyboard[0][0].url.split("=")[-1]
+    check_sum = await get_money(check_id)
+    pass
+    check_sum
 
 
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)
