@@ -115,10 +115,10 @@ async def vasilii_game(message, check_id):
     ).id
     await app_robot.send_message(
         message.chat.id,
-        "Принимаю чек...",
+        "Принимаю чек, жду ответа от @wallet...",
     )
     await app_robot.send_chat_action(message.chat.id, ChatAction.TYPING)
-    await asyncio.sleep(10)
+    await asyncio.sleep(20)
 
     smth_wrong = True
     async for history_message in app_dj.get_chat_history("wallet", limit=10):
