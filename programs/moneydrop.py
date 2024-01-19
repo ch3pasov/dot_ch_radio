@@ -119,7 +119,6 @@ async def vasilii_game(message, check_id):
     )
     await app_robot.send_chat_action(message.chat.id, ChatAction.TYPING)
     await asyncio.sleep(20)
-
     smth_wrong = True
     async for history_message in app_dj.get_chat_history("wallet", limit=10):
         if history_message.id == get_money_message_id:  # сообщения до нашей попытки взять денег игнорируем
