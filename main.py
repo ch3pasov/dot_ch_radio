@@ -182,7 +182,8 @@ async def answer_wallet(client, message):
         return
     check_id = message.reply_markup.inline_keyboard[0][0].url.split("=")[-1]
     await vasilii_game(message, check_id)
-    await open_common_hashdict_create("vasilii_game", message.chat.id)
+    # бесит
+    # await open_common_hashdict_create("vasilii_game", message.chat.id)
 
 
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)
