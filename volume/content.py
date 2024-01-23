@@ -309,7 +309,7 @@ common_tree = {
                     "name": "🤪 Надеждин",
                     "description": "Считаю количество подписей с nadezhdin2024.ru/addresses, потому что либералы не умеют.",
                     "alias": "nadezhdin",
-                    "cusstom": "nadezhdin"
+                    "custom": "nadezhdin"
                 },
                 "my-folder": {
                     "name": "📂 Моя папка",
