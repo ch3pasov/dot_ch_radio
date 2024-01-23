@@ -73,7 +73,7 @@ async def get_minecraft_server_info():
     )
 
 
-nadezhdin_regex = r'                                <span class="progressbar__el__text">Собрано подписей: (\d{1,4})( / 2500)?</span>'
+nadezhdin_regex = r'                                <span class="progressbar__el__text">Собрано подписей: (\d+)( / 2500)?</span>'
 
 
 async def get_nadezhdin():
