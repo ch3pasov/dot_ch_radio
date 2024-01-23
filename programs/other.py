@@ -79,4 +79,4 @@ nadezhdin_regex = r'                                <span class="progressbar__el
 async def get_nadezhdin():
     text = await aiohttp_get('https://nadezhdin2024.ru/addresses', 'text')
     score = sum([min(int(region_score[0]), 2500) for region_score in re.findall(nadezhdin_regex, text)])
-    return f"\n{score}/100000 подписей собрано."
+    return f"\nСчитаю количество подписей с nadezhdin2024.ru/addresses, потому что либералы не умеют.\n\n**{score}/100000** подписей собрано."
