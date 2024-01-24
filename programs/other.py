@@ -75,7 +75,7 @@ async def get_minecraft_server_info():
 
 nadezhdin_regex = r'                                <span class="progressbar__el__text">Собрано подписей: (\d+)( / 2500)?</span>'
 out = '''
-Считаю количество подписей с nadezhdin2024.ru/addresses, потому что либералы не умеют.
+Считаю количество подписей с nadezhdin2024.ru/addresses с учётом [ограничения](https://www.consultant.ru/document/cons_doc_LAW_40445/709aad55b0103f1e128dde11785bbd41d4328966/) в 2500 на регион.
 
 Всего собрано подписей: **{scores_all:,}**.
 С ограниченим в 2500 на регион подписей: **{scores_2500:,}**.
