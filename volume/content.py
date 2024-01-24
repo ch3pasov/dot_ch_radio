@@ -306,7 +306,7 @@ common_tree = {
                     "alias": "weather"
                 },
                 "nadezhdin": {
-                    "name": "🤪 Надеждин",
+                    "name": "📝 Надеждин",
                     "custom": "nadezhdin",
                     "refresh": 1,
                     "alias": "nadezhdin",
