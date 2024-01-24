@@ -318,13 +318,32 @@ common_tree = {
                         "shortcuts": {
                             "name": "🚀 Скрипты Shortcuts",
                             "description": "🔧 Здесь собраны мои скрипты для программы [Shortcuts](https://apps.apple.com/us/app/shortcuts/id915249334), помогающие автоматизировать повседневные задачи.",
-                            "beta_access": 1,
                             "disable_web_page_preview": 1,
+                            "alias": "shortcuts",
                             "children": {
+                                "minecraft-server-online": {
+                                    "name": "🐷 Minecraft server online.shortcut",
+                                    "description": "🐷 **[Minecraft server online.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Minecraft%20server%20online.shortcut)**\n\nПоказывает онлайн майнкрафт сервера и (при возможности) никнеймы игроков.",
+                                    "hide_name": 1,
+                                    "beta_access": 1,
+                                },
                                 "hotspot-qr": {
                                     "name": "📶 Hotspot QR.shortcut",
-                                    "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
-                                    "hide_name": 1
+                                    "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**\n\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
+                                    "hide_name": 1,
+                                    "beta_access": 1,
+                                },
+                                "vasilii-game": {
+                                    "name": "🎲 Vasilii Game.shortcut",
+                                    "description": "🎲 **[Vasilii Game.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Vasilii%20Game.shortcut)**\n\nКлон хеш-игры Василия (@vas100bot), написанный в Shortcuts.",
+                                    "hide_name": 1,
+                                    "beta_access": 0,
+                                },
+                                "calculate-text": {
+                                    "name": "🧮 Calculate text.shortcut",
+                                    "description": "🧮 **[Calculate text.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Calculate%20text.shortcut)**\n\nВычисляет выражение из текстовой строки. Работает круче стандартного калькулятора, например, подсчитает sin(20)^2+cos(20)^2.",
+                                    "hide_name": 1,
+                                    "beta_access": 1,
                                 }
                             }
                         },
