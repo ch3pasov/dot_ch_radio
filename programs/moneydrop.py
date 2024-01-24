@@ -15,7 +15,7 @@ async def send_money(
 ):
 
     assert amount >= 0.0001, "wallet не позволяет отправлять меньше 0.0001 TON!"
-    assert amount < 0.5, "МНОГО ДЕНЕГ"
+    assert amount < 1.7, "МНОГО ДЕНЕГ"
 
     r = await app_dj.get_inline_bot_results('@wallet', str(amount))
     result = r.results[0]
@@ -100,7 +100,7 @@ async def count_credit(message, step_sleep):
             continue
         credit *= 2
         score += 1
-        if score >= 68:
+        if score >= 69:
             print("secret!")
             return await count_credit(message, step_sleep=step_sleep)
     return credit
