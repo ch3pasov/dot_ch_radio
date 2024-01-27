@@ -287,9 +287,16 @@ common_tree = {
             "beta_access": 0,
         },
         "delo": {
-            "name": "📁 Дело",
-            "custom": "delo",
+            "name": "🎧 Дело",
+            "description": "ДЕЛО",
             "alias": "delo",
+            "is_beta": 1,
+            "children": {
+                "go_to_delo": {
+                    "name": "🔗 Перейти к ДЕЛУ",
+                    "url": "https://t.me/dot_ch_delo_bot?start=1",
+                },
+            },
         },
         "other": {
             "name": "📦 Другое",
