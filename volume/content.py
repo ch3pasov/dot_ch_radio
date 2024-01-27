@@ -286,6 +286,11 @@ common_tree = {
             "alias": "vasilii_game",
             "beta_access": 0,
         },
+        "delo": {
+            "name": "📁 Дело",
+            "custom": "delo",
+            "alias": "delo",
+        },
         "other": {
             "name": "📦 Другое",
             "children": {
