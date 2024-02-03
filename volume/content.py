@@ -264,7 +264,8 @@ common_tree = {
             "children": {
                 "server-map": {
                     "name": "🗺️ Карта сервера",
-                    "url": "https://map.anatoliy.ch"
+                    "url": "https://map.anatoliy.ch",
+                    "is_beta": 1
                 },
                 "server-login": {
                     "name": "🔑 Вход на сервер",
