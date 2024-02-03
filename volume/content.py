@@ -287,18 +287,6 @@ common_tree = {
             "alias": "vasilii_game",
             "beta_access": 0,
         },
-        "delo": {
-            "name": "🎧 Дело",
-            "description": "ДЕЛО",
-            "alias": "delo",
-            "is_beta": 1,
-            "children": {
-                "go_to_delo": {
-                    "name": "🔗 Перейти к ДЕЛУ",
-                    "url": "https://t.me/dot_ch_delo_bot?start=1",
-                },
-            },
-        },
         "other": {
             "name": "📦 Другое",
             "children": {
@@ -323,6 +311,18 @@ common_tree = {
                     "custom": "nadezhdin",
                     "alias": "nadezhdin",
                     "beta_access": 0,
+                },
+                "delo": {
+                    "name": "🎧 Дело",
+                    "description": "ДЕЛО",
+                    "alias": "delo",
+                    "is_beta": 1,
+                    "children": {
+                        "go_to_delo": {
+                            "name": "🔗 Перейти к ДЕЛУ",
+                            "url": "https://t.me/dot_ch_delo_bot?start=1",
+                        },
+                    },
                 },
                 "my-folder": {
                     "name": "📂 Моя папка",
