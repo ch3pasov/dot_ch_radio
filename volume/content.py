@@ -265,7 +265,7 @@ common_tree = {
                 "server-map": {
                     "name": "🗺️ Карта сервера",
                     "url": "https://map.anatoliy.ch",
-                    "is_beta": 1
+                    "beta_access": 1
                 },
                 "server-login": {
                     "name": "🔑 Вход на сервер",
@@ -286,6 +286,18 @@ common_tree = {
             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png)\nВасилий предлагает сыграть в следующую игру:\n- вы присылаете чек в 0.1 TON через `@wallet 0.1`. Ни больше, ни меньше\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 0.1 TON\n- в конце вы получаете итоговую сумму\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришлите сюда wallet-чек в 0.1 TON (`@wallet 0.1`). Будьте внимательны, нужно отправить именно TON и именно 0.1. Бета-версия, пока может работать нестабильно.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).",
             "alias": "vasilii_game",
             "beta_access": 0,
+        },
+        "delo": {
+            "name": "🎧 Дело",
+            "description": "ДЕЛО",
+            "alias": "delo",
+            "beta_access": 1,
+            "children": {
+                "go_to_delo": {
+                    "name": "🔗 Перейти к ДЕЛУ",
+                    "url": "https://t.me/dot_ch_delo_bot?start=1",
+                },
+            },
         },
         "other": {
             "name": "📦 Другое",
@@ -311,18 +323,6 @@ common_tree = {
                     "custom": "nadezhdin",
                     "alias": "nadezhdin",
                     "beta_access": 0,
-                },
-                "delo": {
-                    "name": "🎧 Дело",
-                    "description": "ДЕЛО",
-                    "alias": "delo",
-                    "is_beta": 1,
-                    "children": {
-                        "go_to_delo": {
-                            "name": "🔗 Перейти к ДЕЛУ",
-                            "url": "https://t.me/dot_ch_delo_bot?start=1",
-                        },
-                    },
                 },
                 "my-folder": {
                     "name": "📂 Моя папка",
