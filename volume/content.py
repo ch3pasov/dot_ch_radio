@@ -255,32 +255,6 @@ common_tree = {
                 }
             }
         },
-        "minecraft-server": {
-            "name": "⛏️ Анатолий Ч. | minecraft-сервер",
-            "custom": "minecraft_server",
-            "refresh": 1,
-            "alias": "minecraft_server",
-            "disable_web_page_preview": 1,
-            "children": {
-                "server-map": {
-                    "name": "🗺️ Карта сервера",
-                    "url": "https://map.anatoliy.ch",
-                    "beta_access": 1
-                },
-                "server-login": {
-                    "name": "🔑 Вход на сервер",
-                    "url": "https://t.me/mc_ch_bot"
-                },
-                "server-chat": {
-                    "name": "💬 Чат сервера",
-                    "url": "https://t.me/wallet_chat"
-                },
-                "server_voicechat": {
-                    "name": "🎙️ Голосовой чат сервера",
-                    "url": "https://t.me/ch_an?livestream"
-                }
-            }
-        },
         "vasilii-game": {
             "name": "🎲 Игра Василия™️ (beta)",
             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png)\nВасилий предлагает сыграть в следующую игру:\n- вы присылаете чек в 0.1 TON через `@wallet 0.1`. Ни больше, ни меньше\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 0.1 TON\n- в конце вы получаете итоговую сумму\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришлите сюда wallet-чек в 0.1 TON (`@wallet 0.1`). Будьте внимательны, нужно отправить именно TON и именно 0.1. Бета-версия, пока может работать нестабильно.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).",
@@ -288,20 +262,45 @@ common_tree = {
             "beta_access": 0,
         },
         "delo": {
-            "name": "🎧 Дело",
-            "description": "ДЕЛО",
+            "name": "🤫 Дело",
+            "description": "См. [пост](https://t.me/ch_an/1883).",
             "alias": "delo",
-            "beta_access": 1,
             "children": {
                 "go_to_delo": {
                     "name": "🔗 Перейти к ДЕЛУ",
-                    "url": "https://t.me/dot_ch_delo_bot?start=1",
+                    "url": "https://t.me/dot_ch_delo_bot?start=start",
                 },
             },
         },
         "other": {
             "name": "📦 Другое",
             "children": {
+                "minecraft-server": {
+                    "name": "⛏️ Анатолий Ч. | minecraft-сервер",
+                    "custom": "minecraft_server",
+                    "refresh": 1,
+                    "alias": "minecraft_server",
+                    "disable_web_page_preview": 1,
+                    "children": {
+                        "server-map": {
+                            "name": "🗺️ Карта сервера",
+                            "url": "https://map.anatoliy.ch",
+                            "beta_access": 1
+                        },
+                        "server-login": {
+                            "name": "🔑 Вход на сервер",
+                            "url": "https://t.me/mc_ch_bot"
+                        },
+                        "server-chat": {
+                            "name": "💬 Чат сервера",
+                            "url": "https://t.me/wallet_chat"
+                        },
+                        "server_voicechat": {
+                            "name": "🎙️ Голосовой чат сервера",
+                            "url": "https://t.me/ch_an?livestream"
+                        }
+                    }
+                },
                 "search_wanted": {
                     "name": "🔍 Поиск по розыску",
                     "description": "👤 Инструмент для проверки нахождения людей в розыске. Для поиска по базам розыска необходимо отправить фотографию человека. Обратите внимание: точность результатов не гарантируется, и данная система не должна использоваться как единственный источник информации при принятии важных решений.",
@@ -317,12 +316,6 @@ common_tree = {
                     "name": "🌤️ Погода",
                     "description": "🌡️ Показывает погоду в указанном городе. Для получения погоды скинь гео 🌚.",
                     "alias": "weather"
-                },
-                "nadezhdin": {
-                    "name": "📝 Надеждин",
-                    "custom": "nadezhdin",
-                    "alias": "nadezhdin",
-                    "beta_access": 0,
                 },
                 "my-folder": {
                     "name": "📂 Моя папка",
@@ -405,6 +398,11 @@ common_tree = {
                         "clique": {
                             "name": "㊙️ Клика",
                             "url": "https://t.me/sCliqueBot",
+                        },
+                        "nadezhdin": {
+                            "name": "📝 Надеждин",
+                            "custom": "nadezhdin",
+                            "alias": "nadezhdin"
                         },
                     }
                 },
