@@ -263,11 +263,11 @@ common_tree = {
         },
         "delo": {
             "name": "🤫 Дело",
-            "description": "См. [пост](https://t.me/ch_an/1883).",
+            "description": "См. [пост](https://t.me/ch_an/1884).",
             "alias": "delo",
             "children": {
                 "go_to_delo": {
-                    "name": "🔗 Перейти к ДЕЛУ",
+                    "name": "🎧 Перейти к ДЕЛУ",
                     "url": "https://t.me/dot_ch_delo_bot?start=start",
                 },
             },
