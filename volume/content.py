@@ -274,10 +274,16 @@ common_tree = {
         },
         "bashkir-haiku": {
             "name": "🌸 Башкирские хокку",
-            "description": "Конкурс башкирских хокку: https://bashkirhaiku.anatoliy.ch\n\nХокку, сгенерированное [отсюда](http://nevmenandr.net/cgi-bin/haiku.html):",
+            "description": "Хокку, сгенерированное [отсюда](http://nevmenandr.net/cgi-bin/haiku.html):",
             "custom": "bashkir_haiku",
             "refresh": 1,
             "alias": "bashkir_haiku",
+            "chidren": {
+                "haiku_contest": {
+                    "name": "🌸 Конкурс башкирских хокку",
+                    "url": "https://bashkirhaiku.anatoliy.ch",
+                }
+            }
         },
         "other": {
             "name": "📦 Другое",
