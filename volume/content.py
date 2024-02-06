@@ -278,7 +278,7 @@ common_tree = {
             "custom": "bashkir_haiku",
             "refresh": 1,
             "alias": "bashkir_haiku",
-            "chidren": {
+            "children": {
                 "haiku_contest": {
                     "name": "🌸 Конкурс башкирских хокку",
                     "url": "https://bashkirhaiku.anatoliy.ch",
