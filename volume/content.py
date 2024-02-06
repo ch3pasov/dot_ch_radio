@@ -272,6 +272,13 @@ common_tree = {
                 },
             },
         },
+        "bashkir-haiku": {
+            "name": "🌸 Башкирские хокку",
+            "description": "Конкурс башкирских хокку: bashkirhaiku.anatoliy.ch",
+            "custom": "bashkir_haiku",
+            "refresh": 1,
+            "alias": "bashkir_haiku",
+        },
         "other": {
             "name": "📦 Другое",
             "children": {
@@ -305,12 +312,6 @@ common_tree = {
                     "name": "🔍 Поиск по розыску",
                     "description": "👤 Инструмент для проверки нахождения людей в розыске. Для поиска по базам розыска необходимо отправить фотографию человека. Обратите внимание: точность результатов не гарантируется, и данная система не должна использоваться как единственный источник информации при принятии важных решений.",
                     "alias": "search_wanted",
-                },
-                "bashkir-haiku": {
-                    "name": "🌸 Генератор Башкирских хокку",
-                    "custom": "bashkir_haiku",
-                    "refresh": 1,
-                    "alias": "bashkir_haiku",
                 },
                 "weather": {
                     "name": "🌤️ Погода",
