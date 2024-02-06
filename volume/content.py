@@ -274,7 +274,7 @@ common_tree = {
         },
         "bashkir-haiku": {
             "name": "🌸 Башкирские хокку",
-            "description": "Конкурс башкирских хокку: bashkirhaiku.anatoliy.ch",
+            "description": "Конкурс башкирских хокку: bashkirhaiku.anatoliy.ch\n\nХокку, сгенерированное [отсюда](http://nevmenandr.net/cgi-bin/haiku.html):",
             "custom": "bashkir_haiku",
             "refresh": 1,
             "alias": "bashkir_haiku",
