@@ -16,7 +16,6 @@ if not disable_radio:
 
     import asyncio
     import pyrogram
-    # import re
     app_dj_calls = PyTgCalls(app_dj)
     app_dj_calls.start()
 
@@ -25,29 +24,9 @@ if not disable_radio:
         join_as=pyrogram.raw.types.InputPeerChannel(channel_id=dot_ch_radio_id, access_hash=dot_ch_radio_access_hash)
     )
 
-    # # USE THIS IF YOU WANT ASYNC WAY
-    # async def get_youtube_stream(url='https://www.youtube.com/watch?v=jfKfPfyJRdk'):
-    #     proc = await asyncio.create_subprocess_exec(
-    #         'yt-dlp',
-    #         '-g',
-    #         '-f',
-    #         # 'best[height<=?720][width<=?1280]',
-    #         'ba',  # best audio
-    #         url,
-    #         stdout=asyncio.subprocess.PIPE,
-    #         stderr=asyncio.subprocess.PIPE,
-    #     )
-    #     stdout, stderr = await proc.communicate()
-    #     return stdout.decode().split('\n')[0]
-
     async def change_stream(url: str, who_called=''):
-        assert url.startswith('https://'), 'url must be https://...'
+        assert url.startswith('http[s]?://'), 'url must be http[s]?://...'
         print(f"{who_called} calls change_stream to {url}")
-        # if re.search(r'http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?', url):
-        #     new_stream = await get_youtube_stream(url=url)
-        #     # print(new_stream)
-        # else:
-        #     new_stream = url
         await app_dj_calls.change_stream(
             dot_ch_id,
             MediaStream(
@@ -97,8 +76,7 @@ if not disable_radio:
 
     @app_dj_calls.on_stream_end()
     async def handler(client: PyTgCalls, update: Update):
-        # print("stream ended, changing to default")
-        # remote = await get_youtube_stream(default_url)
+        print("stream ended, changing to default")
         await app_dj_calls.change_stream(
             dot_ch_id,
             MediaStream(
@@ -110,8 +88,6 @@ if not disable_radio:
     # главный обработчик событий в войсчате
     @app_dj.on_raw_update()
     async def raw(client, update, users, chats):
-        # print(type(update))
-        # print(dir(update))
         if type(update) is pyrogram.raw.types.update_group_call_participants.UpdateGroupCallParticipants:
             call = update.call
             for participant in update.participants:
