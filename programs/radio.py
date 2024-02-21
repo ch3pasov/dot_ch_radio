@@ -25,7 +25,7 @@ if not disable_radio:
     )
 
     async def change_stream(url: str, who_called=''):
-        assert url.startswith('http[s]?://'), 'url must be http[s]?://...'
+        assert url.startswith('http://') or url.startswith('https://'), 'url must be http[s]?://...'
         print(f"{who_called} calls change_stream to {url}")
         await app_dj_calls.change_stream(
             dot_ch_id,
