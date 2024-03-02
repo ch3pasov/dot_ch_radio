@@ -295,11 +295,11 @@ common_tree = {
                     "alias": "minecraft_server",
                     "disable_web_page_preview": 1,
                     "children": {
-                        "server-map": {
-                            "name": "🗺️ Карта сервера",
-                            "url": "https://map.anatoliy.ch",
-                            "beta_access": 1
-                        },
+                        # "server-map": {
+                        #     "name": "🗺️ Карта сервера",
+                        #     "url": "https://map.anatoliy.ch",
+                        #     "beta_access": 1
+                        # },
                         "server-login": {
                             "name": "🔑 Вход на сервер",
                             "url": "https://t.me/mc_ch_bot"
