@@ -2,7 +2,7 @@
 # base
 pyrogram
 tgcrypto
-py-tgcalls
 # radio
 ntgcalls
+py-tgcalls
 yt-dlp
