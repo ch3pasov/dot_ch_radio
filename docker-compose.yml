@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  dot_ch_radio:
+    image: dotchradio:latest
+    container_name: dot_ch_radio
+    volumes:
+      - ~/dockers/dot_ch_radio/volume:/app/volume
+    restart: on-failure:5
