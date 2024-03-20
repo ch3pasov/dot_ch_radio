@@ -272,48 +272,34 @@ common_tree = {
                 },
             },
         },
-        "bashkir-haiku": {
-            "name": "🌸 Башкирские хокку",
-            "description": "Хокку генерируются [вот тут](http://nevmenandr.net/cgi-bin/haiku.html).\n",
-            "custom": "bashkir_haiku",
+        "minecraft-server": {
+            "name": "⛏️ Анатолий Ч. | minecraft-сервер",
+            "custom": "minecraft_server",
             "refresh": 1,
-            "alias": "bashkir_haiku",
+            "alias": "minecraft_server",
+            "disable_web_page_preview": 1,
             "children": {
-                "haiku_contest": {
-                    "name": "🌸 Конкурс башкирских хокку",
-                    "url": "https://bashkirhaiku.anatoliy.ch",
+                "server-map": {
+                    "name": "🗺️ Карта сервера",
+                    "url": "https://map.anatoliy.ch",
+                },
+                "server-login": {
+                    "name": "🔑 Вход на сервер",
+                    "url": "https://t.me/mc_ch_bot"
+                },
+                "server-chat": {
+                    "name": "💬 Чат сервера",
+                    "url": "https://t.me/wallet_chat"
+                },
+                "server_voicechat": {
+                    "name": "🎙️ Голосовой чат сервера",
+                    "url": "https://t.me/ch_an?livestream"
                 }
             }
         },
         "other": {
             "name": "📦 Другое",
             "children": {
-                "minecraft-server": {
-                    "name": "⛏️ Анатолий Ч. | minecraft-сервер",
-                    "custom": "minecraft_server",
-                    "refresh": 1,
-                    "alias": "minecraft_server",
-                    "disable_web_page_preview": 1,
-                    "children": {
-                        # "server-map": {
-                        #     "name": "🗺️ Карта сервера",
-                        #     "url": "https://map.anatoliy.ch",
-                        #     "beta_access": 1
-                        # },
-                        "server-login": {
-                            "name": "🔑 Вход на сервер",
-                            "url": "https://t.me/mc_ch_bot"
-                        },
-                        "server-chat": {
-                            "name": "💬 Чат сервера",
-                            "url": "https://t.me/wallet_chat"
-                        },
-                        "server_voicechat": {
-                            "name": "🎙️ Голосовой чат сервера",
-                            "url": "https://t.me/ch_an?livestream"
-                        }
-                    }
-                },
                 "search_wanted": {
                     "name": "🔍 Поиск по розыску",
                     "description": "👤 Инструмент для проверки нахождения людей в розыске. Для поиска по базам розыска необходимо отправить фотографию человека. Обратите внимание: точность результатов не гарантируется, и данная система не должна использоваться как единственный источник информации при принятии важных решений.",
@@ -323,6 +309,19 @@ common_tree = {
                     "name": "🌤️ Погода",
                     "description": "🌡️ Показывает погоду в указанном городе. Для получения погоды скинь гео 🌚.",
                     "alias": "weather"
+                },
+                "bashkir-haiku": {
+                    "name": "🌸 Башкирские хокку",
+                    "description": "Хокку генерируются [вот тут](http://nevmenandr.net/cgi-bin/haiku.html).\n",
+                    "custom": "bashkir_haiku",
+                    "refresh": 1,
+                    "alias": "bashkir_haiku",
+                    "children": {
+                        "haiku_contest": {
+                            "name": "🌸 Конкурс башкирских хокку",
+                            "url": "https://bashkirhaiku.anatoliy.ch",
+                        }
+                    }
                 },
                 "my-folder": {
                     "name": "📂 Моя папка",
