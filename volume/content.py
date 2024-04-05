@@ -14,7 +14,7 @@ common_tree = {
                 },
                 "lofi-girl": {
                     "name": "🎧 lofi-girl",
-                    "radio_url": "https://www.youtube.com/watch?v=jfKfPfyJRdk"
+                    "radio_url": "https://live.lofiradio.ru/lofi_mp3_128"
                 },
                 "gta": {
                     "name": "🚗 GTA радио",
@@ -420,7 +420,7 @@ common_tree = {
 startup_url = "https://youtu.be/miZHa7ZC6Z0"
 shutdown_url = "https://youtu.be/XvoVObL4bYY"
 
-default_url = "https://www.youtube.com/watch?v=jfKfPfyJRdk"
+default_url = "https://live.lofiradio.ru/lofi_mp3_128"
 
 wanted_not_found = """**🔍 Проверка завершена**
 
