@@ -2,6 +2,11 @@ version: '3.8'
 services:
   dot_ch_radio:
     image: dotchradio:latest
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     container_name: dot_ch_radio
     volumes:
       - ~/dockers/dot_ch_radio/volume:/app/volume
