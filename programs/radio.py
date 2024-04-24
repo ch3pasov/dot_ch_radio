@@ -7,7 +7,7 @@ if not disable_radio:
         AudioQuality,
         Update,
     )
-    from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
+    from volume.config.tg_ids import dot_ch_id  # , dot_ch_radio_id, dot_ch_radio_access_hash
     from volume.content import default_url, shutdown_url
 
     from decorators import admin_only
@@ -19,15 +19,10 @@ if not disable_radio:
     app_dj_calls = PyTgCalls(app_dj)
     app_dj_calls.start()
 
-    app_dj_calls.join_group_call(
-        dot_ch_id,
-        join_as=pyrogram.raw.types.InputPeerChannel(channel_id=dot_ch_radio_id, access_hash=dot_ch_radio_access_hash)
-    )
-
     async def change_stream(url: str, who_called=''):
         assert url.startswith('http://') or url.startswith('https://'), 'url must be http[s]?://...'
         print(f"{who_called} calls change_stream to {url}")
-        await app_dj_calls.change_stream(
+        await app_dj_calls.play(
             dot_ch_id,
             MediaStream(
                 url,
