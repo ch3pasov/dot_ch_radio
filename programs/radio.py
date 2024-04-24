@@ -11,6 +11,7 @@ if not disable_radio:
     import asyncio
     import pyrogram
     import pytgcalls
+    from pytgcalls import filters as pytgcalls_filters
     app_dj_calls = pytgcalls.PyTgCalls(app_dj)
     app_dj_calls.start()
 
@@ -64,7 +65,7 @@ if not disable_radio:
             "True?!"
         )
 
-    @app_dj_calls.on_update(pytgcalls.filters.stream_end)
+    @app_dj_calls.on_update(pytgcalls_filters.stream_end)
     async def handler(client: pytgcalls.PyTgCalls, update: pytgcalls.types.Update):
         print("stream ended, changing to default")
         await app_dj_calls.change_stream(
