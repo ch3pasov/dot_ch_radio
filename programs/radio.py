@@ -1,7 +1,7 @@
 from volume.config.debug import disable_radio
 
 if not disable_radio:
-    from volume.config.tg_ids import dot_ch_id  # , dot_ch_radio_id, dot_ch_radio_access_hash
+    from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
     from volume.content import default_url, shutdown_url
 
     from decorators import admin_only
@@ -23,6 +23,12 @@ if not disable_radio:
             pytgcalls.types.MediaStream(
                 url,
                 pytgcalls.types.AudioQuality.HIGH,
+            ),
+            pytgcalls.types.GroupCallConfig(
+                join_as=pyrogram.raw.types.InputPeerChannel(
+                    channel_id=dot_ch_radio_id,
+                    access_hash=dot_ch_radio_access_hash
+                )
             )
         )
 
@@ -32,7 +38,7 @@ if not disable_radio:
     async def leave_group_call(chat_id):
         await change_stream(shutdown_url, who_called='')
         await asyncio.sleep(5)
-        await app_dj_calls.leave_group_call(chat_id)
+        await app_dj_calls.leave_call(chat_id)
 
     @app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
     @admin_only
