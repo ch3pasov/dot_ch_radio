@@ -68,12 +68,9 @@ if not disable_radio:
     @app_dj_calls.on_update(pytgcalls_filters.stream_end)
     async def handler(client: pytgcalls.PyTgCalls, update: pytgcalls.types.Update):
         print("stream ended, changing to default")
-        await app_dj_calls.change_stream(
-            dot_ch_id,
-            pytgcalls.types.MediaStream(
-                default_url,
-                pytgcalls.types.AudioQuality.HIGH,
-            )
+        await change_stream(
+            default_url,
+            "ending of last stream"
         )
 
     # главный обработчик событий в войсчате
