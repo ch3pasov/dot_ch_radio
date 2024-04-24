@@ -1,12 +1,6 @@
 from volume.config.debug import disable_radio
 
 if not disable_radio:
-    from pytgcalls import PyTgCalls
-    from pytgcalls.types import (
-        MediaStream,
-        AudioQuality,
-        Update,
-    )
     from volume.config.tg_ids import dot_ch_id  # , dot_ch_radio_id, dot_ch_radio_access_hash
     from volume.content import default_url, shutdown_url
 
@@ -16,7 +10,8 @@ if not disable_radio:
 
     import asyncio
     import pyrogram
-    app_dj_calls = PyTgCalls(app_dj)
+    import pytgcalls
+    app_dj_calls = pytgcalls.PyTgCalls(app_dj)
     app_dj_calls.start()
 
     async def change_stream(url: str, who_called=''):
@@ -24,9 +19,9 @@ if not disable_radio:
         print(f"{who_called} calls change_stream to {url}")
         await app_dj_calls.play(
             dot_ch_id,
-            MediaStream(
+            pytgcalls.types.MediaStream(
                 url,
-                AudioQuality.HIGH,
+                pytgcalls.types.AudioQuality.HIGH,
             )
         )
 
@@ -69,14 +64,14 @@ if not disable_radio:
             "True?!"
         )
 
-    @app_dj_calls.on_stream_end()
-    async def handler(client: PyTgCalls, update: Update):
+    @app_dj_calls.on_update(pytgcalls.filters.stream_end)
+    async def handler(client: pytgcalls.PyTgCalls, update: pytgcalls.types.Update):
         print("stream ended, changing to default")
         await app_dj_calls.change_stream(
             dot_ch_id,
-            MediaStream(
+            pytgcalls.types.MediaStream(
                 default_url,
-                AudioQuality.HIGH,
+                pytgcalls.types.AudioQuality.HIGH,
             )
         )
 
