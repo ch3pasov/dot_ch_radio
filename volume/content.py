@@ -343,7 +343,7 @@ common_tree = {
                                     "name": "📶 Hotspot QR.shortcut",
                                     "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**\n\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
                                     "hide_name": 1,
-                                    "beta_access": 1,
+                                    "beta_access": 0,
                                 },
                                 "vasilii-game": {
                                     "name": "🎲 Vasilii Game.shortcut",
