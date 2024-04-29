@@ -337,7 +337,7 @@ common_tree = {
                                     "name": "🐷 Minecraft server online.shortcut",
                                     "description": "🐷 **[Minecraft server online.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Minecraft%20server%20online.shortcut)**\n\nПоказывает онлайн майнкрафт сервера и (при возможности) никнеймы игроков.",
                                     "hide_name": 1,
-                                    "beta_access": 1,
+                                    "beta_access": 0,
                                 },
                                 "hotspot-qr": {
                                     "name": "📶 Hotspot QR.shortcut",
@@ -355,7 +355,7 @@ common_tree = {
                                     "name": "🧮 Calculate text.shortcut",
                                     "description": "🧮 **[Calculate text.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Calculate%20text.shortcut)**\n\nВычисляет выражение из текстовой строки. Работает круче стандартного калькулятора, например, подсчитает sin(20)^2+cos(20)^2.",
                                     "hide_name": 1,
-                                    "beta_access": 1,
+                                    "beta_access": 0,
                                 }
                             }
                         },
