@@ -261,17 +261,6 @@ common_tree = {
             "alias": "vasilii_game",
             "beta_access": 0,
         },
-        "delo": {
-            "name": "🤫 Дело",
-            "description": "См. [пост](https://t.me/ch_an/1884).",
-            "alias": "delo",
-            "children": {
-                "go_to_delo": {
-                    "name": "🎧 Перейти к ДЕЛУ",
-                    "url": "https://t.me/dot_ch_delo_bot?start=start",
-                },
-            },
-        },
         "minecraft-server": {
             "name": "⛏️ Анатолий Ч. | minecraft-сервер",
             "custom": "minecraft_server",
@@ -409,6 +398,17 @@ common_tree = {
                             "name": "📝 Надеждин",
                             "custom": "nadezhdin",
                             "alias": "nadezhdin"
+                        },
+                        "delo": {
+                            "name": "🤫 Дело",
+                            "description": "См. [пост](https://t.me/ch_an/1884).",
+                            "alias": "delo",
+                            "children": {
+                                "go_to_delo": {
+                                    "name": "🎧 Перейти к ДЕЛУ",
+                                    "url": "https://t.me/dot_ch_delo_bot?start=start",
+                                },
+                            },
                         },
                     }
                 },
