@@ -417,8 +417,8 @@ common_tree = {
     }
 }
 
-startup_url = "https://youtu.be/miZHa7ZC6Z0"
-shutdown_url = "https://youtu.be/XvoVObL4bYY"
+startup_url = "https://zvukipro.com/uploads/files/2020-12/1609413715_the-microsoft-sound.mp3"
+shutdown_url = "https://zvukipro.com/uploads/files/2021-01/1609567191_shutdown.mp3"
 
 default_url = "https://live.lofiradio.ru/lofi_mp3_128"
 
