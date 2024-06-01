@@ -1,6 +1,5 @@
 import aiohttp
 from volume.config.minecraft_config import server_url, bedrock_proxy_url
-import re
 
 
 async def aiohttp_get(url, type='text'):
@@ -74,21 +73,3 @@ async def get_minecraft_server_info():
         bedrock_proxy_url=bedrock_proxy_url,
         status=status
     )
-
-
-nadezhdin_regex = r'                                <span class="progressbar__el__text">Собрано подписей: (\d+)( / 2500)?</span>'
-out = '''
-Считаю количество подписей с nadezhdin2024.ru/addresses.
-
-Всего собрано подписей: **{scores_all:,}**.
-С ограниченим в 2500 на регион подписей: **{scores_2500:,}**.
-Среди этих подписей нужно **100,000** идеально заполненных подписей. Сколько их сейчас — неизвестно.
-'''
-
-
-async def get_nadezhdin():
-    text = await aiohttp_get('https://nadezhdin2024.ru/addresses', 'text')
-    scores_raw = [int(region_score[0]) for region_score in re.findall(nadezhdin_regex, text)]
-    scores_all = sum(scores_raw)
-    scores_2500 = sum([min(2500, score) for score in scores_raw])
-    return out.format(scores_all=scores_all, scores_2500=scores_2500)

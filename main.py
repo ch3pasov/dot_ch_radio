@@ -9,7 +9,6 @@ from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, get_participants, leave_group_call
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, get_nadezhdin
-from programs.moneydrop import start_post_moneydrop_handlers, vasilii_game
 from global_vars import app_robot, print
 
 
@@ -178,17 +177,34 @@ async def answer_location(client, message):
 
 
 # на сообщение от бота с inline-клавиатурой (для отлова wallet)
-@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.via_bot & pyrogram.filters.inline_keyboard & pyrogram.filters.incoming)
-async def answer_wallet(client, message):
-    if message.via_bot.id != 1985737506:  # @wallet
-        return
-    check_id = message.reply_markup.inline_keyboard[0][0].url.split("=")[-1]
-    await vasilii_game(message, check_id)
-    # бесит
-    # await open_common_hashdict_create("vasilii_game", message.chat.id)
+@app_robot.on_message(pyrogram.filters.command(["/start_free_vasilii_game"]) & pyrogram.filters.private & pyrogram.filters.incoming)
+async def answer_vasilii_game(client, message):
+    await app_robot.send_message(
+        message.chat.id,
+        "Запускаю ИГРУ ВАСИЛИЯ!",
+    )
+    step_sleep = 0.5
+    score = 0
+    credit = 1000
+    for i in range(100):
+        await asyncio.sleep(step_sleep)
+        if (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value <= 3:
+            credit *= 0.25
+            continue
+        credit *= 2
+        score += 1
+    result_text = f"Ваш выигрыш: {credit}. Бросков с победой: {score}."
+    if credit > 1000:
+        result_text += " Поздравляю, королевская победа!"
+        await app_robot.send_message(message.chat.id, "🥳")
+    await app_robot.send_message(
+        message.chat.id,
+        result_text,
+    )
+    await open_common_hashdict_create("vasilii_game", message.chat.id)
 
 
-@app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private)
+@app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private & pyrogram.filters.incoming)
 @admin_only
 async def test_handler(client, message):
     print(message)
@@ -215,7 +231,6 @@ async def test_handler(client, message):
 
 try:
     asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
-    asyncio.get_event_loop().run_until_complete(start_post_moneydrop_handlers())
     pyrogram.idle()
 except KeyboardInterrupt:
     print('Exiting...')
