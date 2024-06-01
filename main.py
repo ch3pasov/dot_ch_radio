@@ -153,7 +153,7 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
 
 
 # фотографии
-@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.photo & pyrogram.filters.incoming)
+@app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.private & pyrogram.filters.incoming)
 async def answer_wanted_search(client, message):
     await asyncio.sleep(1+random())
     await client.send_chat_action(message.chat.id, ChatAction.TYPING)
@@ -163,7 +163,7 @@ async def answer_wanted_search(client, message):
 
 
 # геопин
-@app_robot.on_message(pyrogram.filters.private & (pyrogram.filters.location | pyrogram.filters.venue) & pyrogram.filters.incoming)
+@app_robot.on_message((pyrogram.filters.location | pyrogram.filters.venue) & pyrogram.filters.private & pyrogram.filters.incoming)
 async def answer_location(client, message):
     match message.media:
         case pyrogram.enums.MessageMediaType.VENUE:
@@ -176,8 +176,8 @@ async def answer_location(client, message):
     await open_common_hashdict_create("weather", message.chat.id)
 
 
-# на сообщение от бота с inline-клавиатурой (для отлова wallet)
-@app_robot.on_message(pyrogram.filters.command(["/start_free_vasilii_game"]) & pyrogram.filters.private & pyrogram.filters.incoming)
+# игра Василия
+@app_robot.on_message(pyrogram.filters.command(["start_free_vasilii_game"]) & pyrogram.filters.private & pyrogram.filters.incoming)
 async def answer_vasilii_game(client, message):
     await app_robot.send_message(
         message.chat.id,
