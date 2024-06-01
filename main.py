@@ -7,7 +7,7 @@ from volume.config.tg_ids import dot_ch_id, beta_testers
 from volume.content import startup_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
-from programs.radio import change_stream, get_participants, leave_group_call
+from programs.radio import change_stream, leave_group_call  # , get_participants
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info
 from global_vars import app_robot, print
 
@@ -51,10 +51,14 @@ async def open_common_hashdict(deep_link, message, user_id):
         return "🤷‍♂️Не знаю как ты открыл кнопку-ссылку, но ты не пройдёшь."
     # common case
     if "radio_url" in obj:
-        if user_id in [participant.user_id for participant in await get_participants(dot_ch_id)]:
-            await change_stream(obj['radio_url'], who_called=message.from_user.id)
-            return "▶️"
-        return "🤷‍♂️Сначала зайди в радио!"
+
+        await change_stream(obj['radio_url'], who_called=message.from_user.id)
+        return "▶️"
+
+        # if user_id in [participant.user_id for participant in await get_participants(dot_ch_id)]:
+        #     await change_stream(obj['radio_url'], who_called=message.from_user.id)
+        #     return "▶️"
+        # return "🤷‍♂️Сначала зайди в радио!"
     buttons = []
     text = ""
     if not obj.get("hide_name", 0):
@@ -201,7 +205,21 @@ async def answer_vasilii_game(client, message):
         message.chat.id,
         result_text,
     )
-    await open_common_hashdict_create("vasilii_game", message.chat.id)
+    await app_robot.send_message(
+        message.chat.id,
+        "Игра окончена. Спасибо за участие!",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="⬅️ Назад",
+                        callback_data="vasilii_game"
+                    )
+                ]
+            ]
+        )
+    )
+    # await open_common_hashdict_create("vasilii_game", message.chat.id)
 
 
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private & pyrogram.filters.incoming)
