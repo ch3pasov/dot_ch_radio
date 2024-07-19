@@ -286,8 +286,8 @@ common_tree = {
                 }
             }
         },
-        "🏄🏽‍♂️ subway-surfers 👮‍♂️": {
-            "name": "Subway Surfers New York",
+        "subway-surfers": {
+            "name": "🏄🏽‍♂️ Subway Surfers New York 👮‍♂️",
             "url": "https://t.me/PlaySubwaySurfersBot",
         },
         "other": {
