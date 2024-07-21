@@ -287,8 +287,12 @@ common_tree = {
             }
         },
         "subway-surfers": {
-            "name": "🏄🏽‍♂️ Subway Surfers New York 👮‍♂️",
+            "name": "🏄🏽‍♂️ Subway Surfers 👮‍♂️",
             "url": "https://t.me/PlaySubwaySurfersBot/subway_surfers",
+        },
+        "doodle-jump": {
+            "name": "🐸 Doodle Jump 🚀",
+            "url": "https://t.me/PlayDoodleJumpBot/doodle_jump",
         },
         "other": {
             "name": "📦 Другое",
