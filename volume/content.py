@@ -287,7 +287,7 @@ common_tree = {
             }
         },
         "subway-surfers": {
-            "name": "🏄🏽 Subway Surfers 👮‍♂️",
+            "name": "🏄 Subway Surfers 👮‍♂️",
             "url": "https://t.me/PlaySubwaySurfersBot/subway_surfers",
         },
         "doodle-jump": {
