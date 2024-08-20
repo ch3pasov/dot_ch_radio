@@ -294,6 +294,10 @@ common_tree = {
             "name": "🐸 Doodle Jump 🚀",
             "url": "https://t.me/PlayDoodleJumpBot/doodle_jump",
         },
+        "math-effect": {
+            "name": "🚄 Math Effect 🏯",
+            "url": "https://t.me/PlayMathEffectBot/math_effect",
+        },
         "other": {
             "name": "📦 Другое",
             "children": {
