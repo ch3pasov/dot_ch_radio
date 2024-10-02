@@ -335,8 +335,8 @@ common_tree = {
                             "alias": "shortcuts",
                             "children": {
                                 "run-ysh-scenario": {
-                                    "name": "🏡 Запустить Сценарий УДЯ.shortcut",
-                                    "description": "🏡 **[Запустить Сценарий УДЯ.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/%D0%97%D0%B0%D0%BF%D1%83%D1%81%D1%82%D0%B8%D1%82%D1%8C%20%D0%A1%D1%86%D0%B5%D0%BD%D0%B0%D1%80%D0%B8%D0%B8%CC%86%20%D0%A3%D0%94%D0%98.shortcut)**\n\nЗапускает сценарий из Приложения Умного Дома Яндекса. Работает только на Mac.",
+                                    "name": "🏡 Run YSH Scenario.shortcut",
+                                    "description": "🏡 **[Run YSH Scenario.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Run%20YSH%20Scenario.shortcut)**\n\nЗапускает сценарий из Приложения Умного Дома Яндекса. Работает только на Mac.",
                                     "hide_name": 1,
                                     "beta_access": 0
                                 },
