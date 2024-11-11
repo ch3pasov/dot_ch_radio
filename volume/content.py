@@ -320,7 +320,9 @@ common_tree = {
                 },
                 "katakana_racism": {
                     "name": "🇯🇵 Руссуко-Японсукий пэрэводутику (простите)",
-                    "description": "Один!\n[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg)Два!\n[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg)\nТри!",
+                    "description": "Переводит любой текст с русского на японскую транслитерацию через катакану. Перевод генерируется [вот тут](https://nippon.temerov.org/rus_kana.php). Ещё раз, простите.[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg)Два!\n[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg)",
+                    "switch_inline_query_current_chat": "/rus_to_katakana ",
+                    "alias": "rus_to_katakana",
                     "beta_access": 1,
                 },
                 "bashkir-haiku": {
