@@ -222,6 +222,19 @@ async def answer_vasilii_game(client, message):
     # await open_common_hashdict_create("vasilii_game", message.chat.id)
 
 
+# rus_to_katakana
+@app_robot.on_message(pyrogram.filters.command(["/rus_to_katakana"]) & pyrogram.filters.incoming)
+async def answer_rus_to_katakana(client, message):
+    await app_robot.send_message(
+        message.chat.id,
+        message.text,
+    )
+    await app_robot.send_message(
+        message.chat.id,
+        message.command,
+    )
+
+
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private & pyrogram.filters.incoming)
 @admin_only
 async def test_handler(client, message):
