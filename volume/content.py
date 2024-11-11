@@ -261,6 +261,25 @@ common_tree = {
             "alias": "vasilii_game",
             "beta_access": 0,
         },
+        "web-games": {
+            "name": "🎮 Веб-игры",
+            "description": "🕹️ Да, я научился запускать эти игры в Телеграм!",
+            "alias": "web_games",
+            "children": {
+                "subway-surfers": {
+                    "name": "🏄 Subway Surfers 👮‍♂️",
+                    "url": "https://t.me/PlaySubwaySurfersBot/subway_surfers",
+                },
+                "doodle-jump": {
+                    "name": "🐸 Doodle Jump 🚀",
+                    "url": "https://t.me/PlayDoodleJumpBot/doodle_jump",
+                },
+                "math-effect": {
+                    "name": "🚄 Math Effect 🏯",
+                    "url": "https://t.me/PlayMathEffectBot/math_effect",
+                },
+            }
+        },
         "minecraft-server": {
             "name": "⛏️ Анатолий Ч. | minecraft-сервер",
             "custom": "minecraft_server",
@@ -286,18 +305,6 @@ common_tree = {
                 }
             }
         },
-        "subway-surfers": {
-            "name": "🏄 Subway Surfers 👮‍♂️",
-            "url": "https://t.me/PlaySubwaySurfersBot/subway_surfers",
-        },
-        "doodle-jump": {
-            "name": "🐸 Doodle Jump 🚀",
-            "url": "https://t.me/PlayDoodleJumpBot/doodle_jump",
-        },
-        "math-effect": {
-            "name": "🚄 Math Effect 🏯",
-            "url": "https://t.me/PlayMathEffectBot/math_effect",
-        },
         "other": {
             "name": "📦 Другое",
             "children": {
@@ -310,6 +317,11 @@ common_tree = {
                     "name": "🌤️ Погода",
                     "description": "🌡️ Показывает погоду в указанном городе. Для получения погоды скинь гео 🌚.",
                     "alias": "weather"
+                },
+                "katakana_racism": {
+                    "name": "🇯🇵 Руссуко-Японсукий пэрэводутику (простите)",
+                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.webp)",
+                    "beta_access": 1,
                 },
                 "bashkir-haiku": {
                     "name": "🌸 Башкирские хокку",

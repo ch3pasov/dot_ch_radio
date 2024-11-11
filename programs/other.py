@@ -71,3 +71,16 @@ async def get_minecraft_server_info():
         server_url=server_url,
         status=status
     )
+
+async def rus_to_katakana(text):
+    url = 'https://nippon.temerov.org/rus_kana.php'
+    form_data = aiohttp.FormData()
+    form_data.add_field('text', text)
+    form_data.add_field('select', 'katakana')
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, data=form_data) as resp:
+            r = (await resp.text()).split('\n')[425]
+            return {
+                "katakana": r.lstrip('<P>Результат преобразования:</P><P>').split('</P>')[0],
+                "racism": r.rstrip('</SPAN><BR></SPAN></P></TD>').split('")\'>')[1]
+            }
