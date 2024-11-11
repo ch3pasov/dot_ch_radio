@@ -320,7 +320,7 @@ common_tree = {
                 },
                 "katakana_racism": {
                     "name": "🇯🇵 Руссуко-Японсукий пэрэводутику (простите)",
-                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.webp)",
+                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg)",
                     "beta_access": 1,
                 },
                 "bashkir-haiku": {
