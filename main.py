@@ -226,7 +226,7 @@ async def answer_vasilii_game(client, message):
 @app_robot.on_message(pyrogram.filters.regex(f'^@{bot_username} /rus_to_katakana') & pyrogram.filters.incoming)
 async def answer_rus_to_katakana(client, message):
     buttons = [[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="/rus_to_katakana ")]]
-    if message.chat.type != "private":
+    if message.chat.type != pyrogram.enums.ChatType.BOT:
         buttons.append([InlineKeyboardButton(text=f"🤖 @{bot_username}", url=f"https://t.me/{bot_username}")])
     relpy_markup = InlineKeyboardMarkup(buttons)
 
