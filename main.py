@@ -228,7 +228,7 @@ async def answer_rus_to_katakana(client, message):
     import json
     await app_robot.send_message(
         message.chat.id,
-        json.dumps(message.to_dict(), indent=4),
+        json.dumps(message, indent=4),
     )
     
 
