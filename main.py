@@ -227,9 +227,8 @@ async def answer_vasilii_game(client, message):
 async def answer_rus_to_katakana(client, message):
     buttons = [[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="/rus_to_katakana ")]]
     if message.chat.type != pyrogram.enums.ChatType.PRIVATE:
-        buttons.append([InlineKeyboardButton(text=f"🤖 @{bot_username}", url=f"https://t.me/{bot_username}")])
+        buttons.append([InlineKeyboardButton(text=f"🤖 К роботу", url=f"https://t.me/{bot_username}?start=rus_to_katakana")])
     relpy_markup = InlineKeyboardMarkup(buttons)
-
     text = message.text.lstrip(f'@{bot_username} /rus_to_katakana').lstrip(' ').lower()
     if text == "":
         message_text = "Пустой текст! Нечего переводить."
