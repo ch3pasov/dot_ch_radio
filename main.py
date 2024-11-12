@@ -232,10 +232,10 @@ async def answer_rus_to_katakana(client, message):
             "Пустой текст! Нечего переводить.",
         )
     translate_dict = await rus_to_katakana(text)
-    russian = '\n>'.join(translate_dict['racism'].split('\n'))
     await message.reply_text(
-        f">{russian}\n`{translate_dict['katakana']}`",
-        quote=True
+        f"<blockquote>{translate_dict['racism']}</blockquote><code>{translate_dict['katakana']}</code>",
+        quote=True,
+        parse_mode="HTML"
     )
 
 
