@@ -79,8 +79,8 @@ async def rus_to_katakana(text):
     form_data.add_field('select', 'katakana')
     async with aiohttp.ClientSession() as session:
         async with session.post(url, data=form_data) as resp:
-            r = (await resp.text()).split('\n')[425]
+            r = (await resp.text()).split('\n')[-7]
             return {
-                "katakana": r.lstrip('<P>Результат преобразования:</P><P>').split('</P>')[0],
-                "racism": r.rstrip('</SPAN><BR></SPAN></P></TD>').split('")\'>')[1]
+                "katakana": r.lstrip('<P>Результат преобразования:</P><P>').split('</P>')[0].replace('<BR>', '\n'),
+                "racism": '\n'.join([line[:-7].split('")\'>')[-1] for line in r.split('<P>')[3][24:].split('<BR>')[:-1]])
             }
