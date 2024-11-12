@@ -225,12 +225,14 @@ async def answer_vasilii_game(client, message):
 # rus_to_katakana
 @app_robot.on_message(pyrogram.filters.private & pyrogram.filters.incoming)
 async def answer_rus_to_katakana(client, message):
-    text = ''
-    text += f"\n{message.text}"
     # text += f"\n{'   '.join(message.command)}"
     await app_robot.send_message(
         message.chat.id,
-        text,
+        message.text,
+    )
+    await app_robot.send_message(
+        message.chat.id,
+        ",   ".join(message.command),
     )
 
 
