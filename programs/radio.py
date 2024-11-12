@@ -2,7 +2,7 @@ from volume.config.debug import disable_radio
 
 if not disable_radio:
     from volume.config.tg_ids import dot_ch_id, dot_ch_radio_id, dot_ch_radio_access_hash
-    from volume.content import default_url, shutdown_url
+    from volume.content import default_url
 
     from decorators import admin_only
 
@@ -36,8 +36,6 @@ if not disable_radio:
         return await app_dj_calls.get_participants(chat_id)
 
     async def leave_group_call(chat_id):
-        await change_stream(shutdown_url, who_called='')
-        await asyncio.sleep(5)
         await app_dj_calls.leave_call(chat_id)
 
     @app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
