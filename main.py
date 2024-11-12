@@ -234,7 +234,9 @@ async def answer_rus_to_katakana(client, message):
     translate_dict = await rus_to_katakana(text)
     await message.reply_text(
         f"<i>{translate_dict['racism']}</i>\n<code>{translate_dict['katakana']}</code>",
-        quote=True
+        quote=True,
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="/rus_to_katakana "),]]
+        )
     )
 
 
