@@ -229,7 +229,7 @@ async def answer_rus_to_katakana(client, message):
     if message.chat.type != pyrogram.enums.ChatType.PRIVATE:
         buttons.append([InlineKeyboardButton(text=f"🤖 К роботу", url=f"https://t.me/{bot_username}?start=rus_to_katakana")])
     relpy_markup = InlineKeyboardMarkup(buttons)
-    text = message.text.split(f'@{bot_username} /rus_to_katakana')[1].lstrip(' ').lower()
+    text = message.text.split(f'@{bot_username} rus_to_katakana')[1].lstrip(' ').lower()
     if text == "":
         message_text = "Пустой текст! Нечего переводить."
     else:
