@@ -226,11 +226,14 @@ async def answer_vasilii_game(client, message):
 @app_robot.on_message(pyrogram.filters.private & pyrogram.filters.incoming)
 async def answer_rus_to_katakana(client, message):
     import json
+    text = ''
+    text += f"\n{message.text}"
+    # add command
+    text += f"\n{'   '.join(message.command)}"
     await app_robot.send_message(
         message.chat.id,
-        json.dumps(message, indent=4),
+        text,
     )
-    
 
 
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private & pyrogram.filters.incoming)
