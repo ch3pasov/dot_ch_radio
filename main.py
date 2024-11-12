@@ -235,7 +235,7 @@ async def answer_rus_to_katakana(client, message):
         message_text = "Пустой текст! Нечего переводить."
     else:
         translate_dict = await rus_to_katakana(text)
-        message_text = f"<i>{translate_dict['rus']}</i>\n<code>{translate_dict['katakana']}</code>"
+        message_text = f"<i>{translate_dict['racism']}</i>\n<code>{translate_dict['katakana']}</code>"
     await message.reply_text(
         message_text,
         quote=True,
