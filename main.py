@@ -225,7 +225,7 @@ async def answer_vasilii_game(client, message):
 # rus_to_katakana
 @app_robot.on_message(pyrogram.filters.regex(f'^@{bot_username} /rus_to_katakana') & pyrogram.filters.incoming)
 async def answer_rus_to_katakana(client, message):
-    text = message.text.lsrip(f'@{bot_username} /rus_to_katakana').lstrip(' ').lower()
+    text = message.text.lstrip(f'@{bot_username} /rus_to_katakana').lstrip(' ').lower()
     if text == "":
         return await app_robot.send_message(
             message.chat.id,
