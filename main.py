@@ -235,7 +235,7 @@ async def answer_rus_to_katakana(client, message):
     await message.reply_text(
         f"<blockquote>{translate_dict['racism']}</blockquote><code>{translate_dict['katakana']}</code>",
         quote=True,
-        parse_mode="HTML"
+        parse_mode=pyrogram.enums.ParseMode.HTML
     )
 
 
