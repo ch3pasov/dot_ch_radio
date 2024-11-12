@@ -325,7 +325,7 @@ common_tree = {
                     "children": {
                         "rus_to_katakana_command": {
                             "name": "🔡 Перевести текст",
-                            "switch_inline_query_current_chat": "/rus_to_katakana ",
+                            "switch_inline_query_current_chat": "rus_to_katakana ",
                         }
                     }
                 },
