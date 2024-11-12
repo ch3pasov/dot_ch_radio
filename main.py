@@ -3,12 +3,12 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums.chat_action import ChatAction
 import asyncio
 from random import random
-from volume.config.tg_ids import dot_ch_id, beta_testers
+from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
 from volume.content import startup_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, leave_group_call  # , get_participants
-from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info
+from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana
 from global_vars import app_robot, print
 
 
@@ -223,16 +223,17 @@ async def answer_vasilii_game(client, message):
 
 
 # rus_to_katakana
-@app_robot.on_message(pyrogram.filters.private & pyrogram.filters.incoming)
+@app_robot.on_message(pyrogram.filters.regex(f'^@{bot_username} /rus_to_katakana') & pyrogram.filters.incoming)
 async def answer_rus_to_katakana(client, message):
-    # text += f"\n{'   '.join(message.command)}"
-    await app_robot.send_message(
-        message.chat.id,
-        message.text,
-    )
-    await app_robot.send_message(
-        message.chat.id,
-        ",   ".join(message.command),
+    text = message.text.lsrip(f'@{bot_username} /rus_to_katakana').lstrip(' ').lower()
+    if text == "":
+        return await app_robot.send_message(
+            message.chat.id,
+            "Пустой текст! Нечего переводить.",
+        )
+    translate_dict = await rus_to_katakana(text)
+    await message.reply(
+        f">{'\n>'.join(translate_dict['racism']).split('\n')}\n`{translate_dict['katakana']}`"
     )
 
 
