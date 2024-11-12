@@ -225,18 +225,21 @@ async def answer_vasilii_game(client, message):
 # rus_to_katakana
 @app_robot.on_message(pyrogram.filters.regex(f'^@{bot_username} /rus_to_katakana') & pyrogram.filters.incoming)
 async def answer_rus_to_katakana(client, message):
+    buttons = [[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="/rus_to_katakana ")]]
+    if message.chat.type != "private":
+        buttons.append([InlineKeyboardButton(text=f"🤖 @{bot_username}", url=f"https://t.me/{bot_username}")])
+    relpy_markup = InlineKeyboardMarkup(buttons)
+
     text = message.text.lstrip(f'@{bot_username} /rus_to_katakana').lstrip(' ').lower()
     if text == "":
-        return await app_robot.send_message(
-            message.chat.id,
-            "Пустой текст! Нечего переводить.",
-        )
-    translate_dict = await rus_to_katakana(text)
+        message_text = "Пустой текст! Нечего переводить."
+    else:
+        translate_dict = await rus_to_katakana(text)
+        message_text = f"<i>{translate_dict['rus']}</i>\n<code>{translate_dict['katakana']}</code>"
     await message.reply_text(
-        f"<i>{translate_dict['racism']}</i>\n<code>{translate_dict['katakana']}</code>",
+        message_text,
         quote=True,
-        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="/rus_to_katakana "),]]
-        )
+        reply_markup=relpy_markup
     )
 
 
