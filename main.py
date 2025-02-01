@@ -1,4 +1,3 @@
-from shlex import quote
 import pyrogram
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 # from pyrogram.enums.chat_action import ChatAction
@@ -9,7 +8,7 @@ from volume.content import startup_url  # , wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, leave_group_call  # , get_participants
-from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana
+from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture
 from global_vars import app_robot, print
 
 
@@ -170,8 +169,12 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
 # фотографии
 @app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.private & pyrogram.filters.incoming)
 async def answer_invert_picture(client, message):
-    await message.reply_text("Обрабатываю...")
-    await message.reply_text(str(message), quote=True)
+    await message.reply_text("получил запрос")
+    # Скачиваем фото в оперативную память
+    photo = await message.download(in_memory=True)
+    processed_photo_bytes = invert_picture(photo)
+    # Отправляем обработанное фото
+    await message.reply_photo(processed_photo_bytes)
 
 
 # геопин

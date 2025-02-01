@@ -1,5 +1,9 @@
-import aiohttp
 from volume.config.minecraft_config import server_url
+import aiohttp
+from PIL import Image
+import numpy as np
+import io
+from typing import Tuple
 
 
 async def aiohttp_get(url, type='text'):
@@ -85,3 +89,191 @@ async def rus_to_katakana(text):
                 "katakana": r.lstrip('<P>Результат преобразования:</P><P>').split('</P>')[0].replace('<BR>', '\n'),
                 "racism": '\n'.join([line[:-7].split('")\'>')[-1] for line in r.split('<P>')[3][24:].split('<BR>')[:-1]])
             }
+
+
+# def get_image_dimensions(image_path):
+#     # Открываем изображение
+#     with Image.open(image_path) as img:
+#         # Получаем размеры изображения
+#         width, height = img.size
+#         return width, height
+
+# def circle_inversion(image_path, output_path, center, radius, version=1, default_color=(0, 0, 0)):
+#     # Открываем изображение
+#     with Image.open(image_path) as img:
+#         img = img.convert("RGB")  # Убедимся, что изображение в режиме RGB
+#         width, height = img.size
+#         pixels = np.array(img)  # Преобразуем изображение в массив numpy
+
+#         # Создаем пустое изображение для результата
+#         inverted_pixels = np.zeros((height, width, 3), dtype=np.uint8)
+#         inverted_pixels[:] = default_color  # Заполняем изображение цветом по умолчанию
+
+#         # Центр окружности
+#         x0, y0 = center
+
+#         if version == 1:
+#             # Версия 1: исходные пиксели → образы
+#             for y in range(height):
+#                 for x in range(width):
+#                     # Вычисляем новые координаты после инверсии
+#                     dx = x - x0
+#                     dy = y - y0
+#                     distance_squared = dx**2 + dy**2
+
+#                     if distance_squared == 0:
+#                         # Если пиксель находится в центре, он остается на месте
+#                         x_new, y_new = x0, y0
+#                     else:
+#                         # Применяем формулу инверсии
+#                         scale = radius**2 / distance_squared
+#                         x_new = int(x0 + dx * scale)
+#                         y_new = int(y0 + dy * scale)
+
+#                     # Проверяем, чтобы новые координаты были в пределах изображения
+#                     if 0 <= x_new < width and 0 <= y_new < height:
+#                         inverted_pixels[y_new, x_new] = pixels[y, x]
+
+#         elif version == 2:
+#             # Версия 2: пиксели выходного изображения → прообразы
+#             for y_new in range(height):
+#                 for x_new in range(width):
+#                     # Вычисляем прообраз (x, y) для пикселя (x_new, y_new)
+#                     dx = x_new - x0
+#                     dy = y_new - y0
+#                     distance_squared = dx**2 + dy**2
+
+#                     if distance_squared == 0:
+#                         # Если пиксель находится в центре, его прообраз — он сам
+#                         x, y = x0, y0
+#                     else:
+#                         # Применяем формулу инверсии для вычисления прообраза
+#                         scale = radius**2 / distance_squared
+#                         x = int(x0 + dx * scale)
+#                         y = int(y0 + dy * scale)
+
+#                     # Проверяем, чтобы прообраз был в пределах исходного изображения
+#                     if 0 <= x < width and 0 <= y < height:
+#                         inverted_pixels[y_new, x_new] = pixels[y, x]
+
+#         else:
+#             raise ValueError("Неподдерживаемая версия. Используйте 1 или 2.")
+
+#         # Создаем новое изображение из массива пикселей
+#         inverted_image = Image.fromarray(inverted_pixels, "RGB")
+#         inverted_image.save(output_path)
+
+# # Пример использования
+# image_path = 'sandbox/image.jpg'
+# output_path = 'sandbox/outputv1.jpg'
+
+# width, height = get_image_dimensions(image_path)
+
+# center = (width // 2, height // 2)  # Центр окружности (x, y)
+# radius = int(min(width, height) * 0.2)  # Радиус окружности
+
+# # Выбираем версию (1 или 2)
+# version = 1  # Можно изменить на 1 для первой версии
+
+# circle_inversion(image_path, output_path, center, radius, version=version)
+# print(f"Инвертированное изображение сохранено в {output_path}")
+
+
+def circle_inversion_bytes(
+    image_bytes: io.BytesIO,
+    version: int = 1,
+    default_color: Tuple[int, int, int] = (0, 0, 0),
+    # center: Union[Tuple[int, int], None] = None,
+    radius_percent: float = 0.2,
+) -> io.BytesIO:
+    """
+    Применяет инверсию относительно окружности к изображению.
+
+    Аргументы:
+        image_bytes (io.BytesIO): Входное изображение в формате BytesIO.
+        version (int): Версия алгоритма (1 или 2). По умолчанию 1.
+        default_color (Tuple[int, int, int]): Цвет по умолчанию для пикселей вне изображения. По умолчанию (0, 0, 0).
+        # center (Union[Tuple[int, int], None]): Центр окружности. Если None, вычисляется автоматически. По умолчанию None.
+        radius_percent (Union[float, None]): Процент радиуса окружности относительно минимального размера изображения. По умолчанию None.
+
+    Возвращает:
+        io.BytesIO: Обработанное изображение в формате BytesIO.
+    """
+    # Открываем изображение
+    with Image.open(image_bytes) as img:
+        img = img.convert("RGB")  # Убедимся, что изображение в режиме RGB
+        width, height = img.size
+        pixels = np.array(img)  # Преобразуем изображение в массив numpy
+
+        # Вычисляем центр и радиус, если они не заданы
+        center = (width // 2, height // 2)  # Центр изображения
+        radius = int(min(width, height) * radius_percent)  # Радиус как 20% от минимального размера
+
+        # Создаем пустое изображение для результата
+        inverted_pixels = np.zeros((height, width, 3), dtype=np.uint8)
+        inverted_pixels[:] = default_color  # Заполняем изображение цветом по умолчанию
+
+        # Центр окружности
+        x0, y0 = center
+
+        if version == 1:
+            # Версия 1: исходные пиксели → образы
+            for y in range(height):
+                for x in range(width):
+                    # Вычисляем новые координаты после инверсии
+                    dx = x - x0
+                    dy = y - y0
+                    distance_squared = dx**2 + dy**2
+
+                    if distance_squared == 0:
+                        # Если пиксель находится в центре, он остается на месте
+                        x_new, y_new = x0, y0
+                    else:
+                        # Применяем формулу инверсии
+                        scale = radius**2 / distance_squared
+                        x_new = int(x0 + dx * scale)
+                        y_new = int(y0 + dy * scale)
+
+                    # Проверяем, чтобы новые координаты были в пределах изображения
+                    if 0 <= x_new < width and 0 <= y_new < height:
+                        inverted_pixels[y_new, x_new] = pixels[y, x]
+
+        elif version == 2:
+            # Версия 2: пиксели выходного изображения → прообразы
+            for y_new in range(height):
+                for x_new in range(width):
+                    # Вычисляем прообраз (x, y) для пикселя (x_new, y_new)
+                    dx = x_new - x0
+                    dy = y_new - y0
+                    distance_squared = dx**2 + dy**2
+
+                    if distance_squared == 0:
+                        # Если пиксель находится в центре, его прообраз — он сам
+                        x, y = x0, y0
+                    else:
+                        # Применяем формулу инверсии для вычисления прообраза
+                        scale = radius**2 / distance_squared
+                        x = int(x0 + dx * scale)
+                        y = int(y0 + dy * scale)
+
+                    # Проверяем, чтобы прообраз был в пределах исходного изображения
+                    if 0 <= x < width and 0 <= y < height:
+                        inverted_pixels[y_new, x_new] = pixels[y, x]
+
+        else:
+            raise ValueError("Неподдерживаемая версия. Используйте 1 или 2.")
+
+        # Сохраняем результат в BytesIO
+        output_bytes = io.BytesIO()
+        inverted_image = Image.fromarray(inverted_pixels, "RGB")
+        inverted_image.save(output_bytes, format="JPEG")
+        output_bytes.seek(0)  # Сбрасываем указатель в начало
+        return output_bytes
+
+
+async def invert_picture(photo):
+    photo_bytes = io.BytesIO(photo.getvalue())
+    photo_bytes.name = "photo.jpg"  # Указываем имя файла (необязательно)
+
+    # Обрабатываем фото (версия 2, автоматический центр и радиус)
+    return circle_inversion_bytes(photo_bytes, version=2)

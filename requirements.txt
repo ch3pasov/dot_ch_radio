@@ -5,3 +5,7 @@ tgcrypto
 # radio
 ntgcalls
 py-tgcalls
+# ohter
+aiohttp
+PIL
+numpy
