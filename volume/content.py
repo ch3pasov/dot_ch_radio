@@ -256,8 +256,8 @@ common_tree = {
             }
         },
         "invert_picture": {
-            "name": "🔄 Инвертировать изображение",
-            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg)\n🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_(геометрия)) Относительно окружности! Отправляй картинку!",
+            "name": "💫 Правильная инверсия",
+            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg)\n🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) Относительно окружности! Отправляй картинку!",
             "alias": "invert_picture",
         },
         "vasilii_game": {
@@ -285,34 +285,34 @@ common_tree = {
                 },
             }
         },
-        "minecraft_server": {
-            "name": "⛏️ Анатолий Ч. | minecraft-сервер",
-            "custom": "minecraft_server",
-            "refresh": 1,
-            "alias": "minecraft_server",
-            "disable_web_page_preview": 1,
-            "children": {
-                "server-map": {
-                    "name": "🗺️ Карта сервера",
-                    "url": "https://map.anatoliy.ch",
-                },
-                "server-login": {
-                    "name": "🔑 Вход на сервер",
-                    "url": "https://t.me/mc_ch_bot"
-                },
-                "server-chat": {
-                    "name": "💬 Чат сервера",
-                    "url": "https://t.me/wallet_chat"
-                },
-                "server_voicechat": {
-                    "name": "🎙️ Голосовой чат сервера",
-                    "url": "https://t.me/ch_an?livestream"
-                }
-            }
-        },
         "other": {
             "name": "📦 Другое",
             "children": {
+                "minecraft_server": {
+                    "name": "⛏️ Анатолий Ч. | minecraft-сервер",
+                    "custom": "minecraft_server",
+                    "refresh": 1,
+                    "alias": "minecraft_server",
+                    "disable_web_page_preview": 1,
+                    "children": {
+                        "server-map": {
+                            "name": "🗺️ Карта сервера",
+                            "url": "https://map.anatoliy.ch",
+                        },
+                        "server-login": {
+                            "name": "🔑 Вход на сервер",
+                            "url": "https://t.me/mc_ch_bot"
+                        },
+                        "server-chat": {
+                            "name": "💬 Чат сервера",
+                            "url": "https://t.me/wallet_chat"
+                        },
+                        "server_voicechat": {
+                            "name": "🎙️ Голосовой чат сервера",
+                            "url": "https://t.me/ch_an?livestream"
+                        }
+                    }
+                },
                 "search_wanted": {
                     "name": "🔍 Поиск по розыску",
                     "description": "👤 Инструмент для проверки нахождения людей в розыске. Обратите внимание: точность результатов не гарантируется, и данная система не должна использоваться как единственный источник информации при принятии важных решений.",
@@ -320,7 +320,7 @@ common_tree = {
                     "children": {
                         "search_wanted_command": {
                             "name": "🔍 Проверить фото",
-                            "switch_inline_query_current_chat": "search_wanted (приложи фотографию с этим сообщением)",
+                            "switch_inline_query_current_chat": "search_wanted (приложи фотографию к этому сообщением и отправляй)",
                         }
                     }
                 },
