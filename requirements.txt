@@ -7,5 +7,5 @@ ntgcalls
 py-tgcalls
 # ohter
 aiohttp
-PIL
+Pillow
 numpy
