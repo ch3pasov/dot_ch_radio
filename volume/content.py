@@ -8,12 +8,12 @@ common_tree = {
             "description": "🎶 В этой секции вы найдете различные радиостанции и музыкальные потоки, доступные для прослушивания в https://t.me/ch_an?livestream",
             "alias": "radio",
             "children": {
-                "go-to-radio": {
+                "go_to_radio": {
                     "name": "🔗 Перейти к радио",
                     "url": "https://t.me/ch_an?livestream"
                 },
-                "lofi-girl": {
-                    "name": "🎧 lofi-girl",
+                "lofi_girl": {
+                    "name": "🎧 LoFi Girl",
                     "radio_url": "https://live.lofiradio.ru/lofi_mp3_128"
                 },
                 "gta": {
@@ -156,7 +156,7 @@ common_tree = {
                         }
                     }
                 },
-                "orthodox-radio": {
+                "orthodox_radio": {
                     "name": "🕊️ Православное Радио",
                     "description": "🙏 Подборка православных радиостанций, включающая чтения, молитвы и обучающие программы.",
                     "children": {
@@ -164,7 +164,7 @@ common_tree = {
                             "name": "📖 Чтения",
                             "description": "📘 Радиостанции, вещающие чтения Евангелия и Псалтиря.",
                             "children": {
-                                "evangelie-sinod": {
+                                "evangelie_sinod": {
                                     "name": "✝️ Евангелие (Синодальный перевод)",
                                     "radio_url": "https://radio.azbyka.ru/evangelie"
                                 },
@@ -176,7 +176,7 @@ common_tree = {
                                     "name": "✝️ Евангелие (Синодальный музыкальный)",
                                     "radio_url": "https://radio.azbyka.ru/chitaem-evangelie-sinod-muz"
                                 },
-                                "psaltir-csya": {
+                                "psaltir_csya": {
                                     "name": "📜 Псалтирь (Церковнославянский)",
                                     "radio_url": "https://radio.azbyka.ru/psaltir"
                                 },
@@ -255,32 +255,32 @@ common_tree = {
                 }
             }
         },
-        "vasilii-game": {
+        "vasilii_game": {
             "name": "🎲 Игра Василия™️ (post-wallet)",
             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png)\nВасилий предлагает сыграть в следующую ||уже бесплатную|| игру:\n- вы пишите /start_free_vasilii_game.\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 1000 вымышленных тугриков\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришли сюда /start_free_vasilii_game. Пост-валлет версия, без крипты и кредитов 😎.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).",
             "alias": "vasilii_game",
             "beta_access": 0,
         },
-        "web-games": {
+        "web_games": {
             "name": "🎮 Веб-игры",
             "description": "🕹️ Да, я научился запускать эти игры в Телеграм!",
             "alias": "web_games",
             "children": {
-                "subway-surfers": {
+                "subway_surfers": {
                     "name": "🏄 Subway Surfers 👮‍♂️",
                     "url": "https://t.me/PlaySubwaySurfersBot/subway_surfers",
                 },
-                "doodle-jump": {
+                "doodle_jump": {
                     "name": "🐸 Doodle Jump 🚀",
                     "url": "https://t.me/PlayDoodleJumpBot/doodle_jump",
                 },
-                "math-effect": {
+                "math_effect": {
                     "name": "🚄 Math Effect 🏯",
                     "url": "https://t.me/PlayMathEffectBot/math_effect",
                 },
             }
         },
-        "minecraft-server": {
+        "minecraft_server": {
             "name": "⛏️ Анатолий Ч. | minecraft-сервер",
             "custom": "minecraft_server",
             "refresh": 1,
@@ -329,7 +329,7 @@ common_tree = {
                         }
                     }
                 },
-                "bashkir-haiku": {
+                "bashkir_haiku": {
                     "name": "🌸 Башкирские хокку",
                     "description": "Хокку генерируются [вот тут](http://nevmenandr.net/cgi-bin/haiku.html).\n",
                     "custom": "bashkir_haiku",
@@ -342,7 +342,7 @@ common_tree = {
                         }
                     }
                 },
-                "my-folder": {
+                "my_folder": {
                     "name": "📂 Моя папка",
                     "description": "📁 Здесь вы найдете личные файлы, изображения и аудиозаписи, сохраненные мной.",
                     "children": {
@@ -352,31 +352,31 @@ common_tree = {
                             "disable_web_page_preview": 1,
                             "alias": "shortcuts",
                             "children": {
-                                "run-ysh-scenario": {
+                                "run_ysh_scenario": {
                                     "name": "🏡 Run YSH Scenario.shortcut",
                                     "description": "🏡 **[Run YSH Scenario.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Run%20YSH%20Scenario.shortcut)**\n\nЗапускает сценарий из Приложения Умного Дома Яндекса. Работает только на Mac.",
                                     "hide_name": 1,
                                     "beta_access": 0
                                 },
-                                "minecraft-server-online": {
+                                "minecraft_server_online": {
                                     "name": "🐷 Minecraft server online.shortcut",
                                     "description": "🐷 **[Minecraft server online.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Minecraft%20server%20online.shortcut)**\n\nПоказывает онлайн майнкрафт сервера и (при возможности) никнеймы игроков.",
                                     "hide_name": 1,
                                     "beta_access": 0,
                                 },
-                                "hotspot-qr": {
+                                "hotspot_qr": {
                                     "name": "📶 Hotspot QR.shortcut",
                                     "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**\n\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
                                     "hide_name": 1,
                                     "beta_access": 0,
                                 },
-                                "vasilii-game": {
+                                "vasilii_game": {
                                     "name": "🎲 Vasilii Game.shortcut",
                                     "description": "🎲 **[Vasilii Game.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Vasilii%20Game.shortcut)**\n\nКлон хеш-игры Василия (@vas100bot), написанный в Shortcuts.",
                                     "hide_name": 1,
                                     "beta_access": 0,
                                 },
-                                "calculate-text": {
+                                "calculate_text": {
                                     "name": "🧮 Calculate text.shortcut",
                                     "description": "🧮 **[Calculate text.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Calculate%20text.shortcut)**\n\nВычисляет выражение из текстовой строки. Работает круче стандартного калькулятора, например, подсчитает sin(20)^2+cos(20)^2.",
                                     "hide_name": 1,
@@ -421,11 +421,16 @@ common_tree = {
                         }
                     },
                 },
-                "secret-place": {
+                "secret_place": {
                     "name": "🔒 NDA папка",
                     "beta_access": 1,
                     "description": "👀 Если вы её видите, то вам это разрешили",
                     "children": {
+                        "invert_picture": {
+                            "name": "🔄 Инвертировать изображение",
+                            "description": "🔘 Инвертирует изображение. По настоящему! Относительно окружности! Отправляй картинку!",
+                            "alias": "invert_picture",
+                        },
                         "clique": {
                             "name": "㊙️ Клика",
                             "url": "https://t.me/sCliqueBot",
