@@ -72,6 +72,7 @@ async def get_minecraft_server_info():
         status=status
     )
 
+
 async def rus_to_katakana(text):
     url = 'https://nippon.temerov.org/rus_kana.php'
     form_data = aiohttp.FormData()
