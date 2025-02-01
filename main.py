@@ -1,10 +1,10 @@
 import pyrogram
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram.enums.chat_action import ChatAction
+# from pyrogram.enums.chat_action import ChatAction
 import asyncio
-from random import random
+# from random import random
 from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
-from volume.content import startup_url, wanted_not_found
+from volume.content import startup_url  # , wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, leave_group_call  # , get_participants
@@ -156,14 +156,14 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
         await callback_query.answer(answer)
 
 
-# фотографии
-@app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.private & pyrogram.filters.incoming)
-async def answer_wanted_search(client, message):
-    await asyncio.sleep(1+random())
-    await client.send_chat_action(message.chat.id, ChatAction.TYPING)
-    await asyncio.sleep(2+6*random())
-    await client.send_message(message.chat.id, wanted_not_found)
-    await open_common_hashdict_create("search_wanted", message.chat.id)
+# # фотографии
+# @app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.private & pyrogram.filters.incoming)
+# async def answer_wanted_search(client, message):
+#     await asyncio.sleep(1+random())
+#     await client.send_chat_action(message.chat.id, ChatAction.TYPING)
+#     await asyncio.sleep(2+6*random())
+#     await client.send_message(message.chat.id, wanted_not_found)
+#     await open_common_hashdict_create("search_wanted", message.chat.id)
 
 
 # геопин
