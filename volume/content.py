@@ -256,7 +256,7 @@ common_tree = {
             }
         },
         "invert_picture": {
-            "name": "💫 Правильная инверсия",
+            "name": "💫 Правильная инверсия™️",
             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg)\n🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) Относительно окружности! Отправляй картинку!",
             "alias": "invert_picture",
         },
