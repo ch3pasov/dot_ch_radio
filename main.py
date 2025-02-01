@@ -1,3 +1,4 @@
+from shlex import quote
 import pyrogram
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 # from pyrogram.enums.chat_action import ChatAction
@@ -164,6 +165,13 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
 #     await asyncio.sleep(2+6*random())
 #     await client.send_message(message.chat.id, wanted_not_found)
 #     await open_common_hashdict_create("search_wanted", message.chat.id)
+
+
+# фотографии
+@app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.private & pyrogram.filters.incoming)
+async def answer_invert_picture(client, message):
+    await message.reply_text("Обрабатываю...")
+    await message.reply_text(str(message), quote=True)
 
 
 # геопин
