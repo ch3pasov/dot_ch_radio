@@ -178,7 +178,7 @@ async def answer_invert_picture(client, message):
     processed_photo_bytes = await invert_picture(photo)
     # Отправляем обработанное фото
     await message.reply_photo(processed_photo_bytes, quote=True)
-    await open_common_hashdict_create("search_wanted", message.chat.id)
+    await open_common_hashdict_create("invert_picture", message.chat.id)
 
 
 # геопин
