@@ -172,7 +172,7 @@ async def answer_invert_picture(client, message):
     await message.reply_text("получил запрос")
     # Скачиваем фото в оперативную память
     photo = await message.download(in_memory=True)
-    processed_photo_bytes = invert_picture(photo)
+    processed_photo_bytes = await invert_picture(photo)
     # Отправляем обработанное фото
     await message.reply_photo(processed_photo_bytes)
 
