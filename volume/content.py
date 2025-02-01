@@ -255,6 +255,11 @@ common_tree = {
                 }
             }
         },
+        "invert_picture": {
+            "name": "🔄 Инвертировать изображение",
+            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg)\n🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_(геометрия)) Относительно окружности! Отправляй картинку!",
+            "alias": "invert_picture",
+        },
         "vasilii_game": {
             "name": "🎲 Игра Василия™️ (post-wallet)",
             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png)\nВасилий предлагает сыграть в следующую ||уже бесплатную|| игру:\n- вы пишите /start_free_vasilii_game.\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 1000 вымышленных тугриков\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришли сюда /start_free_vasilii_game. Пост-валлет версия, без крипты и кредитов 😎.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).",
@@ -432,11 +437,6 @@ common_tree = {
                     "beta_access": 1,
                     "description": "👀 Если вы её видите, то вам это разрешили",
                     "children": {
-                        "invert_picture": {
-                            "name": "🔄 Инвертировать изображение",
-                            "description": "🔘 Инвертирует изображение. По настоящему! Относительно окружности! Отправляй картинку!",
-                            "alias": "invert_picture",
-                        },
                         "clique": {
                             "name": "㊙️ Клика",
                             "url": "https://t.me/sCliqueBot",
