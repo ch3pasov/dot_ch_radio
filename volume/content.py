@@ -363,6 +363,12 @@ common_tree = {
                             "disable_web_page_preview": 1,
                             "alias": "shortcuts",
                             "children": {
+                                "add_leetcode_daily_problem_solving_event": {
+                                    "name": "📆 Add LeetCode daily problem solving event.shortcut",
+                                    "description": "📆 **[Add LeetCode daily problem solving event.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Add%20LeetCode%20daily%20problem%20solving%20event.shortcut)**\n\nДобавляет событие в календарь на сегодняшнюю задачу в LeetCode.",
+                                    "hide_name": 1,
+                                    "beta_access": 0
+                                },
                                 "run_ysh_scenario": {
                                     "name": "🏡 Run YSH Scenario.shortcut",
                                     "description": "🏡 **[Run YSH Scenario.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Run%20YSH%20Scenario.shortcut)**\n\nЗапускает сценарий из Приложения Умного Дома Яндекса. Работает только на Mac.",
