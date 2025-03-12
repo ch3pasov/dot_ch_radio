@@ -257,8 +257,12 @@ common_tree = {
         },
         "invert_picture": {
             "name": "💫 Правильная инверсия™️",
-            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg)\n🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) Относительно окружности! Отправляй картинку!",
+            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg)\n🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) Относительно окружности!",
             "alias": "invert_picture",
+            "invert_picture_command": {
+                "name": "🔘 Инвертировать картинку",
+                "switch_inline_query_current_chat": "invert_picture (приложи фотографию к этому сообщению и отправляй)",
+            }
         },
         "vasilii_game": {
             "name": "🎲 Игра Василия™️ (post-wallet)",
@@ -320,7 +324,7 @@ common_tree = {
                     "children": {
                         "search_wanted_command": {
                             "name": "🔍 Проверить фото",
-                            "switch_inline_query_current_chat": "search_wanted (приложи фотографию к этому сообщением и отправляй)",
+                            "switch_inline_query_current_chat": "search_wanted (приложи фотографию к этому сообщению и отправляй)",
                         }
                     }
                 },
