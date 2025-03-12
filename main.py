@@ -178,7 +178,10 @@ async def answer_rus_to_katakana(client, message):
 
 
 # invert_picture
-@app_robot.on_message(pyrogram.filters.regex(f'^@{bot_username} invert_picture') & pyrogram.filters.incoming & pyrogram.filters.photo)
+@app_robot.on_message(
+    pyrogram.filters.photo & pyrogram.filters.incoming
+    # & pyrogram.filters.regex(f'^@{bot_username} invert_picture')
+)
 async def answer_invert_picture(client, message):
     buttons = [[InlineKeyboardButton(text="🔘 Инвертировать картинку", switch_inline_query_current_chat="invert_picture (приложи фотографию к этому сообщению и отправляй)")]]
     if message.chat.type != pyrogram.enums.ChatType.PRIVATE:
