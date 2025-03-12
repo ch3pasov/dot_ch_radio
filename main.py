@@ -189,7 +189,7 @@ async def answer_invert_picture(client, message):
     await client.send_chat_action(message.chat.id, ChatAction.TYPING)
     # Скачиваем фото в оперативную память
     photo = await message.download(in_memory=True)
-    reply_message.edit_text("🌚 Скачал фотку, ждите (тоже долго).")
+    await reply_message.edit_text("🌚 Скачал фотку, ждите (тоже долго).")
     await client.send_chat_action(message.chat.id, ChatAction.UPLOAD_PHOTO)
     processed_photo_bytes = await invert_picture(photo)
     # Отправляем обработанное фото
