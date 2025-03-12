@@ -177,6 +177,16 @@ async def answer_rus_to_katakana(client, message):
     )
 
 
+# поиск в розыске
+@app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.regex(f'^@{bot_username} search_wanted') & pyrogram.filters.private & pyrogram.filters.incoming)
+async def answer_wanted_search(client, message):
+    await asyncio.sleep(1+random())
+    await client.send_chat_action(message.chat.id, ChatAction.TYPING)
+    await asyncio.sleep(2+6*random())
+    await client.send_message(message.chat.id, wanted_not_found)
+    await open_common_hashdict_create("search_wanted", message.chat.id)
+
+
 # invert_picture
 @app_robot.on_message(
     pyrogram.filters.photo & pyrogram.filters.incoming
@@ -198,16 +208,6 @@ async def answer_invert_picture(client, message):
     # Отправляем обработанное фото
     await message.reply_photo(processed_photo_bytes, quote=True, reply_markup=relpy_markup)
     await reply_message.delete()
-
-
-# поиск в розыске
-@app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.regex(f'^@{bot_username} search_wanted') & pyrogram.filters.private & pyrogram.filters.incoming)
-async def answer_wanted_search(client, message):
-    await asyncio.sleep(1+random())
-    await client.send_chat_action(message.chat.id, ChatAction.TYPING)
-    await asyncio.sleep(2+6*random())
-    await client.send_message(message.chat.id, wanted_not_found)
-    await open_common_hashdict_create("search_wanted", message.chat.id)
 
 
 # геопин
