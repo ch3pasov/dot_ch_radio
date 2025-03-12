@@ -259,9 +259,11 @@ common_tree = {
             "name": "💫 Правильная инверсия™️",
             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg)\n🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) Относительно окружности!",
             "alias": "invert_picture",
-            "invert_picture_command": {
-                "name": "🔘 Инвертировать картинку",
-                "switch_inline_query_current_chat": "invert_picture (приложи фотографию к этому сообщению и отправляй)",
+            "children": {
+                "invert_picture_command": {
+                    "name": "🔘 Инвертировать картинку",
+                    "switch_inline_query_current_chat": "invert_picture (приложи фотографию к этому сообщению и отправляй)",
+                }
             }
         },
         "vasilii_game": {
