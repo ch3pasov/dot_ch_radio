@@ -1,18 +1,7 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
-FROM --platform=linux/x86_64 python:3.10-alpine
+FROM --platform=linux/x86_64 python:3.10-slim
 
-# Install necessary packages
-RUN apk update && apk add --no-cache \
-    bash \
-    gcc \
-    g++ \
-    cmake \
-    ffmpeg \
-    musl-dev \
-    libffi-dev \
-    make \
-    openssl-dev \
-    git
+RUN apt update && apt install -y cmake gcc ffmpeg
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -22,14 +11,14 @@ ENV PYTHONUNBUFFERED=1
 
 # Install pip requirements
 COPY requirements.txt .
-RUN python -m pip install --no-cache-dir --no-binary :all: -r requirements.txt
+RUN python -m pip install -r requirements.txt
 
 WORKDIR /app
 COPY . /app
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 5678 -D -g "" appuser && chown -R appuser /app
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
