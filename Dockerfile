@@ -5,8 +5,11 @@ FROM --platform=linux/x86_64 python:3.10-alpine
 RUN apk update && apk add --no-cache \
     bash \
     gcc \
+    g++ \
     cmake \
-    ffmpeg
+    ffmpeg \
+    musl-dev \
+    libffi-dev
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
