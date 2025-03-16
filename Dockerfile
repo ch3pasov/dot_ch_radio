@@ -11,7 +11,8 @@ RUN apk update && apk add --no-cache \
     musl-dev \
     libffi-dev \
     make \
-    openssl-dev
+    openssl-dev \
+    git
 
 RUN which cmake
 
