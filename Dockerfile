@@ -15,6 +15,10 @@ RUN apk update && apk add --no-cache \
 
 RUN ln -s /usr/bin/cmake /usr/local/bin/cmake
 
+RUN cmake --version
+
+
+
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
