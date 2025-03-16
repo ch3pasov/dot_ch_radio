@@ -1,7 +1,7 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM --platform=linux/x86_64 python:3.10-alpine
 
-RUN apk update && apk add --no-cache cmake gcc ffmpeg libx11-dev build-essential curl alsa-lib-devel pulseaudio-libs-devel mesa-libgbm-devel libXcomposite-devel libXrandr-devel libXtst-devel
+RUN apk update && apk add --no-cache cmake gcc ffmpeg libx11-dev build-essential curl
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
