@@ -14,8 +14,6 @@ RUN apk update && apk add --no-cache \
     openssl-dev \
     git
 
-RUN which cmake
-
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 
