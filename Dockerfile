@@ -1,26 +1,25 @@
+# For more information, please refer to https://aka.ms/vscode-docker-python
 FROM --platform=linux/x86_64 python:3.10-alpine
 
-# Устанавливаем необходимые пакеты
-RUN apk update && apk add --no-cache gcc libffi-dev bash build-base
+RUN apk update && apk add --no-cache cmake gcc ffmpeg libx11-dev build-essential curl alsa-lib-devel pulseaudio-libs-devel mesa-libgbm-devel libXcomposite-devel libXrandr-devel libXtst-devel
 
-# Устанавливаем cmake через pip
-RUN python -m pip install cmake
-
-# Отключаем создание .pyc файлов и буферизацию вывода
+# Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
+
+# Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
-# Копируем и устанавливаем зависимости
+# Install pip requirements
 COPY requirements.txt .
-RUN python -m pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install -r requirements.txt
 
-# Устанавливаем рабочую директорию и копируем проект
 WORKDIR /app
 COPY . /app
 
-# Создаем пользователя для безопасности и изменяем права
-RUN adduser -u 5678 -D appuser && chown -R appuser /app
+# Creates a non-root user with an explicit UID and adds permission to access the /app folder
+# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
-# Запуск приложения
+# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
 CMD ["python", "main.py"]
