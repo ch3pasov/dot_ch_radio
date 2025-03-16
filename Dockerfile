@@ -13,6 +13,9 @@ RUN apk update && apk add --no-cache \
     make \
     openssl-dev
 
+RUN ln -s /usr/bin/cmake /usr/local/bin/cmake
+
+
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 
