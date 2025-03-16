@@ -6,12 +6,14 @@ RUN apk update && apk add --no-cache \
     bash \
     gcc \
     g++ \
-    py3-cmake \
+    cmake \
     ffmpeg \
     musl-dev \
     libffi-dev \
     make \
     openssl-dev
+
+RUN which cmake
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
