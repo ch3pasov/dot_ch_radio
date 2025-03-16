@@ -6,7 +6,7 @@ RUN apk update && apk add --no-cache \
     gcc \
     # g++ \
     # cmake \
-    ffmpeg \
+    ffmpeg
     # musl-dev \
     # libffi-dev
 
