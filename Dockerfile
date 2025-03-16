@@ -1,7 +1,7 @@
 FROM --platform=linux/x86_64 python:3.10-alpine
 
-# Устанавливаем необходимые пакеты, включая cmake и bash
-RUN apk update && apk add --no-cache gcc libffi-dev bash cmake
+# Устанавливаем необходимые пакеты, включая bash, gcc, libffi и build-base для компиляции
+RUN apk update && apk add --no-cache gcc libffi-dev bash cmake build-base
 
 # Отключаем создание .pyc файлов и буферизацию вывода
 ENV PYTHONDONTWRITEBYTECODE=1
