@@ -157,9 +157,11 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
 
 
 async def answer_rus_to_katakana_common(client, message, message_with_content):
-    buttons = [[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="rus_to_katakana ")]]
-    if message.chat.type != pyrogram.enums.ChatType.PRIVATE:
-        buttons.append([InlineKeyboardButton(text="🤖 К роботу", url=f"https://t.me/{bot_username}?start=rus_to_katakana")])
+    is_private = (message.chat.type == pyrogram.enums.ChatType.PRIVATE)
+    if is_private:
+        buttons = [[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="rus_to_katakana ")]]
+    else:
+        buttons = [[InlineKeyboardButton(text="🤖 К роботу", url=f"https://t.me/{bot_username}?start=rus_to_katakana")]]
     relpy_markup = InlineKeyboardMarkup(buttons)
 
     text = message_with_content.text.removeprefix(f'@{bot_username}').removeprefix(' rus_to_katakana').lstrip(' ').lower()
