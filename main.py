@@ -162,7 +162,7 @@ async def answer_rus_to_katakana_common(client, message, message_with_content):
         buttons.append([InlineKeyboardButton(text="🤖 К роботу", url=f"https://t.me/{bot_username}?start=rus_to_katakana")])
     relpy_markup = InlineKeyboardMarkup(buttons)
 
-    text = message_with_content.text.removeprefix(f'@{bot_username} rus_to_katakana').lstrip(' ').lower()
+    text = message_with_content.text.removeprefix(f'@{bot_username}').removeprefix(' rus_to_katakana').lstrip(' ').lower()
     translate_dict = await rus_to_katakana(text)
     message_text = f"<i>{translate_dict['racism']}</i>\n<code>{translate_dict['katakana']}</code>"
 
