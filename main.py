@@ -156,29 +156,32 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
         await callback_query.answer(answer)
 
 
-# rus_to_katakana
-@app_robot.on_message(
-    ~pyrogram.filters.channel
-    & pyrogram.filters.regex(f'^@{bot_username} rus_to_katakana')
-    & pyrogram.filters.incoming
-)
-async def answer_rus_to_katakana(client, message):
+async def answer_rus_to_katakana_common(client, message, message_with_content):
     buttons = [[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="rus_to_katakana ")]]
     if message.chat.type != pyrogram.enums.ChatType.PRIVATE:
         buttons.append([InlineKeyboardButton(text="🤖 К роботу", url=f"https://t.me/{bot_username}?start=rus_to_katakana")])
     relpy_markup = InlineKeyboardMarkup(buttons)
-    text = message.text.split(f'@{bot_username} rus_to_katakana')[1].lstrip(' ').lower()
-    if text == "":
-        message_text = "Пустой текст! Нечего переводить."
-    else:
-        translate_dict = await rus_to_katakana(text)
-        message_text = f"<i>{translate_dict['racism']}</i>\n<code>{translate_dict['katakana']}</code>"
-    print(message_text)
+
+    text = message_with_content.text.removeprefix(f'@{bot_username} rus_to_katakana').lstrip(' ').lower()
+    translate_dict = await rus_to_katakana(text)
+    message_text = f"<i>{translate_dict['racism']}</i>\n<code>{translate_dict['katakana']}</code>"
+
+    # print(message_text)
     await message.reply_text(
         message_text,
         quote=True,
         reply_markup=relpy_markup
     )
+
+
+# rus_to_katakana by command
+@app_robot.on_message(
+    pyrogram.filters.regex(f'^@{bot_username} rus_to_katakana')
+    & ~pyrogram.filters.channel
+    & pyrogram.filters.incoming
+)
+async def answer_rus_to_katakana(client, message):
+    return await answer_rus_to_katakana_common(client, message, message)
 
 
 # поиск в розыске
@@ -191,22 +194,8 @@ async def answer_wanted_search(client, message):
     await open_common_hashdict_create("search_wanted", message.chat.id)
 
 
-# invert_picture
-@app_robot.on_message(
-    ~pyrogram.filters.channel
-    & pyrogram.filters.regex(f'^@{bot_username}')
-    & pyrogram.filters.incoming
-)
-async def answer_invert_picture(client, message):
+async def answer_invert_picture_common(client, message, message_with_content):
     is_private = (message.chat.type == pyrogram.enums.ChatType.PRIVATE)
-
-    if message.photo:
-        message_with_photo = message
-    elif message.reply_to_message and message.reply_to_message.photo:
-        message_with_photo = message.reply_to_message
-    else:
-        return
-
     if is_private:
         buttons = [[InlineKeyboardButton(text="🔘 Инвертировать картинку", switch_inline_query_current_chat="invert_picture (приложи фотографию к этому сообщению и отправляй)")]]
     else:
@@ -216,13 +205,42 @@ async def answer_invert_picture(client, message):
     reply_message = await message.reply_text("🙏 Получил запрос, ждите (долго).")
     await client.send_chat_action(message.chat.id, ChatAction.TYPING)
     # Скачиваем фото в оперативную память
-    photo = await message_with_photo.download(in_memory=True)
+    photo = await message_with_content.download(in_memory=True)
     await reply_message.edit_text("🌚 Скачал фотку, ждите (тоже долго).")
     await client.send_chat_action(message.chat.id, ChatAction.UPLOAD_PHOTO)
     processed_photo_bytes = await invert_picture(photo)
     # Отправляем обработанное фото
     await message.reply_photo(processed_photo_bytes, quote=True, reply_markup=relpy_markup)
     await reply_message.delete()
+
+
+# invert_picture by command
+@app_robot.on_message(
+    pyrogram.filters.regex(f'^@{bot_username} invert_picture')
+    & pyrogram.filters.photo
+    & ~pyrogram.filters.channel
+    & pyrogram.filters.incoming
+)
+async def answer_invert_picture(client, message):
+    await answer_invert_picture_common(client, message, message)
+
+
+# mention
+@app_robot.on_message(
+    ~pyrogram.filters.channel
+    & pyrogram.filters.regex(f'^@{bot_username}')
+    & pyrogram.filters.incoming
+)
+async def answer_invert_mention(client, message):
+    if message.photo:
+        return await answer_invert_picture(client, message, message)
+    if message.reply_to_message and message.reply_to_message.photo:
+        return await answer_invert_picture(client, message, message.reply_to_message)
+    if message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
+        return await answer_rus_to_katakana_common(client, message, message)
+    if message.reply_to_message and message.reply_to_message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
+        return await answer_rus_to_katakana_common(client, message, message.reply_to_message)
+    await message.reply_text("🤷‍♂️ Не понимаю")
 
 
 # геопин
