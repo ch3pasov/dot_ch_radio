@@ -243,6 +243,8 @@ async def answer_invert_mention(client, message):
     if message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
         return await answer_rus_to_katakana_common(client, message, message)
     if message.reply_to_message and message.reply_to_message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
+        if message.reply_to_message.from_user.username == bot_username:
+            return await message.reply_text("💩")
         return await answer_rus_to_katakana_common(client, message, message.reply_to_message)
     await message.reply_text("🤷‍♂️ Не понимаю")
 
