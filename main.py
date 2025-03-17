@@ -233,9 +233,9 @@ async def answer_invert_picture(client, message):
 )
 async def answer_invert_mention(client, message):
     if message.photo:
-        return await answer_invert_picture(client, message, message)
+        return await answer_invert_picture_common(client, message, message)
     if message.reply_to_message and message.reply_to_message.photo:
-        return await answer_invert_picture(client, message, message.reply_to_message)
+        return await answer_invert_picture_common(client, message, message.reply_to_message)
     if message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
         return await answer_rus_to_katakana_common(client, message, message)
     if message.reply_to_message and message.reply_to_message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
