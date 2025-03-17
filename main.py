@@ -194,20 +194,29 @@ async def answer_wanted_search(client, message):
 # invert_picture
 @app_robot.on_message(
     ~pyrogram.filters.channel
-    & pyrogram.filters.photo
+    & pyrogram.filters.regex(f'^@{bot_username}')
     & pyrogram.filters.incoming
-    # & pyrogram.filters.regex(f'^@{bot_username} invert_picture')
 )
 async def answer_invert_picture(client, message):
-    buttons = [[InlineKeyboardButton(text="🔘 Инвертировать картинку", switch_inline_query_current_chat="invert_picture (приложи фотографию к этому сообщению и отправляй)")]]
-    if message.chat.type != pyrogram.enums.ChatType.PRIVATE:
-        buttons.append([InlineKeyboardButton(text="🤖 К роботу", url=f"https://t.me/{bot_username}?start=invert_picture")])
+    is_private = (message.chat.type == pyrogram.enums.ChatType.PRIVATE)
+
+    if message.photo:
+        message_with_photo = message
+    elif message.reply_to_message and message.reply_to_message.photo:
+        message_with_photo = message.reply_to_message
+    else:
+        return
+
+    if is_private:
+        buttons = [[InlineKeyboardButton(text="🔘 Инвертировать картинку", switch_inline_query_current_chat="invert_picture (приложи фотографию к этому сообщению и отправляй)")]]
+    else:
+        buttons = [[InlineKeyboardButton(text="🤖 К роботу", url=f"https://t.me/{bot_username}?start=invert_picture")]]
     relpy_markup = InlineKeyboardMarkup(buttons)
 
     reply_message = await message.reply_text("🙏 Получил запрос, ждите (долго).")
     await client.send_chat_action(message.chat.id, ChatAction.TYPING)
     # Скачиваем фото в оперативную память
-    photo = await message.download(in_memory=True)
+    photo = await message_with_photo.download(in_memory=True)
     await reply_message.edit_text("🌚 Скачал фотку, ждите (тоже долго).")
     await client.send_chat_action(message.chat.id, ChatAction.UPLOAD_PHOTO)
     processed_photo_bytes = await invert_picture(photo)
