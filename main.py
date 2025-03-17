@@ -157,7 +157,11 @@ async def answer_common_hashdict(client, callback_query, **kwargs):
 
 
 # rus_to_katakana
-@app_robot.on_message(pyrogram.filters.regex(f'^@{bot_username} rus_to_katakana') & pyrogram.filters.incoming)
+@app_robot.on_message(
+    ~pyrogram.filters.channel
+    & pyrogram.filters.regex(f'^@{bot_username} rus_to_katakana')
+    & pyrogram.filters.incoming
+)
 async def answer_rus_to_katakana(client, message):
     buttons = [[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="rus_to_katakana ")]]
     if message.chat.type != pyrogram.enums.ChatType.PRIVATE:
@@ -189,7 +193,9 @@ async def answer_wanted_search(client, message):
 
 # invert_picture
 @app_robot.on_message(
-    pyrogram.filters.photo & pyrogram.filters.incoming
+    ~pyrogram.filters.channel
+    & pyrogram.filters.photo
+    & pyrogram.filters.incoming
     # & pyrogram.filters.regex(f'^@{bot_username} invert_picture')
 )
 async def answer_invert_picture(client, message):
