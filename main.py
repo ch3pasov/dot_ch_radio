@@ -234,6 +234,8 @@ async def answer_invert_picture(client, message):
     & pyrogram.filters.incoming
 )
 async def answer_invert_mention(client, message):
+    if message.sender_chat.type == pyrogram.enums.ChatType.CHANNEL:
+        return await message.reply_text("💩")
     if message.photo:
         return await answer_invert_picture_common(client, message, message)
     if message.reply_to_message and message.reply_to_message.photo:
