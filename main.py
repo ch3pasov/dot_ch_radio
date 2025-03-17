@@ -214,9 +214,9 @@ async def answer_invert_picture_common(client, message, message_with_content):
     await reply_message.delete()
 
 
-# invert_picture by command
+# invert_picture by command or directly in chat
 @app_robot.on_message(
-    pyrogram.filters.regex(f'^@{bot_username} invert_picture')
+    (pyrogram.filters.regex(f'^@{bot_username} invert_picture') | pyrogram.filters.private)
     & pyrogram.filters.photo
     & ~pyrogram.filters.channel
     & pyrogram.filters.incoming
