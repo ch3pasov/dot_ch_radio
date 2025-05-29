@@ -196,6 +196,31 @@ async def answer_wanted_search(client, message):
     await open_common_hashdict_create("search_wanted", message.chat.id)
 
 
+all_answers = [
+    # yes
+    "Насколько я вижу да", "Это бесспорно", "Да это так", "Мои источники говорят да", "ДА!",
+    "Определённо да", "Перспектива хорошая", "Знаки указывают что да", "Без сомнения",
+    "Ты можешь надеяться на это", "Наиболее вероятно",
+    # no
+    "Не рассчитывай на это", "Я так не думаю", "Мои источники говорят нет", "НЕТ!",
+    "Перспектива не очень хорошая", "Знаки указывают что нет", "Извини, нет",
+    "Я сомневаюсь насчёт этого", "Очень сомневаюсь",
+    # idk
+    "Спроси позже", "Лучше сейчас не говорить тебе", "Не могу сейчас сказать",
+    "Соберись с мыслями и спроси снова", "Будущее туманно спроси позже", "Может быть"
+]
+
+
+async def answer_gork(client, message):
+    message_text = random.choice(all_answers)
+
+    await message.reply_text(
+        message_text,
+        quote=True,
+        # reply_markup=relpy_markup
+    )
+
+
 async def answer_invert_picture_common(client, message, message_with_content):
     is_private = (message.chat.type == pyrogram.enums.ChatType.PRIVATE)
     if is_private:
@@ -236,13 +261,20 @@ async def answer_invert_picture(client, message):
 async def answer_invert_mention(client, message):
     if message.sender_chat and message.sender_chat.type == pyrogram.enums.ChatType.CHANNEL:
         return await message.reply_text("💩")
+    if message.reply_to_message and message.reply_to_message.sender_chat and message.text.removeprefix(f'@{bot_username}').lstrip(' ').lower().startswith("is this true"):
+        # ответ на "is this true"
+        return await answer_gork(client, message)
     if message.photo:
+        # инвертировать фотку
         return await answer_invert_picture_common(client, message, message)
     if message.reply_to_message and message.reply_to_message.photo:
+        # инвертировать фотку собеседника
         return await answer_invert_picture_common(client, message, message.reply_to_message)
     if message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
+        # перевести текст в катакану
         return await answer_rus_to_katakana_common(client, message, message)
     if message.reply_to_message and message.reply_to_message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
+        # перевести текст собеседника в катакану
         if message.reply_to_message.from_user.username == bot_username:
             return await message.reply_text("😝")
         return await answer_rus_to_katakana_common(client, message, message.reply_to_message)
