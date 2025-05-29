@@ -2,7 +2,7 @@ import pyrogram
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums.chat_action import ChatAction
 import asyncio
-from random import random
+import random
 from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
 from volume.content import startup_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
@@ -189,9 +189,9 @@ async def answer_rus_to_katakana(client, message):
 # поиск в розыске
 @app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.regex(f'^@{bot_username} search_wanted') & pyrogram.filters.private & pyrogram.filters.incoming)
 async def answer_wanted_search(client, message):
-    await asyncio.sleep(1+random())
+    await asyncio.sleep(1+random.random())
     await client.send_chat_action(message.chat.id, ChatAction.TYPING)
-    await asyncio.sleep(2+6*random())
+    await asyncio.sleep(2+6*random.random())
     await client.send_message(message.chat.id, wanted_not_found)
     await open_common_hashdict_create("search_wanted", message.chat.id)
 
@@ -213,8 +213,8 @@ all_answers = [
 
 async def answer_gork(client, message):
     message_text = random.choice(all_answers)
-
-    await message.reply_text(
+    print(message_text)
+    return await message.reply_text(
         message_text,
         quote=True,
         # reply_markup=relpy_markup
