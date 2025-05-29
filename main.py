@@ -261,7 +261,7 @@ async def answer_invert_picture(client, message):
 async def answer_invert_mention(client, message):
     if message.sender_chat and message.sender_chat.type == pyrogram.enums.ChatType.CHANNEL:
         return await message.reply_text("💩")
-    if message.reply_to_message and message.reply_to_message.sender_chat and message.text.removeprefix(f'@{bot_username}').lstrip(' ').lower().startswith("is this true"):
+    if message.reply_to_message and message.text.removeprefix(f'@{bot_username}').lstrip(' ').lower().startswith("is this true"):
         # ответ на "is this true"
         return await answer_gork(client, message)
     if message.photo:
