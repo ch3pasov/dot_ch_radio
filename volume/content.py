@@ -16,6 +16,10 @@ common_tree = {
                     "name": "🎧 LoFi Girl",
                     "radio_url": "https://live.lofiradio.ru/lofi_mp3_128"
                 },
+                "radio_jazz": {
+                    "name": "🎷 Радио Jazz Москва 89.1 FM",
+                    "radio_url": "https://nashe1.hostingradio.ru/jazz-256",
+                },
                 "gta": {
                     "name": "🚗 GTA радио",
                     "description": "🎮 Откройте для себя музыкальный мир серии игр GTA.\nPowered by https://gtaradio.net",
