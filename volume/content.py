@@ -19,6 +19,7 @@ common_tree = {
                 "gta": {
                     "name": "🚗 GTA радио",
                     "description": "🎮 Откройте для себя музыкальный мир серии игр GTA.\nPowered by https://gtaradio.net",
+                    "beta_access": 1,
                     "children": {
                         "sa": {
                             "name": "🌆 GTA San Andreas",
