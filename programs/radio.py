@@ -8,7 +8,7 @@ if not disable_radio:
 
     from global_vars import app_robot, app_dj, print
 
-    import asyncio
+    # import asyncio
     import pyrogram
     import pytgcalls
     from pytgcalls import filters as pytgcalls_filters

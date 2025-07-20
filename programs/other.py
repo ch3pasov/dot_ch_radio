@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 import io
 from typing import Tuple
+import re
 
 
 async def aiohttp_get(url, type='text'):
@@ -23,8 +24,11 @@ async def aiohttp_get(url, type='text'):
 
 async def get_bashkir_haiku():
     return "\n".join(
-        (await aiohttp_get('http://nevmenandr.net/cgi-bin/haiku.html', 'text')).split("\n")[119:122]
-    ).replace("</span></td></tr>", "").replace('<tr><td></td><td><span style="color: #363636; font: normal 1.8em/1.36 Georgia">', "")
+        re.findall(
+            r'<span[^>]*>\s*([^<]+?)\s*</span>',
+            (await aiohttp_get('http://nevmenandr.net/cgi-bin/haiku.html', 'text')).split("<table>\n")[1].split("\n</table>")[0],
+        )
+    )
 
 
 async def get_weather(location):
