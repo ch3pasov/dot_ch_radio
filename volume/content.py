@@ -23,7 +23,6 @@ common_tree = {
                 "gta": {
                     "name": "🚗 GTA радио",
                     "description": "🎮 Откройте для себя музыкальный мир серии игр GTA.\nPowered by https://gtaradio.net",
-                    "beta_access": 1,
                     "children": {
                         "sa": {
                             "name": "🌆 GTA San Andreas",
@@ -31,47 +30,47 @@ common_tree = {
                             "children": {
                                 "bounce-fm": {
                                     "name": "🎶 Bounce FM",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/bounce-fm"
+                                    "radio_url": "https://audio.gtaradio.net/sa/bounce-fm"
                                 },
                                 "csr": {
                                     "name": "🎵 CSR 103.9",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/csr"
+                                    "radio_url": "https://audio.gtaradio.net/sa/csr"
                                 },
                                 "k-dst": {
                                     "name": "🤠 K-DST",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/k-dst"
+                                    "radio_url": "https://audio.gtaradio.net/sa/k-dst"
                                 },
                                 "k-jah": {
                                     "name": "🔥 K-JAH West",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/k-jah"
+                                    "radio_url": "https://audio.gtaradio.net/sa/k-jah"
                                 },
                                 "k-rose": {
                                     "name": "🌹 K-Rose",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/k-rose"
+                                    "radio_url": "https://audio.gtaradio.net/sa/k-rose"
                                 },
                                 "master-sounds": {
                                     "name": "💿 Master Sounds 98.3",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/master-sounds"
+                                    "radio_url": "https://audio.gtaradio.net/sa/master-sounds"
                                 },
                                 "playback-fm": {
                                     "name": "⏪ Playback FM",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/playback-fm"
+                                    "radio_url": "https://audio.gtaradio.net/sa/playback-fm"
                                 },
                                 "radio-los-santos": {
                                     "name": "🏙️ Radio Los Santos",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/radio-los-santos"
+                                    "radio_url": "https://audio.gtaradio.net/sa/radio-los-santos"
                                 },
                                 "radio-x": {
                                     "name": "🤘 Radio X",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/radio-x"
+                                    "radio_url": "https://audio.gtaradio.net/sa/radio-x"
                                 },
                                 "sfur": {
                                     "name": "🎧 SF-UR",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/sfur"
+                                    "radio_url": "https://audio.gtaradio.net/sa/sfur"
                                 },
                                 "wctr": {
                                     "name": "📢 WCTR",
-                                    "radio_url": "https://play.smolyakov.dev/stream/sa/wctr"
+                                    "radio_url": "https://audio.gtaradio.net/sa/wctr"
                                 }
                             }
                         },
@@ -81,39 +80,39 @@ common_tree = {
                             "children": {
                                 "emotion": {
                                     "name": "💖 Emotion 98.3",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/emotion"
+                                    "radio_url": "https://audio.gtaradio.net/vc/emotion"
                                 },
                                 "espant": {
                                     "name": "🎷 Espantoso",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/espant"
+                                    "radio_url": "https://audio.gtaradio.net/vc/espant"
                                 },
                                 "fever": {
                                     "name": "🔥 Fever 105",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/fever"
+                                    "radio_url": "https://audio.gtaradio.net/vc/fever"
                                 },
                                 "flash": {
                                     "name": "⚡ Flash FM",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/flash"
+                                    "radio_url": "https://audio.gtaradio.net/vc/flash"
                                 },
                                 "kchat": {
                                     "name": "💬 K-Chat",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/kchat"
+                                    "radio_url": "https://audio.gtaradio.net/vc/kchat"
                                 },
                                 "vcpr": {
                                     "name": "🎙️ VCPR",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/vcpr"
+                                    "radio_url": "https://audio.gtaradio.net/vc/vcpr"
                                 },
                                 "vrock": {
                                     "name": "🎸 V-Rock",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/vrock"
+                                    "radio_url": "https://audio.gtaradio.net/vc/vrock"
                                 },
                                 "wave": {
                                     "name": "🌊 Wave 103",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/wave"
+                                    "radio_url": "https://audio.gtaradio.net/vc/wave"
                                 },
                                 "wild": {
                                     "name": "🐅 Wildstyle",
-                                    "radio_url": "https://play.smolyakov.dev/stream/vc/wild"
+                                    "radio_url": "https://audio.gtaradio.net/vc/wild"
                                 }
                             }
                         },
@@ -123,39 +122,39 @@ common_tree = {
                             "children": {
                                 "head": {
                                     "name": "🎧 Head Radio",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/head"
+                                    "radio_url": "https://audio.gtaradio.net/3/head"
                                 },
                                 "class": {
                                     "name": "🎻 Double Clef FM",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/class"
+                                    "radio_url": "https://audio.gtaradio.net/3/class"
                                 },
                                 "kjah": {
                                     "name": "🌴 K-JAH",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/kjah"
+                                    "radio_url": "https://audio.gtaradio.net/3/kjah"
                                 },
                                 "rise": {
                                     "name": "🔝 Rise FM",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/rise"
+                                    "radio_url": "https://audio.gtaradio.net/3/rise"
                                 },
                                 "lips": {
                                     "name": "💋 Lips 106",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/lips"
+                                    "radio_url": "https://audio.gtaradio.net/3/lips"
                                 },
                                 "game": {
                                     "name": "🕹️ Game FM",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/game"
+                                    "radio_url": "https://audio.gtaradio.net/3/game"
                                 },
                                 "msx": {
                                     "name": "🎚️ MSX FM",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/msx"
+                                    "radio_url": "https://audio.gtaradio.net/3/msx"
                                 },
                                 "flash": {
                                     "name": "⚡ Flashback 95.6",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/flash"
+                                    "radio_url": "https://audio.gtaradio.net/3/flash"
                                 },
                                 "chat": {
                                     "name": "💬 Chatterbox FM",
-                                    "radio_url": "https://play.smolyakov.dev/stream/3/chat"
+                                    "radio_url": "https://audio.gtaradio.net/3/chat"
                                 }
                             }
                         }
@@ -275,7 +274,6 @@ common_tree = {
             "name": "🎲 Игра Василия™️ (post-wallet)",
             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png)\nВасилий предлагает сыграть в следующую ||уже бесплатную|| игру:\n- вы пишите /start_free_vasilii_game.\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 1000 вымышленных тугриков\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришли сюда /start_free_vasilii_game. Пост-валлет версия, без крипты и кредитов 😎.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).",
             "alias": "vasilii_game",
-            "beta_access": 0,
         },
         "web_games": {
             "name": "🎮 Веб-игры",
@@ -353,37 +351,31 @@ common_tree = {
                                     "name": "📆 Add LeetCode daily problem solving event.shortcut",
                                     "description": "📆 **[Add LeetCode daily problem solving event.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Add%20LeetCode%20daily%20problem%20solving%20event.shortcut)**\n\nДобавляет событие в календарь на сегодняшнюю задачу в LeetCode.",
                                     "hide_name": 1,
-                                    "beta_access": 0
                                 },
                                 "run_ysh_scenario": {
                                     "name": "🏡 Run YSH Scenario.shortcut",
                                     "description": "🏡 **[Run YSH Scenario.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Run%20YSH%20Scenario.shortcut)**\n\nЗапускает сценарий из Приложения Умного Дома Яндекса. Работает только на Mac.",
                                     "hide_name": 1,
-                                    "beta_access": 0
                                 },
                                 "minecraft_server_online": {
                                     "name": "🐷 Minecraft server online.shortcut",
                                     "description": "🐷 **[Minecraft server online.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Minecraft%20server%20online.shortcut)**\n\nПоказывает онлайн майнкрафт сервера и (при возможности) никнеймы игроков.",
                                     "hide_name": 1,
-                                    "beta_access": 0,
                                 },
                                 "hotspot_qr": {
                                     "name": "📶 Hotspot QR.shortcut",
                                     "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**\n\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
                                     "hide_name": 1,
-                                    "beta_access": 0,
                                 },
                                 "vasilii_game": {
                                     "name": "🎲 Vasilii Game.shortcut",
                                     "description": "🎲 **[Vasilii Game.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Vasilii%20Game.shortcut)**\n\nКлон хеш-игры Василия (@vas100bot), написанный в Shortcuts.",
                                     "hide_name": 1,
-                                    "beta_access": 0,
                                 },
                                 "calculate_text": {
                                     "name": "🧮 Calculate text.shortcut",
                                     "description": "🧮 **[Calculate text.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Calculate%20text.shortcut)**\n\nВычисляет выражение из текстовой строки. Работает круче стандартного калькулятора, например, подсчитает sin(20)^2+cos(20)^2.",
                                     "hide_name": 1,
-                                    "beta_access": 0,
                                 }
                             }
                         },
