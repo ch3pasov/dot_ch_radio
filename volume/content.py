@@ -379,6 +379,16 @@ common_tree = {
                                 }
                             }
                         },
+                        "emojis_and_stickers": {
+                            "name": "😊 Папка для стикерпаков и эмодзипаков",
+                            "alias": "emojis_and_stickers",
+                            "children": {
+                                "apple_icons_emojis": {
+                                    "name": "Эмодзипак с иконками приложений  Apple",
+                                    "url": "https://t.me/addemoji/AppleIconsIOS",
+                                },
+                            }
+                        },
                         "other": {
                             "name": "Другое",
                             "children": {
