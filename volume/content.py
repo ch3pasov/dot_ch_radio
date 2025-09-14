@@ -381,7 +381,7 @@ common_tree = {
                         },
                         "emojis_and_stickers": {
                             "name": "😊 Папка для стикерпаков и эмодзипаков",
-                            "alias": "emojis_and_stickers",
+                            "alias"
                             "children": {
                                 "apple_icons_emojis": {
                                     "name": "Эмодзипак с иконками приложений  Apple",
@@ -425,6 +425,29 @@ common_tree = {
                             }
                         }
                     },
+                },
+                "about_me": {
+                    "name": "Ссылки на меня",
+                    "description": "👤 Здесь вы найдете ссылки на меня.",
+                    "alias": "about_me",
+                    "children": {
+                        "telegram_channel": {
+                            "name": "Telegram-канал",
+                            "url": "https://t.me/ch_an"
+                        },
+                        "telegram_channel_group": {
+                            "name": "Группа канала",
+                            "url": "https://t.me/wallet_chat"
+                        },
+                        "telegram_bot": {
+                            "name": "Telegram-бот (этот самый)",
+                            "url": "https://t.me/dot_ch_bot"
+                        },
+                        "website": {
+                            "name": "Веб-сайт",
+                            "url": "https://anatoliy.ch/"
+                        }
+                    }
                 },
                 "secret_place": {
                     "name": "🔒 NDA папка",
