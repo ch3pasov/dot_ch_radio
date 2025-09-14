@@ -427,24 +427,24 @@ common_tree = {
                     },
                 },
                 "about_me": {
-                    "name": "Ссылки на меня",
+                    "name": "🔗 Ссылки на меня",
                     "description": "👤 Здесь вы найдете ссылки на меня.",
                     "alias": "about_me",
                     "children": {
                         "telegram_channel": {
-                            "name": "Telegram-канал",
+                            "name": "📢 Telegram-канал",
                             "url": "https://t.me/ch_an"
                         },
                         "telegram_channel_group": {
-                            "name": "Группа канала",
+                            "name": "💬 Группа канала",
                             "url": "https://t.me/wallet_chat"
                         },
                         "telegram_bot": {
-                            "name": "Telegram-бот (этот самый)",
+                            "name": "🤖 Telegram-бот (этот самый)",
                             "url": "https://t.me/dot_ch_bot"
                         },
                         "website": {
-                            "name": "Веб-сайт",
+                            "name": "😎 Веб-сайт",
                             "url": "https://anatoliy.ch/"
                         }
                     }
