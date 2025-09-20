@@ -384,11 +384,11 @@ common_tree = {
                             "alias": "emojis_and_stickers",
                             "children": {
                                 "new_apple_icons_emojis": {
-                                    "name": "Новые иконками приложений  Apple",
+                                    "name": "🍎🫙 Liquid Glass",
                                     "url": "https://t.me/addemoji/AppleAppsIcons",
                                 },
                                 "old_apple_icons_emojis": {
-                                    "name": "Старые иконки приложений  Apple",
+                                    "name": "🍏 Старые иконки приложений  Apple",
                                     "url": "https://t.me/addemoji/AppleIconsIOS",
                                 },
                             }
