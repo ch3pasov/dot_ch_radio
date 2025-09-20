@@ -381,7 +381,7 @@ common_tree = {
                         },
                         "emojis_and_stickers": {
                             "name": "😊 Папка для стикерпаков и эмодзипаков",
-                            "alias"
+                            "alias": "emojis_and_stickers",
                             "children": {
                                 "new_apple_icons_emojis": {
                                     "name": "Новые иконками приложений  Apple",
