@@ -383,8 +383,12 @@ common_tree = {
                             "name": "😊 Папка для стикерпаков и эмодзипаков",
                             "alias"
                             "children": {
-                                "apple_icons_emojis": {
-                                    "name": "Эмодзипак с иконками приложений  Apple",
+                                "new_apple_icons_emojis": {
+                                    "name": "Новые иконками приложений  Apple",
+                                    "url": "https://t.me/addemoji/AppleAppsIcons",
+                                },
+                                "old_apple_icons_emojis": {
+                                    "name": "Старые иконки приложений  Apple",
                                     "url": "https://t.me/addemoji/AppleIconsIOS",
                                 },
                             }
