@@ -376,7 +376,12 @@ common_tree = {
                                     "name": "🧮 Calculate text.shortcut",
                                     "description": "🧮 **[Calculate text.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Calculate%20text.shortcut)**\n\nВычисляет выражение из текстовой строки. Работает круче стандартного калькулятора, например, подсчитает sin(20)^2+cos(20)^2.",
                                     "hide_name": 1,
-                                }
+                                },
+                                "szhat_photo": {
+                                    "name": "🗜 Сжать Фото.shortcut",
+                                    "description": "🗜 **[Сжать Фото.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/%D0%A1%D0%B6%D0%B0%D1%82%D1%8C%20%D0%A4%D0%BE%D1%82%D0%BE.shortcut)**\n\nКонвертирует множество фото по фильтру в HEIF, сохраняет оригинальные метаданные и время создания).",
+                                    "hide_name": 1,
+                                },
                             }
                         },
                         "emojis_and_stickers": {
