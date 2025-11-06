@@ -310,11 +310,6 @@ async def answer_tirkic_name_game(client, message):
             [
                 [
                     InlineKeyboardButton(
-                        text="⬅️ Назад",
-                        callback_data="vasilii_game"
-                    )
-                ], [
-                    InlineKeyboardButton(
                         text="🔤 Поделиться именем",
                         url=turkic_name_out["share_url"]
                     )
@@ -322,7 +317,7 @@ async def answer_tirkic_name_game(client, message):
             ]
         )
     )
-    # await open_common_hashdict_create("vasilii_game", message.chat.id)
+    open_common_hashdict_create("turkic_names", message.chat.id)
 
 
 # игра Василия
@@ -364,7 +359,6 @@ async def answer_vasilii_game(client, message):
             ]
         )
     )
-    # await open_common_hashdict_create("vasilii_game", message.chat.id)
 
 
 @app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private & pyrogram.filters.incoming)
