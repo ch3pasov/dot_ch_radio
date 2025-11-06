@@ -316,7 +316,7 @@ async def answer_tirkic_name_game(client, message):
                 ], [
                     InlineKeyboardButton(
                         text="🔤 Поделиться именем",
-                        url=f"https://t.me/share/url?url={turkic_name_out['share_text']}"
+                        url=turkic_name_out["share_url"]
                     )
                 ]
             ]

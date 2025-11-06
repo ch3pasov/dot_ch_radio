@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 import io
 from typing import Tuple, Dict, Any
+from urllib.parse import quote
 import re
 
 
@@ -345,7 +346,8 @@ def get_turkic_name(roll_1: int, roll_2: int, roll_slot: int) -> str:
     share_text = (
         f"У меня выпало тюркское имя {name} ({roll_1_emoji}+{roll_2_emoji}+{roll_slot_out}).\nПопробуй: t.me/dot_ch_bot?"
     )
+    share_url = quote(f"https://t.me/share/url?url={share_text}")
     return {
         "message_text": message_text,
-        "share_text": share_text
+        "share_url": share_url
     }
