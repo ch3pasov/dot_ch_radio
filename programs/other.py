@@ -3,7 +3,7 @@ import aiohttp
 from PIL import Image
 import numpy as np
 import io
-from typing import Tuple
+from typing import Tuple, Dict, Any
 import re
 
 
@@ -22,11 +22,22 @@ async def aiohttp_get(url, type='text'):
                     raise ValueError("Unknown type")
 
 
+async def aiohttp_get_text(url) -> str:
+    return await aiohttp_get(url, 'text')
+
+
+async def aiohttp_get_json(url) -> Dict[str, Any]:
+    result = await aiohttp_get(url, 'json')
+    if not isinstance(result, dict):
+        raise TypeError(f"Expected a dict, got {type(result).__name__}")
+    return result
+
+
 async def get_bashkir_haiku():
     return "\n".join(
         re.findall(
             r'<span[^>]*>\s*([^<]+?)\s*</span>',
-            (await aiohttp_get('http://nevmenandr.net/cgi-bin/haiku.html', 'text')).split("<table>\n")[1].split("\n</table>")[0],
+            (await aiohttp_get_text('http://nevmenandr.net/cgi-bin/haiku.html')).split("<table>\n")[1].split("\n</table>")[0],
         )
     )
 
@@ -34,7 +45,7 @@ async def get_bashkir_haiku():
 async def get_weather(location):
     lat = location.latitude
     lon = location.longitude
-    weather_data = await aiohttp_get(f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=ru&appid=OPENWEATHER_API_KEY_REMOVED', 'json')
+    weather_data: Dict[str, Any] = await aiohttp_get_json(f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=ru&appid=OPENWEATHER_API_KEY_REMOVED')
 
     temperature = weather_data['main']['temp']
     temperature_feels = weather_data['main']['feels_like']
@@ -64,7 +75,7 @@ status_offline = """**Оффлайн**"""
 
 
 async def get_minecraft_server_info():
-    response = await aiohttp_get(f'https://api.mcsrvstat.us/2/{server_url}', 'json')
+    response = await aiohttp_get_json(f'https://api.mcsrvstat.us/2/{server_url}')
     if not response['online']:
         status = status_offline
     else:

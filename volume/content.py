@@ -275,6 +275,41 @@ common_tree = {
             "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png)\nВасилий предлагает сыграть в следующую ||уже бесплатную|| игру:\n- вы пишите /start_free_vasilii_game.\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 1000 вымышленных тугриков\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришли сюда /start_free_vasilii_game. Пост-валлет версия, без крипты и кредитов 😎.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).",
             "alias": "vasilii_game",
         },
+        "foreign_languages": {
+            "name": "🌐 Что-то на иностранном",
+            "children": {
+                "katakana_racism": {
+                    "name": "🇯🇵 Руссуко-Японсукий пэрэводутику (простите)",
+                    "description": "Переводит любой текст с русского на японскую транслитерацию через катакану. Перевод генерируется [вот тут](https://nippon.temerov.org/rus_kana.php). Ещё раз, простите.[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg)",
+                    "alias": "rus_to_katakana",
+                    "children": {
+                        "rus_to_katakana_command": {
+                            "name": "🔡 Перевести текст",
+                            "switch_inline_query_current_chat": "rus_to_katakana ",
+                        }
+                    }
+                },
+                "bashkir_haiku": {
+                    "name": "🌸 Башкирские хокку",
+                    "description": "Хокку генерируются [вот тут](http://nevmenandr.net/cgi-bin/haiku.html).\n",
+                    "custom": "bashkir_haiku",
+                    "refresh": 1,
+                    "alias": "bashkir_haiku",
+                    "children": {
+                        "haiku_contest": {
+                            "name": "🌸 Конкурс башкирских хокку",
+                            "url": "https://bashkirhaiku.anatoliy.ch",
+                        }
+                    }
+                },
+                "turkic_names": {
+                    "name": "🪆 Тюркские имена",
+                    "description": "бебебе",
+                    "alias": "turkic_names",
+                    "beta_access": 1,
+                },
+            }
+        },
         "web_games": {
             "name": "🎮 Веб-игры",
             "description": "🕹️ Да, я научился запускать эти игры в Телеграм!",
@@ -312,30 +347,6 @@ common_tree = {
                     "name": "🌤️ Погода",
                     "description": "🌡️ Показывает погоду в указанном городе. Для получения погоды скинь гео 🌚.",
                     "alias": "weather"
-                },
-                "katakana_racism": {
-                    "name": "🇯🇵 Руссуко-Японсукий пэрэводутику (простите)",
-                    "description": "Переводит любой текст с русского на японскую транслитерацию через катакану. Перевод генерируется [вот тут](https://nippon.temerov.org/rus_kana.php). Ещё раз, простите.[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg)",
-                    "alias": "rus_to_katakana",
-                    "children": {
-                        "rus_to_katakana_command": {
-                            "name": "🔡 Перевести текст",
-                            "switch_inline_query_current_chat": "rus_to_katakana ",
-                        }
-                    }
-                },
-                "bashkir_haiku": {
-                    "name": "🌸 Башкирские хокку",
-                    "description": "Хокку генерируются [вот тут](http://nevmenandr.net/cgi-bin/haiku.html).\n",
-                    "custom": "bashkir_haiku",
-                    "refresh": 1,
-                    "alias": "bashkir_haiku",
-                    "children": {
-                        "haiku_contest": {
-                            "name": "🌸 Конкурс башкирских хокку",
-                            "url": "https://bashkirhaiku.anatoliy.ch",
-                        }
-                    }
                 },
                 "my_folder": {
                     "name": "📂 Моя папка",
