@@ -70,9 +70,9 @@ if not disable_radio:
         )
 
     @app_dj_calls.on_update(pytgcalls_filters.stream_end)
-    async def handler(client: pytgcalls.PyTgCalls, update: pytgcalls.types.Update):
+    def handler(client: pytgcalls.PyTgCalls, update: pytgcalls.types.Update):
         print("stream ended, changing to default")
-        await change_stream(
+        change_stream(
             default_url,
             "ending of last stream"
         )
