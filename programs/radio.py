@@ -71,6 +71,7 @@ if not disable_radio:
 
     @app_dj_calls.on_update(pytgcalls_filters.stream_end)
     def handler(client: pytgcalls.PyTgCalls, update: pytgcalls.types.Update):
+        # с каким-то обновлением СЛОМАНО
         print("stream ended, changing to default")
         change_stream(
             default_url,
