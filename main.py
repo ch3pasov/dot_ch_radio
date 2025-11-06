@@ -4,7 +4,7 @@ from pyrogram.enums.chat_action import ChatAction
 import asyncio
 import random
 from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
-from volume.content import startup_url, wanted_not_found
+from volume.content import default_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, leave_group_call  # , get_participants
@@ -387,7 +387,7 @@ async def test_handler(client, message):
 
 
 try:
-    asyncio.get_event_loop().run_until_complete(change_stream(startup_url, who_called=''))
+    asyncio.get_event_loop().run_until_complete(change_stream(default_url, who_called=''))
     pyrogram.idle()
 except KeyboardInterrupt:
     print('Exiting...')
