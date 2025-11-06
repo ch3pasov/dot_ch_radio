@@ -303,7 +303,7 @@ async def answer_tirkic_name_game(client, message):
     roll_slot = (await app_robot.send_dice(message.chat.id, "🎰", disable_notification=True)).dice.value - 1
     turkic_name_out = get_turkic_name(roll_1, roll_2, roll_slot)
 
-    await asyncio.sleep(5)
+    await asyncio.sleep(4)
 
     await app_robot.send_message(
         message.chat.id,
