@@ -8,7 +8,7 @@ from volume.content import startup_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import change_stream, leave_group_call  # , get_participants
-from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture
+from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
 from global_vars import app_robot, print
 
 
@@ -293,6 +293,36 @@ async def answer_location(client, message):
             raise ValueError("Unknown media type")
     await client.send_message(message.chat.id, await get_weather(location))
     await open_common_hashdict_create("weather", message.chat.id)
+
+
+# тюркское имя
+@app_robot.on_message(pyrogram.filters.command(["start_turkic_name_game"]) & pyrogram.filters.private & pyrogram.filters.incoming)
+async def answer_tirkic_name_game(client, message):
+    roll_1 = (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value
+    roll_2 = (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value
+    roll_slot = (await app_robot.send_dice(message.chat.id, "🎰", disable_notification=True)).dice.value
+    turkic_name = get_turkic_name(roll_1, roll_2, roll_slot)
+
+    await app_robot.send_message(
+        message.chat.id,
+        turkic_name,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        text="⬅️ Назад",
+                        callback_data="vasilii_game"
+                    )
+                ], [
+                    InlineKeyboardButton(
+                        text="🔤 Поделиться именем",
+                        switch_inline_query="ТЕКСТ"
+                    )
+                ]
+            ]
+        )
+    )
+    # await open_common_hashdict_create("vasilii_game", message.chat.id)
 
 
 # игра Василия

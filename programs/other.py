@@ -292,3 +292,50 @@ async def invert_picture(photo):
 
     # Обрабатываем фото (версия 2, автоматический центр и радиус)
     return circle_inversion_bytes(photo_bytes, version=2)
+
+
+name_1 = [
+    "бу",
+    "гай",
+    "да",
+    "иль",
+    "рав",
+    "гали",
+    "ти"
+]
+name_2 = [
+    "лат",
+    "дар",
+    "мир",
+    "дус",
+    "шан",
+    "мур"
+]
+jackpot = "бек"
+dice_nums = [
+    "1️⃣",
+    "2️⃣",
+    "3️⃣",
+    "4️⃣",
+    "5️⃣",
+    "6️⃣"
+]
+slot_symbols = [
+    "🍻",
+    "🍒",
+    "🍋",
+    "7️⃣"
+]
+
+
+def get_turkic_name(roll_1: int, roll_2: int, roll_slot: int) -> str:
+    name_1_obj = name_1[roll_1]
+    name_2_obj = name_2[roll_2]
+    jackpot_obj = None
+    if roll_slot in [0, 21, 42, 63]:
+        jackpot_obj = jackpot
+    return (
+        f"Кубик 1: {dice_nums[roll_1]} = {name_1_obj}-\nКубик 2: {dice_nums[roll_2]} = -{name_2_obj}\n" +
+        f"Слот: {slot_symbols[roll_slot % 4]}{slot_symbols[(roll_slot >> 2) % 4]}{slot_symbols[(roll_slot >> 4)]}{' 🎰 -' + jackpot_obj if jackpot_obj else ''}\n\n" +
+        f"Имя: **{name_1_obj}{name_2_obj}{jackpot_obj if jackpot_obj else ''}**"
+    )
