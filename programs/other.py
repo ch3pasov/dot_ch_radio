@@ -296,13 +296,13 @@ async def invert_picture(photo):
 
 
 name_1 = [
-    "бу",
-    "гай",
-    "да",
-    "иль",
-    "рав",
-    "гали",
-    "ти"
+    "Бу",
+    "Гай",
+    "Да",
+    "Иль",
+    "Рав",
+    "Гали",
+    "Ти"
 ]
 name_2 = [
     "лат",
@@ -346,7 +346,7 @@ def get_turkic_name(roll_1: int, roll_2: int, roll_slot: int) -> str:
     share_text = (
         f"У меня выпало тюркское имя {name} ({roll_1_emoji}+{roll_2_emoji}+{roll_slot_out}).\nПопробуй: t.me/dot_ch_bot?"
     )
-    share_url = quote(f"https://t.me/share/url?url={share_text}")
+    share_url = f"https://t.me/share/url?url={quote(share_text)}"
     return {
         "message_text": message_text,
         "share_url": share_url
