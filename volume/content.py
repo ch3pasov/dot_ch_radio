@@ -306,7 +306,7 @@ common_tree = {
                     "name": "🪆 Тюркские имена",
                     "description": "Сгенерируй себе тюркское (мужское) имя!\n\nНажми: /start_turkic_name_game",
                     "alias": "turkic_names",
-                    "beta_access": 1,
+                    "beta_access": 0,
                 },
             }
         },
