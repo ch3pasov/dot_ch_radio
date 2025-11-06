@@ -317,7 +317,7 @@ async def answer_tirkic_name_game(client, message):
             ]
         )
     )
-    open_common_hashdict_create("turkic_names", message.chat.id)
+    await open_common_hashdict_create("turkic_names", message.chat.id)
 
 
 # игра Василия
