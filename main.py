@@ -298,14 +298,14 @@ async def answer_location(client, message):
 # тюркское имя
 @app_robot.on_message(pyrogram.filters.command(["start_turkic_name_game"]) & pyrogram.filters.private & pyrogram.filters.incoming)
 async def answer_tirkic_name_game(client, message):
-    roll_1 = (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value
-    roll_2 = (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value
-    roll_slot = (await app_robot.send_dice(message.chat.id, "🎰", disable_notification=True)).dice.value
-    turkic_name = get_turkic_name(roll_1, roll_2, roll_slot)
+    roll_1 = (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value - 1
+    roll_2 = (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value - 1
+    roll_slot = (await app_robot.send_dice(message.chat.id, "🎰", disable_notification=True)).dice.value - 1
+    turkic_name_out = get_turkic_name(roll_1, roll_2, roll_slot)
 
     await app_robot.send_message(
         message.chat.id,
-        turkic_name,
+        turkic_name_out["message_text"],
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -316,7 +316,7 @@ async def answer_tirkic_name_game(client, message):
                 ], [
                     InlineKeyboardButton(
                         text="🔤 Поделиться именем",
-                        switch_inline_query="ТЕКСТ"
+                        url=f"https://t.me/share/url?url={turkic_name_out['share_text']}"
                     )
                 ]
             ]

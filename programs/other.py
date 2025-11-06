@@ -334,8 +334,18 @@ def get_turkic_name(roll_1: int, roll_2: int, roll_slot: int) -> str:
     jackpot_obj = None
     if roll_slot in [0, 21, 42, 63]:
         jackpot_obj = jackpot
-    return (
-        f"Кубик 1: {dice_nums[roll_1]} = {name_1_obj}-\nКубик 2: {dice_nums[roll_2]} = -{name_2_obj}\n" +
-        f"Слот: {slot_symbols[roll_slot % 4]}{slot_symbols[(roll_slot >> 2) % 4]}{slot_symbols[(roll_slot >> 4)]}{' 🎰 -' + jackpot_obj if jackpot_obj else ''}\n\n" +
-        f"Имя: **{name_1_obj}{name_2_obj}{jackpot_obj if jackpot_obj else ''}**"
+    roll_1_emoji = dice_nums[roll_1]
+    roll_2_emoji = dice_nums[roll_2]
+    roll_slot_out = slot_symbols[roll_slot % 4] + slot_symbols[(roll_slot >> 2) % 4] + slot_symbols[(roll_slot >> 4)]
+    name = f"{name_1_obj}{name_2_obj}{jackpot_obj if jackpot_obj else ''}"
+    message_text = (
+        f"Кубик 1: {roll_1_emoji} = {name_1_obj}-\nКубик 2: {roll_2_emoji} = -{name_2_obj}\n" +
+        f"Слот: {roll_slot_out}{' 🎰 -' + jackpot_obj if jackpot_obj else ''}\n\n" + f"Имя: **{name}**"
     )
+    share_text = (
+        f"У меня выпало тюркское имя {name} ({roll_1_emoji}+{roll_2_emoji}+{roll_slot_out}).\nПопробуй: t.me/dot_ch_bot?"
+    )
+    return {
+        "message_text": message_text,
+        "share_text": share_text
+    }
