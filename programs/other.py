@@ -298,7 +298,6 @@ async def invert_picture(photo):
 name_1 = [
     "Бу",
     "Гай",
-    "Да",
     "Иль",
     "Рав",
     "Гали",
