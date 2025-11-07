@@ -343,7 +343,7 @@ def get_turkic_name(roll_1: int, roll_2: int, roll_slot: int) -> str:
         f"Слот: {roll_slot_out}{' 🎰 -' + jackpot_obj if jackpot_obj else ''}\n\n" + f"Имя: **{name}**"
     )
     share_text = (
-        f"У меня вfыпало тюркское имя {name} ({roll_1_emoji}+{roll_2_emoji}+{roll_slot_out}).\nПопробуй: t.me/dot_ch_bot?start=turkic_names"
+        f"У меня выпало тюркское имя {name} ({roll_1_emoji}+{roll_2_emoji}+{roll_slot_out}).\nПопробуй: t.me/dot_ch_bot?start=turkic_names"
     )
     share_url = f"https://t.me/share/url?url={quote(share_text)}"
     return {
