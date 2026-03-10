@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   dot_ch_radio:
     image: dotchradio:latest
