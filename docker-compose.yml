@@ -1,5 +1,8 @@
 services:
   dot_ch_radio:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: dotchradio:latest
     logging:
       driver: json-file
