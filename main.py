@@ -7,7 +7,8 @@ from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
 from volume.content import default_url, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
-from programs.radio import change_stream, leave_group_call  # , get_participants
+from programs.radio import change_stream, leave_group_call, ensure_startup_stream  # , get_participants
+from programs.night_schedule import is_night_radio_lockout_utc, NIGHT_RADIO_SWITCH_BLOCKED
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
 from global_vars import app_robot, print
 
@@ -51,7 +52,8 @@ async def open_common_hashdict(deep_link, message, user_id):
         return "🤷‍♂️Не знаю как ты открыл кнопку-ссылку, но ты не пройдёшь."
     # common case
     if "radio_url" in obj:
-
+        if is_night_radio_lockout_utc():
+            return NIGHT_RADIO_SWITCH_BLOCKED
         await change_stream(obj['radio_url'], who_called=message.from_user.id)
         return "▶️"
 
@@ -389,7 +391,7 @@ async def test_handler(client, message):
 
 
 try:
-    asyncio.get_event_loop().run_until_complete(change_stream(default_url, who_called=''))
+    asyncio.get_event_loop().run_until_complete(ensure_startup_stream())
     pyrogram.idle()
 except KeyboardInterrupt:
     print('Exiting...')

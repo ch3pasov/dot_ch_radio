@@ -11,4 +11,10 @@ backlog.txt
 
 __pycache__/
 
+# Cursor (правила и локальные настройки проекта)
+.cursor/
+
+# Демо-видео только локально; боевой ролик — volume/config/night_loop.mp4 (каталог config в git не входит)
+volume/config_example/night_loop.mp4
+
 .DS_Store

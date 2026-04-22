@@ -1,0 +1,11 @@
+# Не в контекст сборки — на рантайме приходит с хоста (compose volumes: .../volume:/app/volume)
+volume/
+
+.git
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.cursor
