@@ -1,4 +1,4 @@
-"""Ночной режим радио по UTC: 19:00–03:00 — стрим night_loop.mp4, без смены станций из бота."""
+"""Ночной режим радио: полуинтервал [18:15:00Z, 03:00:00Z) по UTC — night_loop.mp4, без смены станций из бота."""
 from __future__ import annotations
 
 import json
@@ -6,9 +6,14 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Полуинтервал ночного эфира по UTC: [start, end) = [18:15:00Z, 03:00:00Z)
+NIGHT_STREAM_START_HOUR = 18
+NIGHT_STREAM_START_MINUTE = 15
+NIGHT_STREAM_END_HOUR_EXCLUSIVE = 3  # 03:00:00Z уже дневной эфир
+
 # Текст для callback_query.answer (до ~200 символов)
 NIGHT_RADIO_SWITCH_BLOCKED = (
-    "🌙 Сейчас ночной эфир (19:00–03:00 UTC). "
+    "🌙 Сейчас ночной эфир [18:15, 03:00) UTC. "
     "Обычные станции недоступны — слушайте ночной стрим в канале."
 )
 
@@ -24,21 +29,27 @@ def _utc_now(now: datetime | None) -> datetime:
 
 
 def is_night_radio_lockout_utc(now: datetime | None = None) -> bool:
-    """19:00 ≤ t < 03:00 по UTC — нельзя переключать радиостанции из бота."""
+    """[18:15:00Z, 03:00:00Z) по UTC — нельзя переключать радиостанции из бота."""
     t = _utc_now(now)
-    h = t.hour
-    return h >= 19 or h < 3
+    h, m = t.hour, t.minute
+    if h < NIGHT_STREAM_END_HOUR_EXCLUSIVE:
+        return True
+    if h > NIGHT_STREAM_START_HOUR:
+        return True
+    if h == NIGHT_STREAM_START_HOUR:
+        return m >= NIGHT_STREAM_START_MINUTE
+    return False
 
 
 def is_night_loop_video_window_utc(now: datetime | None = None) -> bool:
     """
     Период проигрывания night_loop.mp4 внутри lockout.
-    Последняя минута до 03:00 UTC (02:59) — обычный default_url, чтобы проверить смену источника.
+    Последняя минута до конца полуинтервала (02:59 UTC при end=03:00) — обычный default_url, чтобы проверить смену источника.
     """
     if not is_night_radio_lockout_utc(now):
         return False
     t = _utc_now(now)
-    if t.hour == 2 and t.minute == 59:
+    if t.hour == NIGHT_STREAM_END_HOUR_EXCLUSIVE - 1 and t.minute == 59:
         return False
     return True
 
