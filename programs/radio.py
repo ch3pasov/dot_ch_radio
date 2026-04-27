@@ -266,33 +266,44 @@ if not disable_radio:
 
                 if is_night_radio_lockout_utc():
                     if participant_id in _ADMINS:
-                        if participant.just_joined or participant.muted:
-                            print(f"user {participant_id} admin, unmute")
+                        # Только при входе: иначе при muted=True (слушатель) каждый
+                        # UpdateGroupCallParticipants даёт лавину EditGroupCallParticipant и 400 PARTICIPANT_JOIN_MISSING.
+                        if participant.just_joined and participant.muted:
+                            print(f"user {participant_id} admin, unmute on join")
+                            try:
+                                await app_dj.invoke(
+                                    pyrogram.raw.functions.phone.EditGroupCallParticipant(
+                                        call=call,
+                                        participant=peer,
+                                        muted=False,
+                                    )
+                                )
+                            except Exception as e:
+                                print(f"night admin unmute user {participant_id}: {e}")
+                    elif participant.just_joined:
+                        print(f"user {participant_id} night mute on join")
+                        try:
                             await app_dj.invoke(
                                 pyrogram.raw.functions.phone.EditGroupCallParticipant(
                                     call=call,
                                     participant=peer,
-                                    muted=False,
+                                    muted=True,
                                 )
                             )
-                    elif participant.just_joined or not participant.muted:
-                        print(f"user {participant_id} night mute")
+                        except Exception as e:
+                            print(f"night mute user {participant_id}: {e}")
+                elif participant.just_joined:
+                    print(f"user {participant_id} just joined")
+                    try:
                         await app_dj.invoke(
                             pyrogram.raw.functions.phone.EditGroupCallParticipant(
                                 call=call,
                                 participant=peer,
-                                muted=True,
+                                muted=False,
                             )
                         )
-                elif participant.just_joined:
-                    print(f"user {participant_id} just joined")
-                    await app_dj.invoke(
-                        pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                            call=call,
-                            participant=peer,
-                            muted=False,
-                        )
-                    )
+                    except Exception as e:
+                        print(f"day unmute on join user {participant_id}: {e}")
                 if participant.raise_hand_rating:
                     print(f"user {participant_id} raise hand with rating {participant.raise_hand_rating}")
                     # peer = await app_dj.resolve_peer(participant_id)
