@@ -18,10 +18,10 @@ if not disable_radio:
     from global_vars import app_robot, app_dj, print
 
     from programs.night_schedule import (
-        NIGHT_LOOP_BOOTSTRAP_TAIL_SEC,
+        NIGHT_LOOP_FIRST_CLIP_SEC,
         is_night_radio_lockout_utc,
         is_night_loop_media_path,
-        night_loop_bootstrap_tail_ffmpeg_parameters_for_path,
+        night_loop_random_first_clip_ffmpeg_parameters_for_path,
         night_loop_has_video_stream,
         scheduled_stream_target,
         stream_after_end_target,
@@ -45,19 +45,19 @@ if not disable_radio:
 
     def _night_loop_segment_for_fresh_play(
         target: Union[str, Path], who: str
-    ) -> Optional[Literal["bootstrap_tail"]]:
-        """Первый заход в ночной луп при старте/смене источника планировщиком — только хвост."""
+    ) -> Optional[Literal["random_first"]]:
+        """Первый заход в ночной луп при старте/смене источника планировщиком — случайный кусок."""
         if who not in ("startup", "night_scheduler"):
             return None
         if isinstance(target, Path) and is_night_loop_media_path(target.resolve()):
-            return "bootstrap_tail"
+            return "random_first"
         return None
 
     async def change_stream(
         media: Union[str, Path],
         who_called: str = "",
         *,
-        night_loop_segment: Optional[Literal["bootstrap_tail", "full"]] = None,
+        night_loop_segment: Optional[Literal["random_first", "full"]] = None,
     ):
         ffmpeg_parameters = None
         if isinstance(media, Path):
@@ -68,16 +68,17 @@ if not disable_radio:
             stream_arg: Union[str, Path] = src
             if is_night_loop_media_path(src):
                 seg = night_loop_segment or "full"
-                if seg == "bootstrap_tail":
-                    ffmpeg_parameters = night_loop_bootstrap_tail_ffmpeg_parameters_for_path(src)
-                    if ffmpeg_parameters:
+                if seg == "random_first":
+                    clip_params = night_loop_random_first_clip_ffmpeg_parameters_for_path(src)
+                    if clip_params:
+                        ffmpeg_parameters, start_sec = clip_params
                         print(
-                            f"{who_called} night_loop: первый фрагмент — последние "
-                            f"{NIGHT_LOOP_BOOTSTRAP_TAIL_SEC}s до конца (ffmpeg -sseof)"
+                            f"{who_called} night_loop: первый фрагмент — с {start_sec:.2f}s, "
+                            f"{NIGHT_LOOP_FIRST_CLIP_SEC}s (потом полный ролик с начала)"
                         )
                     else:
                         print(
-                            f"{who_called} night_loop: хвост не применён (короткий файл?) — "
+                            f"{who_called} night_loop: случайный старт не применён (короткий файл?) — "
                             "сразу полный ролик с начала"
                         )
                 else:
@@ -143,7 +144,7 @@ if not disable_radio:
     async def _handle_stream_end():
         try:
             nxt = stream_after_end_target(default_url)
-            seg: Optional[Literal["bootstrap_tail", "full"]] = None
+            seg: Optional[Literal["random_first", "full"]] = None
             if isinstance(nxt, Path) and is_night_loop_media_path(nxt.resolve()):
                 seg = "full"
             await change_stream(nxt, who_called="stream_end", night_loop_segment=seg)
@@ -195,7 +196,7 @@ if not disable_radio:
             who_called="startup",
             night_loop_segment=_night_loop_segment_for_fresh_play(target, "startup"),
         )
-        # Иначе первый тик _night_scheduler_loop сразу снова вызовет change_stream с тем же key (bootstrap хвост дважды).
+        # Иначе первый тик _night_scheduler_loop сразу снова вызовет change_stream с тем же key (первый кусок дважды).
         _last_night_target_key = _media_key(target)
         asyncio.get_running_loop().create_task(_night_scheduler_loop())
 

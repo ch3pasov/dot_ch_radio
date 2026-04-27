@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import random
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
@@ -17,8 +18,8 @@ NIGHT_RADIO_SWITCH_BLOCKED = (
     "Обычные станции недоступны — слушайте ночной стрим в канале."
 )
 
-# Первый фрагмент ночного лупа: сколько секунд с конца файла (FFmpeg -sseof), затем — полный ролик с начала.
-NIGHT_LOOP_BOOTSTRAP_TAIL_SEC = 8
+# Первый фрагмент ночного лупа: случайный старт в файле, затем полный ролик с начала (после stream_end).
+NIGHT_LOOP_FIRST_CLIP_SEC = 8
 
 
 def _utc_now(now: datetime | None) -> datetime:
@@ -58,12 +59,6 @@ def night_loop_file_path() -> Path:
     """Ночное видео: только volume/config/night_loop.mp4."""
     volume = Path(__file__).resolve().parent.parent / "volume"
     return volume / "config" / "night_loop.mp4"
-
-
-def night_loop_bootstrap_tail_ffmpeg_parameters() -> str:
-    """Только первый заход: последние N секунд файла (до -i). См. pytgcalls.ffmpeg.build_command."""
-    sec = NIGHT_LOOP_BOOTSTRAP_TAIL_SEC
-    return f"--base ---start -sseof -{sec}"
 
 
 def night_loop_media_duration_sec(path: Path) -> float | None:
@@ -125,14 +120,24 @@ def night_loop_has_video_stream(path: Path) -> bool:
         return False
 
 
-def night_loop_bootstrap_tail_ffmpeg_parameters_for_path(path: Path) -> str | None:
-    """-sseof для хвоста только если файл длиннее хвоста; иначе сразу полный луп с начала."""
+def night_loop_random_first_clip_ffmpeg_parameters_for_path(
+    path: Path,
+) -> tuple[str, float] | None:
+    """
+    Первый заход в ночной луп: -ss в случайное место и -t на N секунд (до -i, pytgcalls --base ---start).
+    Если файла короткого или длительность неизвестна — None (эфир с начала без смещения).
+    """
     if not path.is_file():
         return None
+    clip = float(NIGHT_LOOP_FIRST_CLIP_SEC)
     dur = night_loop_media_duration_sec(path)
-    if dur is None or dur <= NIGHT_LOOP_BOOTSTRAP_TAIL_SEC + 0.5:
+    if dur is None or dur <= clip + 0.5:
         return None
-    return night_loop_bootstrap_tail_ffmpeg_parameters()
+    hi = dur - clip - 0.25
+    start = round(float(random.uniform(0.0, hi)) if hi > 0 else 0.0, 2)
+    # pytgcalls: --base ---start … идут перед -i
+    params = f"--base ---start -ss {start} -t {clip}"
+    return (params, start)
 
 
 def is_night_loop_media_path(path: Path) -> bool:
