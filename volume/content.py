@@ -32,6 +32,39 @@ common_tree = {
                     "name": "🎷 Радио Jazz Москва 89.1 FM",
                     "radio_url": "https://nashe1.hostingradio.ru/jazz-256",
                 },
+                "andon_fm": {
+                    "name": "🤖 Andon FM",
+                    "alias": "andon_fm",
+                    "description": (
+                        "Четыре AI-радиостанции от [Andon Labs](https://andonlabs.com/radio): агенты ведут эфир "
+                        "круглосуточно (музыка, расписание, потоки через Live365).\n\n"
+                        "**🔗 Backlink Broadcast** — ведущий Gemini 3.1 Pro Preview; энергичный эфир, "
+                        "электроника, альтернатива и поп.\n\n"
+                        "**🧠 Thinking Frequencies** — ведущий Claude Opus 4.7; спокойнее днём: инди, соул, "
+                        "электроника и эмбиент.\n\n"
+                        "**🎈 OpenAIR** — ведущий GPT 5.5; разножанровый микс с упором на атмосферу и плейлисты "
+                        "(в т.ч. «скандинавские» настроения в расписании).\n\n"
+                        "**⚡ Grok and Roll** — ведущий Grok 4.3; вечерний разговорный формат, истории и запросы слушателей."
+                    ),
+                    "children": {
+                        "andon_backlink": {
+                            "name": "🔗 Backlink Broadcast",
+                            "radio_url": "https://streaming.live365.com/a13541"
+                        },
+                        "andon_thinking": {
+                            "name": "🧠 Thinking Frequencies",
+                            "radio_url": "https://streaming.live365.com/a46431"
+                        },
+                        "andon_openair": {
+                            "name": "🎈 OpenAIR",
+                            "radio_url": "https://streaming.live365.com/a81044"
+                        },
+                        "andon_grok_roll": {
+                            "name": "⚡ Grok and Roll",
+                            "radio_url": "https://streaming.live365.com/a15419"
+                        },
+                    },
+                },
                 "gta": {
                     "name": "🚗 GTA радио",
                     "description": "🎮 Откройте для себя музыкальный мир серии игр GTA.\nPowered by https://gtaradio.net",
@@ -228,14 +261,6 @@ common_tree = {
                             "name": "🎓 Образование",
                             "description": "🏫 Радиостанции с обучающими программами и беседами на духовные темы.",
                             "children": {
-                                "grad-petrov": {
-                                    "name": "🎙️ Град Петров",
-                                    "radio_url": "https://grad-petrov.ru:8094/aac"
-                                },
-                                "radonezh": {
-                                    "name": "⛪ Радонеж",
-                                    "radio_url": "https://proxy.radio.azbyka.ru/radonezh"
-                                },
                                 "vera": {
                                     "name": "🌟 Радио Вера",
                                     "radio_url": "https://radiovera.hostingradio.ru:8007/radiovera_128"
@@ -252,18 +277,11 @@ common_tree = {
                             "children": {
                                 "ancient-faith-music": {
                                     "name": "🇺🇸 Ancient Faith (Музыка) - США",
-                                    "description": "Американская станция с духовной музыкой, сочетающая традиции и современность.",
                                     "radio_url": "https://ancientfaith.streamguys1.com/music"
                                 },
                                 "ancient-faith-talk": {
                                     "name": "🇺🇸 Ancient Faith (Беседы) - США",
-                                    "description": "Радиостанция из США с беседами на религиозные и духовные темы.",
                                     "radio_url": "https://ancientfaith.streamguys1.com/talk"
-                                },
-                                "gkpc": {
-                                    "name": "🇬🇷 Глас Кафедрального Подворья - Греция",
-                                    "description": "Греческая радиостанция, предлагающая уникальный взгляд на православие.",
-                                    "radio_url": "https://proxy.radio.azbyka.ru/gkpc"
                                 }
                             }
                         }
