@@ -342,22 +342,47 @@ common_tree = {
         },
         "web_games": {
             "name": "🎮 Веб-игры",
-            "description": "🕹️ Да, я научился запускать эти игры в Телеграм!",
+            "description": "🕹️ Игры в Telegram и ссылки на игры вне мессенджера.",
             "alias": "web_games",
             "children": {
-                "subway_surfers": {
-                    "name": "🏄 Subway Surfers 👮‍♂️",
-                    "url": "https://t.me/PlaySubwaySurfersBot/subway_surfers",
+                "telegram": {
+                    "name": "📱 Телеграм веб-игры",
+                    "description": "Запускаются прямо в Telegram.",
+                    "children": {
+                        "subway_surfers": {
+                            "name": "🏄 Subway Surfers 👮‍♂️",
+                            "url": "https://t.me/PlaySubwaySurfersBot/subway_surfers",
+                        },
+                        "doodle_jump": {
+                            "name": "🐸 Doodle Jump 🚀",
+                            "url": "https://t.me/PlayDoodleJumpBot/doodle_jump",
+                        },
+                        "math_effect": {
+                            "name": "🚄 Math Effect 🏯",
+                            "url": "https://t.me/PlayMathEffectBot/math_effect",
+                        },
+                    },
                 },
-                "doodle_jump": {
-                    "name": "🐸 Doodle Jump 🚀",
-                    "url": "https://t.me/PlayDoodleJumpBot/doodle_jump",
+                "other_web_games": {
+                    "name": "🌐 Другие",
+                    "children": {
+                        "life_grid": {
+                            "name": "🧬 Life Grid",
+                            "description": (
+                                "Да, я сделал Game of Life в Roblox.\n\n"
+                                "См. [пост](https://t.me/ch_an/2393)."
+                            ),
+                            "alias": "life_grid",
+                            "children": {
+                                "go_to_life_grid": {
+                                    "name": "🎮 Открыть в Roblox",
+                                    "url": "https://www.roblox.com/share?code=ef23b71d9a2525459993f5074f0b90f4&type=ExperienceDetails",
+                                },
+                            },
+                        },
+                    },
                 },
-                "math_effect": {
-                    "name": "🚄 Math Effect 🏯",
-                    "url": "https://t.me/PlayMathEffectBot/math_effect",
-                },
-            }
+            },
         },
         "other": {
             "name": "📦 Другое",
