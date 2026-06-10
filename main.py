@@ -1,26 +1,54 @@
-import pyrogram
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram.enums.chat_action import ChatAction
 import asyncio
 import random
-from volume.config.tg_ids import dot_ch_id, beta_testers, bot_username
-from volume.content import default_url, wanted_not_found
+
+from telethon import events, Button
+from telethon.errors import MessageNotModifiedError
+from telethon.tl.types import InputMediaDice, MessageMediaVenue
+
+from volume.config.tg_ids import beta_testers, bot_username
+from volume.config.debug import disable_radio
+from volume.content import wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
-from programs.radio import change_stream, leave_group_call, ensure_startup_stream  # , get_participants
+from programs.radio import (
+    change_stream,
+    leave_group_call,
+    ensure_startup_stream,
+    start_calls,
+)
 from programs.night_schedule import is_night_radio_lockout_utc, NIGHT_RADIO_SWITCH_BLOCKED
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
-from global_vars import app_robot, print
+from volume.config.tg_ids import dot_ch_id
+from global_vars import app_robot, app_dj, loop, print
+
+MENTION = f"@{bot_username}"
+
+
+def _is_private(event) -> bool:
+    return bool(getattr(event, "is_private", False))
+
+
+def _not_channel(event) -> bool:
+    # Аналог pyrogram ~filters.channel: исключаем сообщения из broadcast-канала.
+    return not (getattr(event, "is_channel", False) and not getattr(event, "is_group", False))
+
+
+async def _safe_edit(message, text, *, buttons=None, link_preview=True):
+    try:
+        return await message.edit(text, buttons=buttons or None, link_preview=link_preview)
+    except MessageNotModifiedError:
+        return message
+
+
+async def _roll(chat_id, emoticon):
+    m = await app_robot.send_file(chat_id, InputMediaDice(emoticon), silent=True)
+    return m.media.value
 
 
 async def open_common_hashdict(deep_link, message, user_id):
     # refresh
     if deep_link.startswith("refresh=1=id="):
-        message = await app_robot.edit_message_text(
-            message.chat.id,
-            message.id,
-            text="refreshing...",
-        )
+        message = await _safe_edit(message, "refreshing...")
         await asyncio.sleep(1)
         return await open_common_hashdict(deep_link[10:], message, user_id)
 
@@ -54,13 +82,9 @@ async def open_common_hashdict(deep_link, message, user_id):
     if "radio_url" in obj:
         if is_night_radio_lockout_utc():
             return NIGHT_RADIO_SWITCH_BLOCKED
-        await change_stream(obj['radio_url'], who_called=message.from_user.id)
+        await change_stream(obj['radio_url'], who_called=user_id)
         return "▶️"
 
-        # if user_id in [participant.user_id for participant in await get_participants(dot_ch_id)]:
-        #     await change_stream(obj['radio_url'], who_called=message.from_user.id)
-        #     return "▶️"
-        # return "🤷‍♂️Сначала зайди в радио!"
     buttons = []
     text = ""
     if not obj.get("hide_name", 0):
@@ -73,45 +97,22 @@ async def open_common_hashdict(deep_link, message, user_id):
             if children[child].get("beta_access", 0):
                 if user_id not in beta_testers:
                     continue
-            kwargs = {"text": children[child]['name']}
-            if "url" in children[child]:
-                kwargs["url"] = children[child]['url']
-            elif "switch_inline_query_current_chat" in children[child]:
-                kwargs["switch_inline_query_current_chat"] = children[child]['switch_inline_query_current_chat']
+            c = children[child]
+            if "url" in c:
+                btn = Button.url(c['name'], c['url'])
+            elif "switch_inline_query_current_chat" in c:
+                btn = Button.switch_inline(c['name'], query=c['switch_inline_query_current_chat'], same_peer=True)
             else:
-                kwargs["callback_data"] = f"id={child}"
-            buttons.append([InlineKeyboardButton(**kwargs)])
+                btn = Button.inline(c['name'], data=f"id={child}")
+            buttons.append([btn])
     if obj.get("refresh", 0):
-        buttons.append(
-            [
-                InlineKeyboardButton(
-                    text="🔄",
-                    callback_data=f"refresh=1=id={path_hash}"
-                )
-            ]
-        )
-    share_button = InlineKeyboardButton(
-        text="🔗",
-        # switch_inline_query=obj["share"]
-        url=f"https://t.me/share/url?url={obj['share']}"
-    )
+        buttons.append([Button.inline("🔄", data=f"refresh=1=id={path_hash}")])
+    share_button = Button.url("🔗", f"https://t.me/share/url?url={obj['share']}")
     if "parent" in obj:
         parent = obj["parent"]
-        buttons.append(
-            [
-                InlineKeyboardButton(
-                    text="⬅️",
-                    callback_data=f"id={parent}"
-                ),
-                share_button
-            ]
-        )
+        buttons.append([Button.inline("⬅️", data=f"id={parent}"), share_button])
     else:
-        buttons.append(
-            [
-                share_button
-            ]
-        )
+        buttons.append([share_button])
     disable_web_page_preview = obj.get("disable_web_page_preview", 0)
     if "custom" in obj:
         match obj["custom"]:
@@ -121,81 +122,70 @@ async def open_common_hashdict(deep_link, message, user_id):
                 text += f'\n{await get_minecraft_server_info()}'
             # case "nadezhdin":
             #     text += f'\n{await get_nadezhdin()}'
-    reply_markup = InlineKeyboardMarkup(buttons)
-    await app_robot.edit_message_text(
-        message.chat.id,
-        message.id,
-        text=text,
-        reply_markup=reply_markup,
-        disable_web_page_preview=disable_web_page_preview
-    )
+    await _safe_edit(message, text, buttons=buttons, link_preview=not disable_web_page_preview)
     return None
 
 
 async def open_common_hashdict_create(deep_link, user_id):
-    new_message = await app_robot.send_message(
-        user_id,
-        text="Загрузка"
-    )
+    new_message = await app_robot.send_message(user_id, "Загрузка")
     return await open_common_hashdict(deep_link, new_message, user_id)
 
 
-@app_robot.on_message(pyrogram.filters.command(["start"]) & pyrogram.filters.private & pyrogram.filters.incoming)
-async def start_handler(client, message):
-    user_id = message.from_user.id
-    deep_link = "root"
-    if len(message.command) >= 2:
-        deep_link = message.command[1]
-    return await open_common_hashdict_create(deep_link, user_id)
+@app_robot.on(events.NewMessage(pattern=r'^/start(?:\s+(\S+))?\s*$', incoming=True, func=_is_private))
+async def start_handler(event):
+    user_id = event.sender_id
+    arg = event.pattern_match.group(1)
+    deep_link = arg if arg else "root"
+    await open_common_hashdict_create(deep_link, user_id)
+    raise events.StopPropagation
 
 
-@app_robot.on_callback_query()
-async def answer_common_hashdict(client, callback_query, **kwargs):
-    if not callback_query.from_user.id == callback_query.message.chat.id:
+@app_robot.on(events.CallbackQuery())
+async def answer_common_hashdict(event):
+    if event.sender_id != event.chat_id:
         return
-    answer = await open_common_hashdict(callback_query.data, callback_query.message, callback_query.from_user.id)
+    data = event.data.decode()
+    msg = await event.get_message()
+    answer = await open_common_hashdict(data, msg, event.sender_id)
     if answer:
-        await callback_query.answer(answer)
+        await event.answer(answer)
 
 
-async def answer_rus_to_katakana_common(client, message, message_with_content):
-    is_private = (message.chat.type == pyrogram.enums.ChatType.PRIVATE)
-    if is_private:
-        buttons = [[InlineKeyboardButton(text="🔡 Перевести текст", switch_inline_query_current_chat="rus_to_katakana ")]]
+async def answer_rus_to_katakana_common(event, message_with_content):
+    if event.is_private:
+        markup = [[Button.switch_inline("🔡 Перевести текст", query="rus_to_katakana ", same_peer=True)]]
     else:
-        buttons = [[InlineKeyboardButton(text="🤖 К роботу", url=f"https://t.me/{bot_username}?start=rus_to_katakana")]]
-    relpy_markup = InlineKeyboardMarkup(buttons)
+        markup = [[Button.url("🤖 К роботу", f"https://t.me/{bot_username}?start=rus_to_katakana")]]
 
-    text = message_with_content.text.removeprefix(f'@{bot_username}').removeprefix(' rus_to_katakana').lstrip(' ').lower()
+    text = (message_with_content.raw_text or "").removeprefix(MENTION).removeprefix(' rus_to_katakana').lstrip(' ').lower()
     translate_dict = await rus_to_katakana(text)
     message_text = f"<i>{translate_dict['racism']}</i>\n<code>{translate_dict['katakana']}</code>"
 
-    # print(message_text)
-    await message.reply_text(
-        message_text,
-        quote=True,
-        reply_markup=relpy_markup
-    )
+    await event.reply(message_text, buttons=markup, parse_mode='html')
 
 
 # rus_to_katakana by command
-@app_robot.on_message(
-    pyrogram.filters.regex(f'^@{bot_username} rus_to_katakana')
-    & ~pyrogram.filters.channel
-    & pyrogram.filters.incoming
-)
-async def answer_rus_to_katakana(client, message):
-    return await answer_rus_to_katakana_common(client, message, message)
+@app_robot.on(events.NewMessage(
+    incoming=True,
+    func=lambda e: _not_channel(e) and (e.raw_text or "").startswith(f"{MENTION} rus_to_katakana"),
+))
+async def answer_rus_to_katakana(event):
+    await answer_rus_to_katakana_common(event, event.message)
+    raise events.StopPropagation
 
 
 # поиск в розыске
-@app_robot.on_message(pyrogram.filters.photo & pyrogram.filters.regex(f'^@{bot_username} search_wanted') & pyrogram.filters.private & pyrogram.filters.incoming)
-async def answer_wanted_search(client, message):
-    await asyncio.sleep(1+random.random())
-    await client.send_chat_action(message.chat.id, ChatAction.TYPING)
-    await asyncio.sleep(2+6*random.random())
-    await client.send_message(message.chat.id, wanted_not_found)
-    await open_common_hashdict_create("search_wanted", message.chat.id)
+@app_robot.on(events.NewMessage(
+    incoming=True,
+    func=lambda e: _is_private(e) and e.photo is not None and (e.raw_text or "").startswith(f"{MENTION} search_wanted"),
+))
+async def answer_wanted_search(event):
+    await asyncio.sleep(1 + random.random())
+    async with app_robot.action(event.chat_id, 'typing'):
+        await asyncio.sleep(2 + 6 * random.random())
+    await app_robot.send_message(event.chat_id, wanted_not_found)
+    await open_common_hashdict_create("search_wanted", event.chat_id)
+    raise events.StopPropagation
 
 
 all_answers = [
@@ -213,130 +203,119 @@ all_answers = [
 ]
 
 
-async def answer_gork(client, message):
+async def answer_gork(event):
     message_text = random.choice(all_answers)
     print(message_text)
-    return await message.reply_text(
-        message_text,
-        quote=True,
-        # reply_markup=relpy_markup
-    )
+    return await event.reply(message_text)
 
 
-async def answer_invert_picture_common(client, message, message_with_content):
-    is_private = (message.chat.type == pyrogram.enums.ChatType.PRIVATE)
-    if is_private:
-        buttons = [[InlineKeyboardButton(text="🔘 Инвертировать картинку", switch_inline_query_current_chat="invert_picture (приложи фотографию к этому сообщению и отправляй)")]]
+async def answer_invert_picture_common(event, message_with_content):
+    if event.is_private:
+        markup = [[Button.switch_inline("🔘 Инвертировать картинку", query="invert_picture (приложи фотографию к этому сообщению и отправляй)", same_peer=True)]]
     else:
-        buttons = [[InlineKeyboardButton(text="🤖 К роботу", url=f"https://t.me/{bot_username}?start=invert_picture")]]
-    relpy_markup = InlineKeyboardMarkup(buttons)
+        markup = [[Button.url("🤖 К роботу", f"https://t.me/{bot_username}?start=invert_picture")]]
 
-    reply_message = await message.reply_text("🙏 Получил запрос, ждите (долго).")
-    await client.send_chat_action(message.chat.id, ChatAction.TYPING)
+    reply_message = await event.reply("🙏 Получил запрос, ждите (долго).")
     # Скачиваем фото в оперативную память
-    photo = await message_with_content.download(in_memory=True)
-    await reply_message.edit_text("🌚 Скачал фотку, ждите (тоже долго).")
-    await client.send_chat_action(message.chat.id, ChatAction.UPLOAD_PHOTO)
+    photo = await message_with_content.download_media(file=bytes)
+    await reply_message.edit("🌚 Скачал фотку, ждите (тоже долго).")
     processed_photo_bytes = await invert_picture(photo)
     # Отправляем обработанное фото
-    await message.reply_photo(processed_photo_bytes, quote=True, reply_markup=relpy_markup)
+    await event.reply(file=processed_photo_bytes, buttons=markup)
     await reply_message.delete()
 
 
 # invert_picture by command or directly in chat
-@app_robot.on_message(
-    (pyrogram.filters.regex(f'^@{bot_username} invert_picture') | pyrogram.filters.private)
-    & pyrogram.filters.photo
-    & ~pyrogram.filters.channel
-    & pyrogram.filters.incoming
-)
-async def answer_invert_picture(client, message):
-    await answer_invert_picture_common(client, message, message)
+@app_robot.on(events.NewMessage(
+    incoming=True,
+    func=lambda e: e.photo is not None and _not_channel(e) and (
+        e.is_private or (e.raw_text or "").startswith(f"{MENTION} invert_picture")
+    ),
+))
+async def answer_invert_picture(event):
+    await answer_invert_picture_common(event, event.message)
+    raise events.StopPropagation
 
 
 # mention
-@app_robot.on_message(
-    ~pyrogram.filters.channel
-    & pyrogram.filters.regex(f'^@{bot_username}')
-    & pyrogram.filters.incoming
-)
-async def answer_invert_mention(client, message):
-    if message.sender_chat and message.sender_chat.type == pyrogram.enums.ChatType.CHANNEL:
-        return await message.reply_text("💩")
-    if message.reply_to_message and message.text.removeprefix(f'@{bot_username}').lstrip(' ').lower().startswith("is this true"):
+@app_robot.on(events.NewMessage(
+    incoming=True,
+    func=lambda e: _not_channel(e) and (e.raw_text or "").startswith(MENTION),
+))
+async def answer_invert_mention(event):
+    reply = await event.get_reply_message()
+    text = event.raw_text or ""
+    # ответ от имени канала
+    if getattr(event.message, "post", False) or (event.sender_id is not None and event.sender_id < 0):
+        return await event.reply("💩")
+    if reply and text.removeprefix(MENTION).lstrip(' ').lower().startswith("is this true"):
         # ответ на "is this true"
-        return await answer_gork(client, message)
-    if message.photo:
+        return await answer_gork(event)
+    if event.photo:
         # инвертировать фотку
-        return await answer_invert_picture_common(client, message, message)
-    if message.reply_to_message and message.reply_to_message.photo:
+        return await answer_invert_picture_common(event, event.message)
+    if reply and reply.photo:
         # инвертировать фотку собеседника
-        return await answer_invert_picture_common(client, message, message.reply_to_message)
-    if message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
+        return await answer_invert_picture_common(event, reply)
+    if text.removeprefix(MENTION).lstrip(' ') != "":
         # перевести текст в катакану
-        return await answer_rus_to_katakana_common(client, message, message)
-    if message.reply_to_message and message.reply_to_message.text.removeprefix(f'@{bot_username}').lstrip(' ') != "":
+        return await answer_rus_to_katakana_common(event, event.message)
+    if reply and (reply.raw_text or "").removeprefix(MENTION).lstrip(' ') != "":
         # перевести текст собеседника в катакану
-        if message.reply_to_message.from_user.username == bot_username:
-            return await message.reply_text("😝")
-        return await answer_rus_to_katakana_common(client, message, message.reply_to_message)
-    await message.reply_text("🤷‍♂️ Не понимаю")
+        sender = await reply.get_sender()
+        if sender is not None and getattr(sender, "username", None) == bot_username:
+            return await event.reply("😝")
+        return await answer_rus_to_katakana_common(event, reply)
+    await event.reply("🤷‍♂️ Не понимаю")
 
 
 # геопин
-@app_robot.on_message((pyrogram.filters.location | pyrogram.filters.venue) & pyrogram.filters.private & pyrogram.filters.incoming)
-async def answer_location(client, message):
-    match message.media:
-        case pyrogram.enums.MessageMediaType.VENUE:
-            location = message.venue.location
-        case pyrogram.enums.MessageMediaType.LOCATION:
-            location = message.location
-        case _:
-            raise ValueError("Unknown media type")
-    await client.send_message(message.chat.id, await get_weather(location))
-    await open_common_hashdict_create("weather", message.chat.id)
+@app_robot.on(events.NewMessage(
+    incoming=True,
+    func=lambda e: _is_private(e) and (getattr(e.message, "geo", None) is not None or isinstance(e.message.media, MessageMediaVenue)),
+))
+async def answer_location(event):
+    media = event.message.media
+    if isinstance(media, MessageMediaVenue):
+        geo = media.geo
+    else:
+        geo = event.message.geo
+    await app_robot.send_message(event.chat_id, await get_weather(geo.lat, geo.long))
+    await open_common_hashdict_create("weather", event.chat_id)
+    raise events.StopPropagation
 
 
 # тюркское имя
-@app_robot.on_message(pyrogram.filters.command(["start_turkic_name_game"]) & pyrogram.filters.private & pyrogram.filters.incoming)
-async def answer_tirkic_name_game(client, message):
-    roll_1 = (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value - 1
-    roll_2 = (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value - 1
-    roll_slot = (await app_robot.send_dice(message.chat.id, "🎰", disable_notification=True)).dice.value - 1
+@app_robot.on(events.NewMessage(pattern=r'^/start_turkic_name_game(?:\s|$)', incoming=True, func=_is_private))
+async def answer_tirkic_name_game(event):
+    chat_id = event.chat_id
+    roll_1 = (await _roll(chat_id, "🎲")) - 1
+    roll_2 = (await _roll(chat_id, "🎲")) - 1
+    roll_slot = (await _roll(chat_id, "🎰")) - 1
     turkic_name_out = get_turkic_name(roll_1, roll_2, roll_slot)
 
     await asyncio.sleep(4)
 
     await app_robot.send_message(
-        message.chat.id,
+        chat_id,
         turkic_name_out["message_text"],
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="🔤 Поделиться именем",
-                        url=turkic_name_out["share_url"]
-                    )
-                ]
-            ]
-        )
+        buttons=[[Button.url("🔤 Поделиться именем", turkic_name_out["share_url"])]],
     )
-    await open_common_hashdict_create("turkic_names", message.chat.id)
+    await open_common_hashdict_create("turkic_names", chat_id)
+    raise events.StopPropagation
 
 
 # игра Василия
-@app_robot.on_message(pyrogram.filters.command(["start_free_vasilii_game"]) & pyrogram.filters.private & pyrogram.filters.incoming)
-async def answer_vasilii_game(client, message):
-    await app_robot.send_message(
-        message.chat.id,
-        "Запускаю ИГРУ ВАСИЛИЯ!",
-    )
+@app_robot.on(events.NewMessage(pattern=r'^/start_free_vasilii_game(?:\s|$)', incoming=True, func=_is_private))
+async def answer_vasilii_game(event):
+    chat_id = event.chat_id
+    await app_robot.send_message(chat_id, "Запускаю ИГРУ ВАСИЛИЯ!")
     step_sleep = 0.5
     score = 0
     credit = 1000
     for i in range(100):
         await asyncio.sleep(step_sleep)
-        if (await app_robot.send_dice(message.chat.id, "🎲", disable_notification=True)).dice.value <= 3:
+        if (await _roll(chat_id, "🎲")) <= 3:
             credit *= 0.25
             continue
         credit *= 2
@@ -344,61 +323,42 @@ async def answer_vasilii_game(client, message):
     result_text = f"Ваш выигрыш: {credit}. Бросков с победой: {score}."
     if credit > 1000:
         result_text += " Поздравляю, королевская победа!"
-        await app_robot.send_message(message.chat.id, "🥳")
+        await app_robot.send_message(chat_id, "🥳")
+    await app_robot.send_message(chat_id, result_text)
     await app_robot.send_message(
-        message.chat.id,
-        result_text,
-    )
-    await app_robot.send_message(
-        message.chat.id,
+        chat_id,
         "Игра окончена. Спасибо за участие!",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="⬅️ Назад",
-                        callback_data="vasilii_game"
-                    )
-                ]
-            ]
-        )
+        buttons=[[Button.inline("⬅️ Назад", data="vasilii_game")]],
     )
+    raise events.StopPropagation
 
 
-@app_robot.on_message(pyrogram.filters.command(["test"]) & pyrogram.filters.private & pyrogram.filters.incoming)
+@app_robot.on(events.NewMessage(pattern=r'^/test(?:\s|$)', incoming=True, func=_is_private))
 @admin_only
-async def test_handler(client, message):
-    print(message)
-    # reply_markup = pyrogram.types.ReplyKeyboardMarkup(
-    #     [
-    #         [
-    #             pyrogram.types.KeyboardButton("📍", request_location=True),
-    #         ],
-    #     ],
-    #     resize_keyboard=True,
-    #     one_time_keyboard=True,
-    #     placeholder="🖖🏻🖖🏻🖖🏻🖖🏻🖖🏻"
-    # )
-    # reply_markup = pyrogram.types.ForceReply(
-    #     selective=True,
-    #     placeholder="🖖🏻🖖🏻🖖🏻🖖🏻🖖🏻"
-    # )
-    # await message.reply_text(
-    #     "test",
-    #     reply_markup=reply_markup
-    # )
-    pass
+async def test_handler(event):
+    print(event.message.stringify())
 
 
-try:
-    asyncio.get_event_loop().run_until_complete(ensure_startup_stream())
-    pyrogram.idle()
-except KeyboardInterrupt:
-    print('Exiting...')
-finally:
+async def amain():
+    print('login in dj account')
+    await app_dj.start()
+    print('login in robot account')
+    await app_robot.start()
+    if not disable_radio:
+        await start_calls()
+    await ensure_startup_stream()
+    me = await app_robot.get_me()
+    print(f"running as @{getattr(me, 'username', None)} (id={getattr(me, 'id', None)})")
+    await app_robot.run_until_disconnected()
+
+
+if __name__ == "__main__":
     try:
-        asyncio.get_event_loop().run_until_complete(leave_group_call(dot_ch_id))
-        pass
-    except KeyError:
-        # странная ошибка из-за того, что я залогинился через канал
-        pass
+        loop.run_until_complete(amain())
+    except KeyboardInterrupt:
+        print('Exiting...')
+    finally:
+        try:
+            loop.run_until_complete(leave_group_call(dot_ch_id))
+        except Exception:
+            pass

@@ -43,9 +43,7 @@ async def get_bashkir_haiku():
     )
 
 
-async def get_weather(location):
-    lat = location.latitude
-    lon = location.longitude
+async def get_weather(lat, lon):
     weather_data: Dict[str, Any] = await aiohttp_get_json(f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=ru&appid=OPENWEATHER_API_KEY_REMOVED')
 
     temperature = weather_data['main']['temp']
@@ -288,11 +286,20 @@ def circle_inversion_bytes(
 
 
 async def invert_picture(photo):
-    photo_bytes = io.BytesIO(photo.getvalue())
+    # photo: bytes | bytearray | io.BytesIO (Telethon download_media(file=bytes) отдаёт bytes)
+    if isinstance(photo, (bytes, bytearray)):
+        raw = bytes(photo)
+    elif hasattr(photo, "getvalue"):
+        raw = photo.getvalue()
+    else:
+        raw = bytes(photo)
+    photo_bytes = io.BytesIO(raw)
     photo_bytes.name = "photo.jpg"  # Указываем имя файла (необязательно)
 
     # Обрабатываем фото (версия 2, автоматический центр и радиус)
-    return circle_inversion_bytes(photo_bytes, version=2)
+    out = circle_inversion_bytes(photo_bytes, version=2)
+    out.name = "inverted.jpg"
+    return out
 
 
 name_1 = [

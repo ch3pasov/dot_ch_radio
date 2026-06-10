@@ -27,16 +27,32 @@ if not disable_radio:
         stream_after_end_target,
     )
 
-    import pyrogram
+    from telethon import events
+    from telethon.tl.types import InputPeerChannel, UpdateGroupCallParticipants, PeerUser
+    from telethon.tl.functions.phone import EditGroupCallParticipantRequest
+
     import pytgcalls
     from pytgcalls import filters as pytgcalls_filters
+
     app_dj_calls = pytgcalls.PyTgCalls(app_dj)
-    app_dj_calls.start()
+    # app_dj_calls.start() — переносим в main.py (нужен запущенный event loop)
+
+    async def start_calls():
+        await app_dj_calls.start()
 
     _prev_lockout = False
     _last_night_target_key: str | None = None
     _last_input_group_call = None
     _ADMINS = frozenset(admins)
+
+    # Идентичность, под которой dj-аккаунт заходит в войс (вещает «от канала-радио»).
+    _RADIO_JOIN_AS = InputPeerChannel(
+        channel_id=dot_ch_radio_id,
+        access_hash=dot_ch_radio_access_hash,
+    )
+
+    def _is_private(event) -> bool:
+        return bool(getattr(event, "is_private", False))
 
     def _media_key(media: Union[str, Path]) -> str:
         if isinstance(media, Path):
@@ -92,16 +108,13 @@ if not disable_radio:
         await app_dj_calls.play(
             dot_ch_id,
             pytgcalls.types.MediaStream(
-                stream_arg,
-                pytgcalls.types.AudioQuality.HIGH,
+                str(stream_arg),
+                audio_parameters=pytgcalls.types.AudioQuality.HIGH,
                 ffmpeg_parameters=ffmpeg_parameters,
             ),
-            pytgcalls.types.GroupCallConfig(
-                join_as=pyrogram.raw.types.InputPeerChannel(
-                    channel_id=dot_ch_radio_id,
-                    access_hash=dot_ch_radio_access_hash
-                )
-            )
+            config=pytgcalls.types.GroupCallConfig(
+                join_as=_RADIO_JOIN_AS,
+            ),
         )
 
     async def get_participants(chat_id):
@@ -110,34 +123,37 @@ if not disable_radio:
     async def leave_group_call(chat_id):
         await app_dj_calls.leave_call(chat_id)
 
-    @app_robot.on_message(pyrogram.filters.command(["pause"]) & pyrogram.filters.private)
+    @app_robot.on(events.NewMessage(pattern=r'^/pause(?:\s|$)', func=_is_private))
     @admin_only
-    async def pause_handler(client, message):
-        print(f"{message.from_user.id} calls pause")
-        await app_robot.send_message(message.from_user.id, await app_dj_calls.pause_stream(dot_ch_id))
+    async def pause_handler(event):
+        print(f"{event.sender_id} calls pause")
+        result = await app_dj_calls.pause_stream(dot_ch_id)
+        await app_robot.send_message(event.sender_id, str(result))
 
-    @app_robot.on_message(pyrogram.filters.command(["resume"]) & pyrogram.filters.private)
+    @app_robot.on(events.NewMessage(pattern=r'^/resume(?:\s|$)', func=_is_private))
     @admin_only
-    async def resume_handler(client, message):
-        print(f"{message.from_user.id} calls resume")
-        await app_robot.send_message(message.from_user.id, await app_dj_calls.resume_stream(dot_ch_id))
+    async def resume_handler(event):
+        print(f"{event.sender_id} calls resume")
+        result = await app_dj_calls.resume_stream(dot_ch_id)
+        await app_robot.send_message(event.sender_id, str(result))
 
-    @app_robot.on_message(pyrogram.filters.command(["time"]) & pyrogram.filters.private)
+    @app_robot.on(events.NewMessage(pattern=r'^/time(?:\s|$)', func=_is_private))
     @admin_only
-    async def time_handler(client, message):
-        print(f"{message.from_user.id} calls time")
-        await app_robot.send_message(message.from_user.id, await app_dj_calls.played_time(dot_ch_id))
+    async def time_handler(event):
+        print(f"{event.sender_id} calls time")
+        result = await app_dj_calls.played_time(dot_ch_id)
+        await app_robot.send_message(event.sender_id, str(result))
 
-    @app_robot.on_message(pyrogram.filters.command(["change_stream"]) & pyrogram.filters.private)
+    @app_robot.on(events.NewMessage(pattern=r'^/change_stream\s+(\S+)', func=_is_private))
     @admin_only
-    async def change_stream_handler(client, message):
-        url = message.command[1]
+    async def change_stream_handler(event):
+        url = event.pattern_match.group(1)
         await change_stream(
             url,
-            who_called=message.from_user.id
+            who_called=event.sender_id
         )
         await app_robot.send_message(
-            message.from_user.id,
+            event.sender_id,
             "True?!"
         )
 
@@ -200,6 +216,16 @@ if not disable_radio:
         _last_night_target_key = _media_key(target)
         asyncio.get_running_loop().create_task(_night_scheduler_loop())
 
+    async def _edit_participant_muted(call, participant_id, muted: bool):
+        peer = await app_dj.get_input_entity(participant_id)
+        await app_dj(
+            EditGroupCallParticipantRequest(
+                call=call,
+                participant=peer,
+                muted=muted,
+            )
+        )
+
     async def _mute_sweep_non_admins():
         global _last_input_group_call
         call = _last_input_group_call
@@ -212,15 +238,8 @@ if not disable_radio:
         for p in parts:
             if p.user_id in _ADMINS:
                 continue
-            peer = await app_dj.resolve_peer(p.user_id)
             try:
-                await app_dj.invoke(
-                    pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                        call=call,
-                        participant=peer,
-                        muted=True,
-                    )
-                )
+                await _edit_participant_muted(call, p.user_id, True)
             except Exception as e:
                 print(f"night mute sweep user {p.user_id}: {e}")
 
@@ -233,100 +252,53 @@ if not disable_radio:
         if not parts:
             return
         for p in parts:
-            peer = await app_dj.resolve_peer(p.user_id)
             try:
-                await app_dj.invoke(
-                    pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                        call=call,
-                        participant=peer,
-                        muted=False,
-                    )
-                )
+                await _edit_participant_muted(call, p.user_id, False)
             except Exception as e:
                 print(f"day unmute sweep user {p.user_id}: {e}")
 
     # главный обработчик событий в войсчате
-    @app_dj.on_raw_update()
-    async def raw(client, update, users, chats):
+    @app_dj.on(events.Raw(types=UpdateGroupCallParticipants))
+    async def raw(update):
         global _last_input_group_call
-        if type(update) is pyrogram.raw.types.update_group_call_participants.UpdateGroupCallParticipants:
-            call = update.call
-            _last_input_group_call = call
-            for participant in update.participants:
-                match type(participant.peer):
-                    case pyrogram.raw.types.PeerUser:
-                        participant_id = participant.peer.user_id
-                    case _:
-                        continue
+        call = update.call
+        _last_input_group_call = call
+        for participant in update.participants:
+            if isinstance(participant.peer, PeerUser):
+                participant_id = participant.peer.user_id
+            else:
+                continue
 
-                if participant.left:
-                    print(f"user {participant_id} left")
-                    continue
+            if participant.left:
+                print(f"user {participant_id} left")
+                continue
 
-                peer = await app_dj.resolve_peer(participant_id)
-
-                if is_night_radio_lockout_utc():
-                    if participant_id in _ADMINS:
-                        # Только при входе: иначе при muted=True (слушатель) каждый
-                        # UpdateGroupCallParticipants даёт лавину EditGroupCallParticipant и 400 PARTICIPANT_JOIN_MISSING.
-                        if participant.just_joined and participant.muted:
-                            print(f"user {participant_id} admin, unmute on join")
-                            try:
-                                await app_dj.invoke(
-                                    pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                                        call=call,
-                                        participant=peer,
-                                        muted=False,
-                                    )
-                                )
-                            except Exception as e:
-                                print(f"night admin unmute user {participant_id}: {e}")
-                    elif participant.just_joined:
-                        print(f"user {participant_id} night mute on join")
+            if is_night_radio_lockout_utc():
+                if participant_id in _ADMINS:
+                    # Только при входе: иначе при muted=True (слушатель) каждый
+                    # UpdateGroupCallParticipants даёт лавину EditGroupCallParticipant и 400 PARTICIPANT_JOIN_MISSING.
+                    if participant.just_joined and participant.muted:
+                        print(f"user {participant_id} admin, unmute on join")
                         try:
-                            await app_dj.invoke(
-                                pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                                    call=call,
-                                    participant=peer,
-                                    muted=True,
-                                )
-                            )
+                            await _edit_participant_muted(call, participant_id, False)
                         except Exception as e:
-                            print(f"night mute user {participant_id}: {e}")
+                            print(f"night admin unmute user {participant_id}: {e}")
                 elif participant.just_joined:
-                    print(f"user {participant_id} just joined")
+                    print(f"user {participant_id} night mute on join")
                     try:
-                        await app_dj.invoke(
-                            pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                                call=call,
-                                participant=peer,
-                                muted=False,
-                            )
-                        )
+                        await _edit_participant_muted(call, participant_id, True)
                     except Exception as e:
-                        print(f"day unmute on join user {participant_id}: {e}")
-                if participant.raise_hand_rating:
-                    print(f"user {participant_id} raise hand with rating {participant.raise_hand_rating}")
-                    # peer = await app_dj.resolve_peer(participant_id)
-                    # await asyncio.sleep(5)
-                    # if randint(0, 1):
-                    #     await app_dj.invoke(
-                    #         pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                    #             call=call,
-                    #             participant=peer,
-                    #             raise_hand=False
-                    #         )
-                    #     )
-                    # else:
-                    #     await app_dj.invoke(
-                    #         pyrogram.raw.functions.phone.EditGroupCallParticipant(
-                    #             call=call,
-                    #             participant=peer,
-                    #             muted=False
-                    #         )
-                    #     )
+                        print(f"night mute user {participant_id}: {e}")
+            elif participant.just_joined:
+                print(f"user {participant_id} just joined")
+                try:
+                    await _edit_participant_muted(call, participant_id, False)
+                except Exception as e:
+                    print(f"day unmute on join user {participant_id}: {e}")
+            if participant.raise_hand_rating:
+                print(f"user {participant_id} raise hand with rating {participant.raise_hand_rating}")
 else:
-    async def start_radio():
+    async def start_calls():
         print("Radio is disabled")
         return None
 

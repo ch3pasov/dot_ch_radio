@@ -2,6 +2,7 @@ common.log
 config
 
 *_account.session*
+*.session.pyrogram.bak
 *.db*
 *.mp3
 *.webm

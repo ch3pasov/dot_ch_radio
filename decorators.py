@@ -3,11 +3,14 @@ from volume.config.tg_ids import admins
 
 def _only(allowlist):
     def decorator(func):
-        async def wrapper(client, message, *args, **kwargs):
-            if message.from_user.id in allowlist:
-                return await func(client, message, *args, **kwargs)
-            else:
-                return "🧚‍♀️"
+        async def wrapper(event, *args, **kwargs):
+            if event.sender_id in allowlist:
+                return await func(event, *args, **kwargs)
+            try:
+                await event.reply("🧚‍♀️")
+            except Exception:
+                pass
+            return None
         return wrapper
     return decorator
 
