@@ -1,3 +1,5 @@
+name: dot_ch_radio
+
 services:
   dot_ch_radio:
     build:
@@ -11,5 +13,5 @@ services:
         max-file: "5"
     container_name: dot_ch_radio
     volumes:
-      - ~/dockers/dot-ch-radio/volume:/app/volume
+      - ~/dockers/dot_ch_radio/volume:/app/volume
     restart: unless-stopped
