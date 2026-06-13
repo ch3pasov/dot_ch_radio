@@ -1,5 +1,5 @@
 # base
-telethon<2
+telethon @ https://codeberg.org/Lonami/Telethon/archive/0f394205c04482a1ee08747859a32ef33af1a589.tar.gz
 cryptg
 # radio
 ntgcalls
