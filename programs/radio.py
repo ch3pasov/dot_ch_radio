@@ -43,6 +43,8 @@ if not disable_radio:
     _prev_lockout = False
     _last_night_target_key: str | None = None
     _last_input_group_call = None
+    _stream_end_recovery_lock = asyncio.Lock()
+    _last_stream_end_recovery_at = 0.0
     _ADMINS = frozenset(admins)
 
     # Идентичность, под которой dj-аккаунт заходит в войс (вещает «от канала-радио»).
@@ -158,14 +160,21 @@ if not disable_radio:
         )
 
     async def _handle_stream_end():
-        try:
-            nxt = stream_after_end_target(default_url)
-            seg: Optional[Literal["random_first", "full"]] = None
-            if isinstance(nxt, Path) and is_night_loop_media_path(nxt.resolve()):
-                seg = "full"
-            await change_stream(nxt, who_called="stream_end", night_loop_segment=seg)
-        except Exception as e:
-            print(f"stream_end handler: {e}")
+        global _last_stream_end_recovery_at
+        async with _stream_end_recovery_lock:
+            now = asyncio.get_running_loop().time()
+            if now - _last_stream_end_recovery_at < 2.0:
+                print("duplicate stream_end ignored")
+                return
+            _last_stream_end_recovery_at = now
+            try:
+                nxt = stream_after_end_target(default_url)
+                seg: Optional[Literal["random_first", "full"]] = None
+                if isinstance(nxt, Path) and is_night_loop_media_path(nxt.resolve()):
+                    seg = "full"
+                await change_stream(nxt, who_called="stream_end", night_loop_segment=seg)
+            except Exception as e:
+                print(f"stream_end handler: {e}")
 
     @app_dj_calls.on_update(pytgcalls_filters.stream_end())
     async def handler(client: pytgcalls.PyTgCalls, update: pytgcalls.types.Update):

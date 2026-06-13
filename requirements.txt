@@ -1,9 +1,9 @@
 # base
-telethon @ https://codeberg.org/Lonami/Telethon/archive/0f394205c04482a1ee08747859a32ef33af1a589.tar.gz
+telethon==1.43.2
 cryptg
 # radio
 ntgcalls
-py-tgcalls==2.2.*
+py-tgcalls==2.3.*
 # other
 aiohttp
 Pillow
