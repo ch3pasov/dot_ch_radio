@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from volume.content_assets import apply_telegram_assets
 from volume.content_schema import folder, link, normalize_tree
 
 
@@ -663,7 +664,7 @@ common_tree = {
     }
 }
 
-common_tree = normalize_tree(common_tree)
+common_tree = normalize_tree(apply_telegram_assets(common_tree))
 
 startup_url = "https://zvukipro.com/uploads/files/2020-12/1609413715_the-microsoft-sound.mp3"
 

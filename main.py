@@ -40,9 +40,9 @@ def _not_channel(event) -> bool:
     return not (getattr(event, "is_channel", False) and not getattr(event, "is_group", False))
 
 
-async def _safe_edit(message, text, *, buttons=None, link_preview=True):
+async def _safe_edit(message, text, *, buttons=None, link_preview=True, file=None):
     try:
-        return await message.edit(text, buttons=buttons or None, link_preview=link_preview)
+        return await message.edit(text, buttons=buttons or None, link_preview=link_preview, file=file)
     except MessageNotModifiedError:
         return message
     except ReplyMarkupTooLongError:
@@ -51,6 +51,21 @@ async def _safe_edit(message, text, *, buttons=None, link_preview=True):
             "⚠️ Не смог отрисовать клавиатуру: Telegram отклонил слишком большую разметку."
         )
         return await message.edit(fallback, buttons=None, link_preview=link_preview)
+
+
+async def _node_telegram_media(obj):
+    media_ref = obj.get("telegram_media")
+    if not media_ref:
+        return None
+    try:
+        archive_message = await app_robot.get_messages(
+            int(media_ref["chat_id"]),
+            ids=int(media_ref["message_id"]),
+        )
+    except Exception as exc:
+        print(f"failed to load telegram media {media_ref}: {exc}")
+        return None
+    return getattr(archive_message, "media", None)
 
 
 def _button_label(item):
@@ -213,7 +228,8 @@ async def open_common_hashdict(deep_link, message, user_id):
                 text += f'\n{await get_minecraft_server_info()}'
             # case "nadezhdin":
             #     text += f'\n{await get_nadezhdin()}'
-    await _safe_edit(message, text, buttons=buttons, link_preview=not disable_web_page_preview)
+    telegram_media = await _node_telegram_media(obj)
+    await _safe_edit(message, text, buttons=buttons, link_preview=not disable_web_page_preview, file=telegram_media)
     return None
 
 
