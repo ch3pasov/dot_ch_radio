@@ -1,3 +1,72 @@
+import json
+from pathlib import Path
+
+
+EMOJI_PACK_LINKS_PATH = Path(__file__).resolve().parent.parent / "config" / "emoji_pack_links.json"
+
+
+def _build_sf7_emoji_pack_tree():
+    with EMOJI_PACK_LINKS_PATH.open(encoding="utf-8") as links_file:
+        links_config = json.load(links_file)
+
+    weights = links_config["weights"]
+    url_template = links_config["url_template"]
+    set_name_template = links_config["set_name_template"]
+
+    groups = {}
+    for pack in links_config["packs"]:
+        groups.setdefault(
+            pack["group_id"],
+            {
+                "title": pack["title"],
+                "count": pack["count"],
+            },
+        )
+
+    if len(groups) != links_config["groups_count"]:
+        raise ValueError(f"Expected {links_config['groups_count']} emoji groups, got {len(groups)}")
+
+    def pack_url(weight, group_id):
+        set_name = set_name_template.format(weight_slug=weight.lower(), group_slug=group_id)
+        return url_template.format(set_name=set_name)
+
+    def group_pages(weight, page_size=11):
+        group_items = list(groups.items())
+        pages = {}
+        for page_index in range(0, len(group_items), page_size):
+            page_items = group_items[page_index:page_index + page_size]
+            first_title = page_items[0][1]["title"]
+            last_title = page_items[-1][1]["title"]
+            page_number = page_index // page_size + 1
+            pages[f"page_{page_number:02d}"] = {
+                "name": f"{first_title} — {last_title}",
+                "children": {
+                    group_id: {
+                        "name": f"{group['title']} ({group['count']})",
+                        "url": pack_url(weight, group_id),
+                    }
+                    for group_id, group in page_items
+                },
+            }
+        return pages
+
+    return {
+        "name": "🧩 SF7 эмодзипаки",
+        "description": (
+            f"{links_config['packs_count']} эмодзипаков SF7: "
+            f"{len(weights)} толщин × {len(groups)} групп."
+        ),
+        "beta_access": 1,
+        "children": {
+            weight.lower(): {
+                "name": f"🔤 {weight}",
+                "children": group_pages(weight),
+            }
+            for weight in weights
+        },
+    }
+
+
 common_tree = {
     "name": "🌳 Корень",
     "description": "👋 Добро пожаловать в корень дерева! Здесь начинается ваше путешествие по музыкальному миру и файлам.",
@@ -462,6 +531,7 @@ common_tree = {
                                     "name": "🍏 Старые иконки приложений  Apple",
                                     "url": "https://t.me/addemoji/AppleIconsIOS",
                                 },
+                                "sf7_emoji_packs": _build_sf7_emoji_pack_tree(),
                             }
                         },
                         "other": {
