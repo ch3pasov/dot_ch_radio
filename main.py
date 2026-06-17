@@ -2,8 +2,15 @@ import asyncio
 import random
 
 from telethon import events, Button
-from telethon.errors import MessageNotModifiedError
-from telethon.tl.types import InputMediaDice, MessageMediaVenue
+from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
+from telethon.tl.types import (
+    InputMediaDice,
+    KeyboardButtonCopy,
+    KeyboardButtonSimpleWebView,
+    KeyboardButtonUserProfile,
+    KeyboardButtonWebView,
+    MessageMediaVenue,
+)
 
 from volume.config.tg_ids import beta_testers, bot_username
 from volume.config.debug import disable_radio
@@ -38,6 +45,102 @@ async def _safe_edit(message, text, *, buttons=None, link_preview=True):
         return await message.edit(text, buttons=buttons or None, link_preview=link_preview)
     except MessageNotModifiedError:
         return message
+    except ReplyMarkupTooLongError:
+        fallback = (
+            f"{text}\n\n"
+            "⚠️ Не смог отрисовать клавиатуру: Telegram отклонил слишком большую разметку."
+        )
+        return await message.edit(fallback, buttons=None, link_preview=link_preview)
+
+
+def _button_label(item):
+    return item.get("button_text") or item["name"]
+
+
+def _button_icon(item):
+    icon = item.get("button_icon")
+    return int(icon) if icon is not None else None
+
+
+def _button_style(item):
+    return item.get("button_style")
+
+
+def _raw_button_style(item):
+    return Button._get_style(_button_style(item), _button_icon(item))
+
+
+def _child_is_action_button(item):
+    return any(
+        key in item
+        for key in (
+            "url",
+            "switch_inline_query",
+            "switch_inline_query_current_chat",
+            "copy_text",
+            "web_app_url",
+            "simple_web_app_url",
+            "user_id",
+        )
+    )
+
+
+def _build_child_button(child_hash, item):
+    label = _button_label(item)
+    style = _button_style(item)
+    icon = _button_icon(item)
+
+    if "url" in item:
+        return Button.url(label, item["url"], style=style, icon=icon)
+    if "copy_text" in item:
+        return KeyboardButtonCopy(label, item["copy_text"], style=_raw_button_style(item))
+    if "web_app_url" in item:
+        return KeyboardButtonWebView(label, item["web_app_url"], style=_raw_button_style(item))
+    if "simple_web_app_url" in item:
+        return KeyboardButtonSimpleWebView(label, item["simple_web_app_url"], style=_raw_button_style(item))
+    if item.get("button_type") == "user_profile" or "user_id" in item:
+        return KeyboardButtonUserProfile(label, int(item["user_id"]), style=_raw_button_style(item))
+    if "switch_inline_query_current_chat" in item:
+        return Button.switch_inline(
+            label,
+            query=item["switch_inline_query_current_chat"],
+            same_peer=True,
+            style=style,
+            icon=icon,
+        )
+    if "switch_inline_query" in item:
+        return Button.switch_inline(
+            label,
+            query=item["switch_inline_query"],
+            same_peer=bool(item.get("same_peer", False)),
+            style=style,
+            icon=icon,
+        )
+    return Button.inline(label, data=f"id={child_hash}", style=style, icon=icon)
+
+
+def _child_button_rows(children, obj, user_id):
+    columns = max(1, int(obj.get("children_columns", 1)))
+    rows = []
+    row = []
+
+    for child_hash, child in children.items():
+        if child.get("beta_access", 0) and user_id not in beta_testers:
+            continue
+
+        if child.get("break_before") and row:
+            rows.append(row)
+            row = []
+
+        row.append(_build_child_button(child_hash, child))
+
+        if child.get("break_after") or len(row) >= columns:
+            rows.append(row)
+            row = []
+
+    if row:
+        rows.append(row)
+    return rows
 
 
 async def _roll(chat_id, emoticon):
@@ -75,9 +178,9 @@ async def open_common_hashdict(deep_link, message, user_id):
             await open_common_hashdict("", message, user_id)
             return "🤷‍♂️Не знаю как ты это открыл, но тебе сюда нельзя."
 
-    if "url" in obj or "switch_inline_query_current_chat" in obj:
+    if _child_is_action_button(obj):
         await open_common_hashdict("", message, user_id)
-        return "🤷‍♂️Не знаю как ты открыл кнопку-ссылку, но ты не пройдёшь."
+        return "🤷‍♂️Не знаю как ты открыл action-кнопку, но ты не пройдёшь."
     # common case
     if "radio_url" in obj:
         if is_night_radio_lockout_utc():
@@ -92,19 +195,7 @@ async def open_common_hashdict(deep_link, message, user_id):
     if "description" in obj:
         text += f'\n{obj["description"]}'
     if "children" in obj:
-        children = obj["children"]
-        for child in children:
-            if children[child].get("beta_access", 0):
-                if user_id not in beta_testers:
-                    continue
-            c = children[child]
-            if "url" in c:
-                btn = Button.url(c['name'], c['url'])
-            elif "switch_inline_query_current_chat" in c:
-                btn = Button.switch_inline(c['name'], query=c['switch_inline_query_current_chat'], same_peer=True)
-            else:
-                btn = Button.inline(c['name'], data=f"id={child}")
-            buttons.append([btn])
+        buttons.extend(_child_button_rows(obj["children"], obj, user_id))
     if obj.get("refresh", 0):
         buttons.append([Button.inline("🔄", data=f"refresh=1=id={path_hash}")])
     share_button = Button.url("🔗", f"https://t.me/share/url?url={obj['share']}")

@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+from volume.content_schema import folder, link, normalize_tree
+
 
 EMOJI_PACK_LINKS_PATH = Path(__file__).resolve().parent.parent / "config" / "emoji_pack_links.json"
 
@@ -32,39 +34,49 @@ def _build_sf7_emoji_pack_tree():
 
     def group_pages(weight, page_size=11):
         group_items = list(groups.items())
-        pages = {}
+        pages = []
         for page_index in range(0, len(group_items), page_size):
             page_items = group_items[page_index:page_index + page_size]
             first_title = page_items[0][1]["title"]
             last_title = page_items[-1][1]["title"]
             page_number = page_index // page_size + 1
-            pages[f"page_{page_number:02d}"] = {
-                "name": f"{first_title} — {last_title}",
-                "children": {
-                    group_id: {
-                        "name": f"{group['title']} ({group['count']})",
-                        "url": pack_url(weight, group_id),
-                    }
-                    for group_id, group in page_items
-                },
-            }
+            pages.append(
+                folder(
+                    f"{first_title} — {last_title}",
+                    id=f"page_{page_number:02d}",
+                    children_columns=1,
+                    children=[
+                        link(
+                            f"{group['title']} ({group['count']})",
+                            pack_url(weight, group_id),
+                            id=group_id,
+                            button_style="primary",
+                        )
+                        for group_id, group in page_items
+                    ],
+                )
+            )
         return pages
 
-    return {
-        "name": "🧩 SF7 эмодзипаки",
-        "description": (
+    return folder(
+        "🧩 SF7 эмодзипаки",
+        description=(
             f"{links_config['packs_count']} эмодзипаков SF7: "
             f"{len(weights)} толщин × {len(groups)} групп."
         ),
-        "beta_access": 1,
-        "children": {
-            weight.lower(): {
-                "name": f"🔤 {weight}",
-                "children": group_pages(weight),
-            }
+        beta_access=1,
+        children_columns=1,
+        children=[
+            folder(
+                f"🔤 {weight}",
+                id=weight.lower(),
+                button_style="primary",
+                children_columns=1,
+                children=group_pages(weight),
+            )
             for weight in weights
-        },
-    }
+        ],
+    )
 
 
 common_tree = {
@@ -650,6 +662,8 @@ common_tree = {
         }
     }
 }
+
+common_tree = normalize_tree(common_tree)
 
 startup_url = "https://zvukipro.com/uploads/files/2020-12/1609413715_the-microsoft-sound.mp3"
 
