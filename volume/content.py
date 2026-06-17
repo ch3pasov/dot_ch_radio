@@ -1,11 +1,33 @@
 import json
 from pathlib import Path
 
-from volume.content_assets import apply_telegram_assets
+from volume.content_assets import apply_telegram_file_ids
 from volume.content_schema import folder, link, normalize_tree
 
 
 EMOJI_PACK_LINKS_PATH = Path(__file__).resolve().parent.parent / "config" / "emoji_pack_links.json"
+
+
+TELEGRAM_ASSET_FILE_IDS = {
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/%D0%A5%D0%BE%D1%80%D0%BE%D1%88%D0%B8%D0%B5%20%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8%20%E2%84%9611.pdf': 'BQADAgADBJgAAm8JmUl1etUPD8MkSwI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/CNOLM_Win.zip': 'BQADAgADB5gAAm8JmUnaQcg8fKzxGQI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg': 'BQADAgAD7ZwAAm8JmUnXVfb1QoFRYgI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg': 'BQADAgAD7pwAAm8JmUmhLedYHQzukAI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Naya.mp4': 'BAADAgADCJgAAm8JmUnIq3P8xA5ATAI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Presentation%20%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0%20%D0%92%D0%9A%D0%A0.zip': 'BQADAgADCZgAAm8JmUnkSm8xswRh8QI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/%D0%A1%D0%B6%D0%B0%D1%82%D1%8C%20%D0%A4%D0%BE%D1%82%D0%BE.shortcut': 'BQADAgADCpgAAm8JmUnzWFr9S81bQAI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Add%20LeetCode%20daily%20problem%20solving%20event.shortcut': 'BQADAgADC5gAAm8JmUmVPYn5f3767gI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Calculate%20text.shortcut': 'BQADAgADDJgAAm8JmUmZVk2plFv6CgI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut': 'BQADAgADDZgAAm8JmUkQUb6_C2aT8QI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Minecraft%20server%20online.shortcut': 'BQADAgADDpgAAm8JmUmHwAryCIs_UAI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Run%20YSH%20Scenario.shortcut': 'BQADAgADD5gAAm8JmUn_YxKoejEDvAI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Vasilii%20Game.shortcut': 'BQADAgADEJgAAm8JmUmLSAOWKUTxIgI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/audio_01.mp3': 'CQADAgADEZgAAm8JmUkzP34w1TB3KAI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/cnolm.jpg': 'BQADAgAD75wAAm8JmUmieQQZEQz-CwI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/photo.jpg': 'BQADAgAD8JwAAm8JmUnwxgIgp9lVnQI',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/photo2.jpg': 'BQADAgAD8ZwAAm8JmUn_GQABueMfx7AC',
+    'https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png': 'BQADAgAD8pwAAm8JmUlKxffmZspcsgI',
+}
 
 
 def _build_sf7_emoji_pack_tree():
@@ -664,7 +686,7 @@ common_tree = {
     }
 }
 
-common_tree = normalize_tree(apply_telegram_assets(common_tree))
+common_tree = normalize_tree(apply_telegram_file_ids(common_tree, TELEGRAM_ASSET_FILE_IDS))
 
 startup_url = "https://zvukipro.com/uploads/files/2020-12/1609413715_the-microsoft-sound.mp3"
 

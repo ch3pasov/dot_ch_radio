@@ -33,9 +33,9 @@ folder(
 
 ## Telegram media
 
-`volume/telegram_assets.json` is a local index of files that are already stored in Telegram. Runtime code never downloads bucket files. It prefers Bot API-style `file_id`, attaches the matching Telegram media, and removes old hidden bucket-preview links from descriptions.
+`TELEGRAM_ASSET_FILE_IDS` in `volume/content.py` maps old bucket URLs to Telegram Bot API-style `file_id` values. Runtime code never downloads bucket files and does not depend on archive `chat_id` / `message_id` references. It resolves `telegram_file_id`, attaches the matching Telegram media, and removes old hidden bucket-preview links from descriptions.
 
-For new media, upload the file to Telegram manually and add its `file_id` to `volume/telegram_assets.json`, or set `telegram_file_id` directly on a content node. Legacy `chat_id` / `message_id` refs may remain as fallback and for one-time migration with `scripts/migrate_telegram_assets_to_file_ids.py`.
+For new media, upload the file to Telegram manually and add its `file_id` to `TELEGRAM_ASSET_FILE_IDS`, or set `telegram_file_id` directly on a content node.
 
 ## Button fields
 

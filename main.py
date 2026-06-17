@@ -61,24 +61,12 @@ async def _safe_edit(message, text, *, buttons=None, link_preview=True, file=Non
 
 async def _node_telegram_media(obj):
     file_id = obj.get("telegram_file_id")
-    if file_id:
-        media = utils.resolve_bot_file_id(file_id)
-        if media is not None:
-            return media
+    if not file_id:
+        return None
+    media = utils.resolve_bot_file_id(file_id)
+    if media is None:
         print(f"failed to resolve telegram file_id for {obj.get('name')}")
-
-    media_ref = obj.get("telegram_media")
-    if not media_ref:
-        return None
-    try:
-        archive_message = await app_robot.get_messages(
-            int(media_ref["chat_id"]),
-            ids=int(media_ref["message_id"]),
-        )
-    except Exception as exc:
-        print(f"failed to load telegram media {media_ref}: {exc}")
-        return None
-    return getattr(archive_message, "media", None)
+    return media
 
 
 def _button_label(item):
