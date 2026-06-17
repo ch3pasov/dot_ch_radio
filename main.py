@@ -1,7 +1,7 @@
 import asyncio
 import random
 
-from telethon import events, Button
+from telethon import events, Button, utils
 from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
 from telethon.tl.types import (
     InputMediaDice,
@@ -60,6 +60,13 @@ async def _safe_edit(message, text, *, buttons=None, link_preview=True, file=Non
 
 
 async def _node_telegram_media(obj):
+    file_id = obj.get("telegram_file_id")
+    if file_id:
+        media = utils.resolve_bot_file_id(file_id)
+        if media is not None:
+            return media
+        print(f"failed to resolve telegram file_id for {obj.get('name')}")
+
     media_ref = obj.get("telegram_media")
     if not media_ref:
         return None

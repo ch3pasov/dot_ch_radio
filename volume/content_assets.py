@@ -39,8 +39,11 @@ def _apply_to_node(node: dict[str, Any], assets: dict[str, Any]) -> None:
             if url in assets
         ]
         if telegram_assets:
+            primary_asset = telegram_assets[0]
             node.setdefault("telegram_assets", telegram_assets)
-            node.setdefault("telegram_media", telegram_assets[0])
+            if primary_asset.get("file_id"):
+                node.setdefault("telegram_file_id", primary_asset["file_id"])
+            node.setdefault("telegram_media", primary_asset)
             node["description"] = _clean_bucket_links(description, assets)
 
     for child in node.get("children", {}).values() if isinstance(node.get("children"), dict) else node.get("children", []):
