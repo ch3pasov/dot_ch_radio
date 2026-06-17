@@ -40,9 +40,15 @@ def _not_channel(event) -> bool:
     return not (getattr(event, "is_channel", False) and not getattr(event, "is_group", False))
 
 
-async def _safe_edit(message, text, *, buttons=None, link_preview=True, file=None):
+async def _safe_edit(message, text, *, buttons=None, link_preview=True, file=None, parse_mode=()):
     try:
-        return await message.edit(text, buttons=buttons or None, link_preview=link_preview, file=file)
+        return await message.edit(
+            text,
+            buttons=buttons or None,
+            link_preview=link_preview,
+            file=file,
+            parse_mode=parse_mode,
+        )
     except MessageNotModifiedError:
         return message
     except ReplyMarkupTooLongError:
@@ -50,7 +56,7 @@ async def _safe_edit(message, text, *, buttons=None, link_preview=True, file=Non
             f"{text}\n\n"
             "⚠️ Не смог отрисовать клавиатуру: Telegram отклонил слишком большую разметку."
         )
-        return await message.edit(fallback, buttons=None, link_preview=link_preview)
+        return await message.edit(fallback, buttons=None, link_preview=link_preview, parse_mode=parse_mode)
 
 
 async def _node_telegram_media(obj):
@@ -229,7 +235,14 @@ async def open_common_hashdict(deep_link, message, user_id):
             # case "nadezhdin":
             #     text += f'\n{await get_nadezhdin()}'
     telegram_media = await _node_telegram_media(obj)
-    await _safe_edit(message, text, buttons=buttons, link_preview=not disable_web_page_preview, file=telegram_media)
+    await _safe_edit(
+        message,
+        text,
+        buttons=buttons,
+        link_preview=not disable_web_page_preview,
+        file=telegram_media,
+        parse_mode=obj.get("parse_mode", ()),
+    )
     return None
 
 

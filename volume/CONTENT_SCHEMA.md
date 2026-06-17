@@ -22,13 +22,26 @@ folder(
 
 - `id`: stable path segment when children are written as a list.
 - `name`: visible title and default button label.
-- `description`: message body below the title.
+- `description`: message body below the title. Markdown is used by default.
+- `parse_mode`: override text parser for this node, for example `"markdown"`, `"html"`, or `None`.
 - `children`: either the legacy `{id: node}` dict or a list of nodes with `id`.
 - `children_columns`: how many child buttons to place in one row. Defaults to `1`.
 - `beta_access`: inherited by descendants; hidden from non-beta users.
 - `alias`: stable `/start` deep-link alias.
 - `refresh`: adds a refresh button.
 - `disable_web_page_preview`: disables link previews for the node message.
+
+## Telegram media
+
+Bucket links from `https://storage.yandexcloud.net/dot-ch-bot-bucket/...` are uploaded by `scripts/upload_content_assets.py` into Telegram and indexed in `volume/telegram_assets.json`. At runtime `volume.content_assets.apply_telegram_assets` turns matching links into `telegram_media` attachments and removes hidden bucket-preview links from descriptions.
+
+Run this after adding bucket files:
+
+```bash
+docker compose stop dot_ch_radio
+docker compose run --rm --user root --workdir /app dot_ch_radio env PYTHONPATH=/app python scripts/upload_content_assets.py
+docker compose up -d --build
+```
 
 ## Button fields
 
