@@ -33,15 +33,9 @@ folder(
 
 ## Telegram media
 
-Bucket links from `https://storage.yandexcloud.net/dot-ch-bot-bucket/...` are uploaded by `scripts/upload_content_assets.py` into Telegram and indexed in `volume/telegram_assets.json`. At runtime `volume.content_assets.apply_telegram_assets` turns matching links into `telegram_media` attachments and removes hidden bucket-preview links from descriptions.
+`volume/telegram_assets.json` is a local index of files that are already stored in Telegram. Runtime code never downloads bucket files. It only reads this index, attaches the matching Telegram media, and removes old hidden bucket-preview links from descriptions.
 
-Run this after adding bucket files:
-
-```bash
-docker compose stop dot_ch_radio
-docker compose run --rm --user root --workdir /app dot_ch_radio env PYTHONPATH=/app python scripts/upload_content_assets.py
-docker compose up -d --build
-```
+For new media, upload the file to Telegram manually and add its `chat_id` / `message_id` to `volume/telegram_assets.json`, or set `telegram_media` directly on a content node.
 
 ## Button fields
 
