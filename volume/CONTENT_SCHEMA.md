@@ -33,9 +33,9 @@ folder(
 
 ## Telegram media
 
-`TELEGRAM_ASSET_FILE_IDS` in `volume/content.py` maps old bucket URLs to Telegram Bot API-style `file_id` values. Runtime code never downloads bucket files and does not depend on archive `chat_id` / `message_id` references. It resolves `telegram_file_id`, attaches the matching Telegram media, and removes old hidden bucket-preview links from descriptions.
+Use `telegram_file_id` directly on a content node to attach Telegram media by Bot API-style `file_id`. Runtime code never downloads bucket files and does not depend on archive `chat_id` / `message_id` references. Old bucket-preview links should not be kept in descriptions.
 
-For new media, upload the file to Telegram manually and add its `file_id` to `TELEGRAM_ASSET_FILE_IDS`, or set `telegram_file_id` directly on a content node.
+For new media, upload the file to Telegram manually and paste its `file_id` into the relevant node as `telegram_file_id`.
 
 ## Button fields
 

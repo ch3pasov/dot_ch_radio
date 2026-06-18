@@ -1,33 +1,12 @@
 import json
 from pathlib import Path
 
-from volume.content_assets import apply_telegram_file_ids
 from volume.content_schema import folder, link, normalize_tree
 
 
 EMOJI_PACK_LINKS_PATH = Path(__file__).resolve().parent.parent / "config" / "emoji_pack_links.json"
 
 
-TELEGRAM_ASSET_FILE_IDS = {
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/%D0%A5%D0%BE%D1%80%D0%BE%D1%88%D0%B8%D0%B5%20%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8%20%E2%84%9611.pdf': 'BQADAgADBJgAAm8JmUl1etUPD8MkSwI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/CNOLM_Win.zip': 'BQADAgADB5gAAm8JmUnaQcg8fKzxGQI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg': 'BQADAgAD7ZwAAm8JmUnXVfb1QoFRYgI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg': 'BQADAgAD7pwAAm8JmUmhLedYHQzukAI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Naya.mp4': 'BAADAgADCJgAAm8JmUnIq3P8xA5ATAI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Presentation%20%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0%20%D0%92%D0%9A%D0%A0.zip': 'BQADAgADCZgAAm8JmUnkSm8xswRh8QI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/%D0%A1%D0%B6%D0%B0%D1%82%D1%8C%20%D0%A4%D0%BE%D1%82%D0%BE.shortcut': 'BQADAgADCpgAAm8JmUnzWFr9S81bQAI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Add%20LeetCode%20daily%20problem%20solving%20event.shortcut': 'BQADAgADC5gAAm8JmUmVPYn5f3767gI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Calculate%20text.shortcut': 'BQADAgADDJgAAm8JmUmZVk2plFv6CgI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut': 'BQADAgADDZgAAm8JmUkQUb6_C2aT8QI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Minecraft%20server%20online.shortcut': 'BQADAgADDpgAAm8JmUmHwAryCIs_UAI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Run%20YSH%20Scenario.shortcut': 'BQADAgADD5gAAm8JmUn_YxKoejEDvAI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Vasilii%20Game.shortcut': 'BQADAgADEJgAAm8JmUmLSAOWKUTxIgI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/audio_01.mp3': 'CQADAgADEZgAAm8JmUkzP34w1TB3KAI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/cnolm.jpg': 'BQADAgAD75wAAm8JmUmieQQZEQz-CwI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/photo.jpg': 'BQADAgAD8JwAAm8JmUnwxgIgp9lVnQI',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/photo2.jpg': 'BQADAgAD8ZwAAm8JmUn_GQABueMfx7AC',
-    'https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png': 'BQADAgAD8pwAAm8JmUlKxffmZspcsgI',
-}
 
 
 def _build_sf7_emoji_pack_tree():
@@ -395,7 +374,9 @@ common_tree = {
         },
         "invert_picture": {
             "name": "💫 Правильная инверсия™️",
-            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/invert_picture.jpg)\n🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) Относительно окружности!",
+            "description": '🔘 Инвертирует изображение. [По настоящему!](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) Относительно окружности!',
+
+            "telegram_file_id": 'BQADAgAD7pwAAm8JmUmhLedYHQzukAI',
             "alias": "invert_picture",
             "children": {
                 "invert_picture_command": {
@@ -406,7 +387,9 @@ common_tree = {
         },
         "vasilii_game": {
             "name": "🎲 Игра Василия™️ (post-wallet)",
-            "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/vasilii_game.png)\nВасилий предлагает сыграть в следующую ||уже бесплатную|| игру:\n- вы пишите /start_free_vasilii_game.\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 1000 вымышленных тугриков\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришли сюда /start_free_vasilii_game. Пост-валлет версия, без крипты и кредитов 😎.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).",
+            "description": 'Василий предлагает сыграть в следующую ||уже бесплатную|| игру:\n- вы пишите /start_free_vasilii_game.\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 1000 вымышленных тугриков\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришли сюда /start_free_vasilii_game. Пост-валлет версия, без крипты и кредитов 😎.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).',
+
+            "telegram_file_id": 'BQADAgAD8pwAAm8JmUlKxffmZspcsgI',
             "alias": "vasilii_game",
         },
         "foreign_languages": {
@@ -414,7 +397,9 @@ common_tree = {
             "children": {
                 "katakana_racism": {
                     "name": "🇯🇵 Руссуко-Японсукий пэрэводутику (простите)",
-                    "description": "Переводит любой текст с русского на японскую транслитерацию через катакану. Перевод генерируется [вот тут](https://nippon.temerov.org/rus_kana.php). Ещё раз, простите.[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Illustrations/%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%AF%F0%9F%87%B5.jpg)",
+                    "description": 'Переводит любой текст с русского на японскую транслитерацию через катакану. Перевод генерируется [вот тут](https://nippon.temerov.org/rus_kana.php). Ещё раз, простите.',
+
+                    "telegram_file_id": 'BQADAgAD7ZwAAm8JmUnXVfb1QoFRYgI',
                     "alias": "rus_to_katakana",
                     "children": {
                         "rus_to_katakana_command": {
@@ -519,37 +504,51 @@ common_tree = {
                             "children": {
                                 "add_leetcode_daily_problem_solving_event": {
                                     "name": "📆 Add LeetCode daily problem solving event.shortcut",
-                                    "description": "📆 **[Add LeetCode daily problem solving event.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Add%20LeetCode%20daily%20problem%20solving%20event.shortcut)**\n\nДобавляет событие в календарь на сегодняшнюю задачу в LeetCode.",
+                                    "description": '📆 **Add LeetCode daily problem solving event.shortcut**\n\nДобавляет событие в календарь на сегодняшнюю задачу в LeetCode.',
+
+                                    "telegram_file_id": 'BQADAgADC5gAAm8JmUmVPYn5f3767gI',
                                     "hide_name": 1,
                                 },
                                 "run_ysh_scenario": {
                                     "name": "🏡 Run YSH Scenario.shortcut",
-                                    "description": "🏡 **[Run YSH Scenario.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Run%20YSH%20Scenario.shortcut)**\n\nЗапускает сценарий из Приложения Умного Дома Яндекса. Работает только на Mac.",
+                                    "description": '🏡 **Run YSH Scenario.shortcut**\n\nЗапускает сценарий из Приложения Умного Дома Яндекса. Работает только на Mac.',
+
+                                    "telegram_file_id": 'BQADAgADD5gAAm8JmUn_YxKoejEDvAI',
                                     "hide_name": 1,
                                 },
                                 "minecraft_server_online": {
                                     "name": "🐷 Minecraft server online.shortcut",
-                                    "description": "🐷 **[Minecraft server online.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Minecraft%20server%20online.shortcut)**\n\nПоказывает онлайн майнкрафт сервера и (при возможности) никнеймы игроков.",
+                                    "description": '🐷 **Minecraft server online.shortcut**\n\nПоказывает онлайн майнкрафт сервера и (при возможности) никнеймы игроков.',
+
+                                    "telegram_file_id": 'BQADAgADDpgAAm8JmUmHwAryCIs_UAI',
                                     "hide_name": 1,
                                 },
                                 "hotspot_qr": {
                                     "name": "📶 Hotspot QR.shortcut",
-                                    "description": "📶 **[Hotspot QR.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Hotspot%20QR.shortcut)**\n\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.",
+                                    "description": '📶 **Hotspot QR.shortcut**\n\nВключает раздачу интернета на телефоне, и генерирует удобный экран, на котором есть название+пароль от WiFi сети, а также QR-код для быстрого подключения.',
+
+                                    "telegram_file_id": 'BQADAgADDZgAAm8JmUkQUb6_C2aT8QI',
                                     "hide_name": 1,
                                 },
                                 "vasilii_game": {
                                     "name": "🎲 Vasilii Game.shortcut",
-                                    "description": "🎲 **[Vasilii Game.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Vasilii%20Game.shortcut)**\n\nКлон хеш-игры Василия (@vas100bot), написанный в Shortcuts.",
+                                    "description": '🎲 **Vasilii Game.shortcut**\n\nКлон хеш-игры Василия (@vas100bot), написанный в Shortcuts.',
+
+                                    "telegram_file_id": 'BQADAgADEJgAAm8JmUmLSAOWKUTxIgI',
                                     "hide_name": 1,
                                 },
                                 "calculate_text": {
                                     "name": "🧮 Calculate text.shortcut",
-                                    "description": "🧮 **[Calculate text.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/Calculate%20text.shortcut)**\n\nВычисляет выражение из текстовой строки. Работает круче стандартного калькулятора, например, подсчитает sin(20)^2+cos(20)^2.",
+                                    "description": '🧮 **Calculate text.shortcut**\n\nВычисляет выражение из текстовой строки. Работает круче стандартного калькулятора, например, подсчитает sin(20)^2+cos(20)^2.',
+
+                                    "telegram_file_id": 'BQADAgADDJgAAm8JmUmZVk2plFv6CgI',
                                     "hide_name": 1,
                                 },
                                 "szhat_photo": {
                                     "name": "🗜 Сжать Фото.shortcut",
-                                    "description": "🗜 **[Сжать Фото.shortcut](https://storage.yandexcloud.net/dot-ch-bot-bucket/Shortcuts/%D0%A1%D0%B6%D0%B0%D1%82%D1%8C%20%D0%A4%D0%BE%D1%82%D0%BE.shortcut)**\n\nКонвертирует множество фото по фильтру в HEIF, сохраняет оригинальные метаданные и время создания).\nПо мотивам https://t.me/ch_an/2289",
+                                    "description": '🗜 **Сжать Фото.shortcut**\n\nКонвертирует множество фото по фильтру в HEIF, сохраняет оригинальные метаданные и время создания).\nПо мотивам https://t.me/ch_an/2289',
+
+                                    "telegram_file_id": 'BQADAgADCpgAAm8JmUnzWFr9S81bQAI',
                                     "hide_name": 1,
                                 },
                             }
@@ -574,32 +573,36 @@ common_tree = {
                             "children": {
                                 "photo.jpg": {
                                     "name": "🖼️ photo.png",
-                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo.jpg)",
+                                    "telegram_file_id": 'BQADAgAD8JwAAm8JmUnwxgIgp9lVnQI',
                                 },
                                 "photo2.jpg": {
                                     "name": "🖼️ photo2.png",
-                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/photo2.jpg)",
+                                    "telegram_file_id": 'BQADAgAD8ZwAAm8JmUn_GQABueMfx7AC',
                                 },
                                 "audio_01.mp3": {
                                     "name": "🎵 audio_01.mp3",
-                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/audio_01.mp3)",
+                                    "telegram_file_id": 'CQADAgADEZgAAm8JmUkzP34w1TB3KAI',
                                 },
                                 "Naya.mp4": {
                                     "name": "🎥 Naya.mp4",
-                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/Naya.mp4)",
+                                    "telegram_file_id": 'BAADAgADCJgAAm8JmUnIq3P8xA5ATAI',
                                 },
                                 "Хорошие новости №11.pdf": {
                                     "name": "📄 Хорошие новости №11.pdf",
-                                    "description": "[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/%D0%A5%D0%BE%D1%80%D0%BE%D1%88%D0%B8%D0%B5%20%D0%BD%D0%BE%D0%B2%D0%BE%D1%81%D1%82%D0%B8%20%E2%84%9611.pdf)",
+                                    "telegram_file_id": 'BQADAgADBJgAAm8JmUl1etUPD8MkSwI',
                                 },
                                 "CNOLM_Win.zip": {
                                     "name": "📦 CNOLM_Win.zip",
-                                    "description": "**📦 [CNOLM_Win.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/CNOLM_Win.zip)**[​​​​​​​​​​​](https://storage.yandexcloud.net/dot-ch-bot-bucket/cnolm.jpg)",
+                                    "description": '**📦 CNOLM_Win.zip**',
+
+                                    "telegram_file_id": 'BQADAgADB5gAAm8JmUnaQcg8fKzxGQI',
                                     "hide_name": 1,
                                 },
                                 "Presentation защита ВКР.zip": {
                                     "name": "📦 Presentation защита ВКР.zip",
-                                    "description": "**[📦 Presentation защита ВКР.zip](https://storage.yandexcloud.net/dot-ch-bot-bucket/Presentation%20%D0%B7%D0%B0%D1%89%D0%B8%D1%82%D0%B0%20%D0%92%D0%9A%D0%A0.zip)**",
+                                    "description": '**📦 Presentation защита ВКР.zip**',
+
+                                    "telegram_file_id": 'BQADAgADCZgAAm8JmUnkSm8xswRh8QI',
                                     "hide_name": 1,
                                 },
                             }
@@ -686,7 +689,7 @@ common_tree = {
     }
 }
 
-common_tree = normalize_tree(apply_telegram_file_ids(common_tree, TELEGRAM_ASSET_FILE_IDS))
+common_tree = normalize_tree(common_tree)
 
 startup_url = "https://zvukipro.com/uploads/files/2020-12/1609413715_the-microsoft-sound.mp3"
 
