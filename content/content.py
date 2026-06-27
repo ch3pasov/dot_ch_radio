@@ -18,6 +18,114 @@ SF7_WEIGHT_ORDER = [
     "Heavy",
     "Black",
 ]
+SF7_GROUP_CATEGORIES = [
+    (
+        "symbols_numbers",
+        "Symbols & Numbers",
+        {
+            "arrows_bidirectional",
+            "arrows_down",
+            "arrows_general",
+            "arrows_left_01",
+            "arrows_left_02",
+            "arrows_right",
+            "arrows_turning_01",
+            "arrows_turning_02",
+            "arrows_up",
+            "charts_data",
+            "math_controls",
+            "math_minus",
+            "math_plus",
+            "media_controls",
+            "number_0",
+            "number_1",
+            "number_10",
+            "number_2",
+            "number_3",
+            "number_4",
+            "number_5",
+            "number_6",
+            "number_7",
+            "number_8",
+            "number_9",
+            "numbers_general",
+            "status_alerts",
+            "status_close_remove",
+            "status_general",
+            "status_questions",
+            "status_success",
+            "status_warnings",
+            "text_symbols",
+            "unmapped_001",
+            "unmapped_002",
+            "unmapped_003",
+            "unmapped_004",
+            "unmapped_005",
+            "unmapped_006",
+            "unmapped_007",
+            "unmapped_008",
+            "unmapped_009",
+            "unmapped_010",
+            "unmapped_011",
+            "unmapped_012",
+        },
+    ),
+    (
+        "life_places",
+        "Life & Places",
+        {
+            "body",
+            "calendar",
+            "celebration",
+            "food_drink",
+            "games_awards",
+            "health_medical",
+            "human_activity",
+            "maps_navigation",
+            "nature",
+            "people_01",
+            "people_02",
+            "people_03",
+            "places_home_01",
+            "places_home_02",
+            "shopping",
+            "sports",
+            "time",
+            "transport_air_water",
+            "transport_bicycles",
+            "transport_cars",
+            "transport_fuel_charging",
+            "transport_general",
+            "transport_public",
+            "weather",
+        },
+    ),
+    (
+        "devices_objects",
+        "Devices & Objects",
+        {
+            "audio_devices",
+            "audio_media",
+            "camera_video",
+            "commerce_money_01",
+            "commerce_money_02",
+            "communication",
+            "computers_peripherals",
+            "connectivity_power",
+            "devices_general",
+            "documents_storage",
+            "education_docs",
+            "misc",
+            "phones_tablets",
+            "screens_tv",
+            "search_light",
+            "security",
+            "tools",
+            "watches",
+            "writing_drawing",
+        },
+    ),
+]
 
 
 def _button_icon(icon_id):
@@ -97,21 +205,33 @@ def _build_sf7_emoji_pack_tree():
             for group_id, group in group_items
         )
 
-    def group_pages(weight, page_size=44):
+    def group_pages(weight):
         group_items = list(groups.items())
+        categorized_group_ids = set()
         pages = []
-        for page_index in range(0, len(group_items), page_size):
-            page_items = group_items[page_index:page_index + page_size]
-            first_title = page_items[0][1]["title"]
-            last_title = page_items[-1][1]["title"]
-            page_number = page_index // page_size + 1
+        for category_id, category_title, category_group_ids in SF7_GROUP_CATEGORIES:
+            page_items = [(group_id, group) for group_id, group in group_items if group_id in category_group_ids]
+            categorized_group_ids.update(group_id for group_id, _ in page_items)
+            if not page_items:
+                continue
             pages.append(
                 folder(
-                    f"{first_title} — {last_title}",
-                    id=f"page_{page_number:02d}",
+                    category_title,
+                    id=category_id,
                     description=group_link_lines(weight, page_items),
                     parse_mode="html",
                     **_button_icon(group_icon(page_items[0][0], weight)),
+                )
+            )
+        uncategorized_items = [(group_id, group) for group_id, group in group_items if group_id not in categorized_group_ids]
+        if uncategorized_items:
+            pages.append(
+                folder(
+                    "Other",
+                    id="other",
+                    description=group_link_lines(weight, uncategorized_items),
+                    parse_mode="html",
+                    **_button_icon(group_icon(uncategorized_items[0][0], weight)),
                 )
             )
         return pages
