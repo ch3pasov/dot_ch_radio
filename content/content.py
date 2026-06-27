@@ -127,6 +127,11 @@ SF7_GROUP_CATEGORIES = [
         },
     ),
 ]
+SF7_GROUP_ICON_SYMBOL_OVERRIDES = {
+    "people_01": "figure",
+    "people_02": "figure.run",
+    "people_03": "person.2",
+}
 
 
 def _button_icon(icon_id):
@@ -148,7 +153,7 @@ def _sf7_custom_emoji_id(symbols, symbol_name, weight):
 
 
 def _sf7_group_icon_symbols(symbols):
-    group_icons = {}
+    group_icons = dict(SF7_GROUP_ICON_SYMBOL_OVERRIDES)
     for symbol_name, symbol in symbols.items():
         group_id = symbol.get("group_id")
         if group_id and group_id not in group_icons:
