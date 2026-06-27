@@ -1,5 +1,6 @@
 import asyncio
 import random
+from html import escape
 
 from telethon import events, Button, utils
 from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
@@ -206,8 +207,12 @@ async def open_common_hashdict(deep_link, message, user_id):
 
     buttons = []
     text = ""
+    parse_mode = obj.get("parse_mode", ())
     if not obj.get("hide_name", 0):
-        text += f'**{obj["name"]}**'
+        if parse_mode == "html":
+            text += f'<b>{escape(obj["name"])}</b>'
+        else:
+            text += f'**{obj["name"]}**'
     if "description" in obj:
         text += f'\n{obj["description"]}'
     if "children" in obj:
@@ -236,7 +241,7 @@ async def open_common_hashdict(deep_link, message, user_id):
         buttons=buttons,
         link_preview=not disable_web_page_preview,
         file=telegram_media,
-        parse_mode=obj.get("parse_mode", ()),
+        parse_mode=parse_mode,
     )
     return None
 

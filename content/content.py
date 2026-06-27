@@ -19,6 +19,17 @@ SF7_WEIGHT_ORDER = [
     "Black",
 ]
 SF7_WEIGHT_ICON_SYMBOL = "tray.full"
+SF7_WEIGHT_BUTTON_STYLES = {
+    "Ultralight": "success",
+    "Thin": "success",
+    "Light": "success",
+    "Regular": "primary",
+    "Medium": "primary",
+    "Semibold": "primary",
+    "Bold": "danger",
+    "Heavy": "danger",
+    "Black": "danger",
+}
 SF7_GROUP_CATEGORIES = [
     (
         "symbols_numbers",
@@ -288,6 +299,7 @@ def _build_sf7_emoji_pack_tree():
                     id=category_id,
                     description=group_link_lines(weight, page_items),
                     parse_mode="html",
+                    disable_web_page_preview=1,
                     **_button_icon(group_icon(page_items[0][0], weight)),
                 )
             )
@@ -299,6 +311,7 @@ def _build_sf7_emoji_pack_tree():
                     id="other",
                     description=group_link_lines(weight, uncategorized_items),
                     parse_mode="html",
+                    disable_web_page_preview=1,
                     **_button_icon(group_icon(uncategorized_items[0][0], weight)),
                 )
             )
@@ -317,7 +330,7 @@ def _build_sf7_emoji_pack_tree():
             folder(
                 weight,
                 id=weight.lower(),
-                button_style="primary",
+                button_style=SF7_WEIGHT_BUTTON_STYLES[weight],
                 children_columns=1,
                 **_button_icon(weight_icon(weight)),
                 children=[
