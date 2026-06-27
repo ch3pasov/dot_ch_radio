@@ -3,7 +3,6 @@ config
 volume/sessions/
 
 *_account.session*
-*.session.pyrogram.bak
 *.db*
 *.mp3
 *.webm

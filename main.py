@@ -36,7 +36,7 @@ def _is_private(event) -> bool:
 
 
 def _not_channel(event) -> bool:
-    # Аналог pyrogram ~filters.channel: исключаем сообщения из broadcast-канала.
+    # Исключаем сообщения из broadcast-канала.
     return not (getattr(event, "is_channel", False) and not getattr(event, "is_group", False))
 
 
