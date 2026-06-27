@@ -97,7 +97,7 @@ def _build_sf7_emoji_pack_tree():
             for group_id, group in group_items
         )
 
-    def group_pages(weight, page_size=22):
+    def group_pages(weight, page_size=44):
         group_items = list(groups.items())
         pages = []
         for page_index in range(0, len(group_items), page_size):
