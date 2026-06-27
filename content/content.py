@@ -86,7 +86,7 @@ def _build_sf7_emoji_pack_tree():
     def weight_icon(weight):
         return _sf7_custom_emoji_id(symbols, "textformat.size", weight)
 
-    def group_link_lines(weight):
+    def group_link_lines(weight, group_items):
         return "\n".join(
             (
                 f"{_custom_emoji_html(group_icon(group_id, weight), group_fallback_emoji(group_id))}"
@@ -94,8 +94,27 @@ def _build_sf7_emoji_pack_tree():
                 f"{escape(group['title'])} ({group['count']})"
                 "</a>"
             )
-            for group_id, group in groups.items()
+            for group_id, group in group_items
         )
+
+    def group_pages(weight, page_size=22):
+        group_items = list(groups.items())
+        pages = []
+        for page_index in range(0, len(group_items), page_size):
+            page_items = group_items[page_index:page_index + page_size]
+            first_title = page_items[0][1]["title"]
+            last_title = page_items[-1][1]["title"]
+            page_number = page_index // page_size + 1
+            pages.append(
+                folder(
+                    f"{first_title} — {last_title}",
+                    id=f"page_{page_number:02d}",
+                    description=group_link_lines(weight, page_items),
+                    parse_mode="html",
+                    **_button_icon(group_icon(page_items[0][0], weight)),
+                )
+            )
+        return pages
 
     return folder(
         "SF7 эмодзипаки",
@@ -112,9 +131,8 @@ def _build_sf7_emoji_pack_tree():
                 id=weight.lower(),
                 button_style="primary",
                 children_columns=1,
-                description=group_link_lines(weight),
-                parse_mode="html",
                 **_button_icon(weight_icon(weight)),
+                children=group_pages(weight),
             )
             for weight in weights
         ],
