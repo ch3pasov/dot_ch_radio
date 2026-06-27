@@ -14,7 +14,7 @@ from telethon.tl.types import (
 
 from config.tg_ids import beta_testers, bot_username
 from config.debug import disable_radio
-from content.content import wanted_not_found
+from content.content import search_sf7_custom_emoji_html, wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import (
@@ -300,6 +300,22 @@ async def answer_wanted_search(event):
         await asyncio.sleep(2 + 6 * random.random())
     await app_robot.send_message(event.chat_id, wanted_not_found)
     await open_common_hashdict_create("search_wanted", event.chat_id)
+    raise events.StopPropagation
+
+
+@app_robot.on(events.NewMessage(
+    pattern=r'^/sf7_search_([a-z]+)(?:@\w+)?(?:\s+(.+))?$',
+    incoming=True,
+    func=_is_private,
+))
+async def answer_sf7_custom_emoji_search(event):
+    weight_slug = event.pattern_match.group(1)
+    query = event.pattern_match.group(2) or ""
+    message_text = search_sf7_custom_emoji_html(weight_slug, query)
+    if message_text is None:
+        await event.reply("Не знаю такую толщину SF7.")
+    else:
+        await event.reply(message_text, parse_mode="html")
     raise events.StopPropagation
 
 

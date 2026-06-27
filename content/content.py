@@ -156,6 +156,68 @@ def _sf7_group_icon_symbols(symbols):
     return group_icons
 
 
+def _weight_name(weight_slug):
+    normalized_slug = weight_slug.lower()
+    for weight in SF7_WEIGHT_ORDER:
+        if weight.lower() == normalized_slug:
+            return weight
+    return None
+
+
+def _sf7_search_line(symbol_name, symbol, weight):
+    weighted_icon = symbol.get("weights", {}).get(weight)
+    if not weighted_icon:
+        return None
+    icon_id = weighted_icon.get("custom_emoji_id")
+    fallback_emoji = symbol.get("primary_emoji") or "🔹"
+    return f"{_custom_emoji_html(icon_id, fallback_emoji)}<code>{escape(symbol_name)}</code>"
+
+
+def search_sf7_custom_emoji_html(weight_slug, query, limit=40):
+    weight = _weight_name(weight_slug)
+    if weight is None:
+        return None
+
+    normalized_query = query.strip().lower()
+    if len(normalized_query) < 2:
+        return (
+            f"<b>{escape(weight)}</b>\n"
+            f"Напиши запрос подлиннее: <code>/sf7_search_{weight.lower()} tray</code>"
+        )
+
+    with SF7_CUSTOM_EMOJI_INDEX_PATH.open(encoding="utf-8") as index_file:
+        symbols = json.load(index_file)["symbols"]
+
+    matches = []
+    for symbol_name, symbol in symbols.items():
+        searchable = " ".join(
+            [
+                symbol_name,
+                symbol.get("group_id", ""),
+                symbol.get("group_title", ""),
+                " ".join(symbol.get("categories", [])),
+            ]
+        ).lower()
+        if normalized_query in searchable:
+            line = _sf7_search_line(symbol_name, symbol, weight)
+            if line:
+                matches.append(line)
+        if len(matches) >= limit:
+            break
+
+    if not matches:
+        return (
+            f"<b>{escape(weight)}</b>\n"
+            f"По запросу <code>{escape(query.strip())}</code> ничего не нашлось."
+        )
+
+    return (
+        f"<b>{escape(weight)}</b>\n"
+        f"{len(matches)} результатов по <code>{escape(query.strip())}</code>\n\n"
+        + "\n".join(matches)
+    )
+
+
 def _build_sf7_emoji_pack_tree():
     with EMOJI_PACK_LINKS_PATH.open(encoding="utf-8") as links_file:
         links_config = json.load(links_file)
@@ -253,7 +315,15 @@ def _build_sf7_emoji_pack_tree():
                 button_style="primary",
                 children_columns=1,
                 **_button_icon(weight_icon(weight)),
-                children=group_pages(weight),
+                children=[
+                    folder(
+                        "Search",
+                        id="search",
+                        switch_inline_query_current_chat=f"/sf7_search_{weight.lower()} ",
+                        **_button_icon(_sf7_custom_emoji_id(symbols, "magnifyingglass", weight)),
+                    ),
+                    *group_pages(weight),
+                ],
             )
             for weight in weights
         ],
