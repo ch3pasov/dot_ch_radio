@@ -18,6 +18,17 @@ SF7_WEIGHT_ORDER = [
     "Heavy",
     "Black",
 ]
+SF7_WEIGHT_ICON_SYMBOLS = {
+    "Ultralight": "u.circle",
+    "Thin": "t.circle",
+    "Light": "l.joystick",
+    "Regular": "r.joystick",
+    "Medium": "m.circle",
+    "Semibold": "s.circle",
+    "Bold": "b.circle",
+    "Heavy": "h.circle",
+    "Black": "b.circle.fill",
+}
 SF7_GROUP_CATEGORIES = [
     (
         "symbols_numbers",
@@ -192,7 +203,7 @@ def _build_sf7_emoji_pack_tree():
         return symbol.get("primary_emoji") or "🔹"
 
     def weight_icon(weight):
-        return _sf7_custom_emoji_id(symbols, "textformat.size", weight)
+        return _sf7_custom_emoji_id(symbols, SF7_WEIGHT_ICON_SYMBOLS.get(weight), weight)
 
     def group_link_lines(weight, group_items):
         return "\n".join(
