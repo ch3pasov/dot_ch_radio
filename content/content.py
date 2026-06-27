@@ -6,6 +6,17 @@ from libs.content_schema import folder, link, normalize_tree
 
 EMOJI_PACK_LINKS_PATH = Path(__file__).resolve().parent.parent / "config" / "emoji_pack_links.json"
 SF7_CUSTOM_EMOJI_INDEX_PATH = Path(__file__).resolve().parent / "sf7-custom-emoji-index.json"
+SF7_WEIGHT_ORDER = [
+    "Ultralight",
+    "Thin",
+    "Light",
+    "Regular",
+    "Medium",
+    "Semibold",
+    "Bold",
+    "Heavy",
+    "Black",
+]
 
 
 def _button_icon(icon_id):
@@ -37,7 +48,7 @@ def _build_sf7_emoji_pack_tree():
     with SF7_CUSTOM_EMOJI_INDEX_PATH.open(encoding="utf-8") as index_file:
         emoji_index = json.load(index_file)
 
-    weights = links_config["weights"]
+    weights = [weight for weight in SF7_WEIGHT_ORDER if weight in links_config["weights"]]
     url_template = links_config["url_template"]
     set_name_template = links_config["set_name_template"]
     symbols = emoji_index["symbols"]
@@ -66,36 +77,20 @@ def _build_sf7_emoji_pack_tree():
     def weight_icon(weight):
         return _sf7_custom_emoji_id(symbols, "textformat.size", weight)
 
-    def group_pages(weight, page_size=11):
-        group_items = list(groups.items())
-        pages = []
-        for page_index in range(0, len(group_items), page_size):
-            page_items = group_items[page_index:page_index + page_size]
-            first_title = page_items[0][1]["title"]
-            last_title = page_items[-1][1]["title"]
-            page_number = page_index // page_size + 1
-            pages.append(
-                folder(
-                    f"{first_title} — {last_title}",
-                    id=f"page_{page_number:02d}",
-                    children_columns=1,
-                    **_button_icon(group_icon(page_items[0][0], weight)),
-                    children=[
-                        link(
-                            f"{group['title']} ({group['count']})",
-                            pack_url(weight, group_id),
-                            id=group_id,
-                            button_style="primary",
-                            **_button_icon(group_icon(group_id, weight)),
-                        )
-                        for group_id, group in page_items
-                    ],
-                )
+    def group_links(weight):
+        return [
+            link(
+                f"{group['title']} ({group['count']})",
+                pack_url(weight, group_id),
+                id=group_id,
+                button_style="primary",
+                **_button_icon(group_icon(group_id, weight)),
             )
-        return pages
+            for group_id, group in groups.items()
+        ]
 
     return folder(
-        "🧩 SF7 эмодзипаки",
+        "SF7 эмодзипаки",
         description=(
             f"{links_config['packs_count']} эмодзипаков SF7: "
             f"{len(weights)} толщин × {len(groups)} групп."
@@ -105,12 +100,12 @@ def _build_sf7_emoji_pack_tree():
         **_button_icon(_sf7_custom_emoji_id(symbols, "square.grid.2x2", "Regular")),
         children=[
             folder(
-                f"🔤 {weight}",
+                weight,
                 id=weight.lower(),
                 button_style="primary",
                 children_columns=1,
                 **_button_icon(weight_icon(weight)),
-                children=group_pages(weight),
+                children=group_links(weight),
             )
             for weight in weights
         ],
