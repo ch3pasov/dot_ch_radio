@@ -1,4 +1,4 @@
-from volume.config.minecraft_config import server_url
+from config.minecraft_config import server_url
 import aiohttp
 from PIL import Image
 import numpy as np

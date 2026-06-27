@@ -14,4 +14,6 @@ services:
     container_name: dot_ch_radio
     volumes:
       - ~/dockers/dot_ch_radio/volume:/app/volume
+      - ~/dockers/dot_ch_radio/config:/app/config
+      - ~/dockers/dot_ch_radio/content:/app/content
     restart: unless-stopped

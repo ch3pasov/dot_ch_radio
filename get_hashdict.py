@@ -1,5 +1,5 @@
-from volume.content import common_tree
-from volume.config.tg_ids import bot_username
+from content.content import common_tree
+from config.tg_ids import bot_username
 import hashlib
 
 

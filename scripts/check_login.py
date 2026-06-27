@@ -10,7 +10,7 @@ import asyncio
 
 from telethon import TelegramClient
 
-from volume.config.app import api_id, api_hash
+from config.app import api_id, api_hash
 
 SESSION_DIR = "volume/sessions"
 

@@ -1,17 +1,17 @@
-from volume.config.debug import disable_radio
+from config.debug import disable_radio
 
 if not disable_radio:
     import asyncio
     from pathlib import Path
     from typing import Literal, Optional, Union
 
-    from volume.config.tg_ids import (
+    from config.tg_ids import (
         admins,
         dot_ch_id,
         dot_ch_radio_id,
         dot_ch_radio_access_hash,
     )
-    from volume.content import default_url
+    from content.content import default_url
 
     from decorators import admin_only
 

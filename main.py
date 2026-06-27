@@ -12,9 +12,9 @@ from telethon.tl.types import (
     MessageMediaVenue,
 )
 
-from volume.config.tg_ids import beta_testers, bot_username
-from volume.config.debug import disable_radio
-from volume.content import wanted_not_found
+from config.tg_ids import beta_testers, bot_username
+from config.debug import disable_radio
+from content.content import wanted_not_found
 from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import (
@@ -25,7 +25,7 @@ from programs.radio import (
 )
 from programs.night_schedule import is_night_radio_lockout_utc, NIGHT_RADIO_SWITCH_BLOCKED
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
-from volume.config.tg_ids import dot_ch_id
+from config.tg_ids import dot_ch_id
 from global_vars import app_robot, app_dj, loop, print
 
 MENTION = f"@{bot_username}"

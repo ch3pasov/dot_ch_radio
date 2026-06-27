@@ -1,5 +1,6 @@
-common.log
+# Local runtime/config data.
 config
+volume/sessions/
 
 *_account.session*
 *.session.pyrogram.bak
@@ -15,7 +16,7 @@ __pycache__/
 # Cursor (правила и локальные настройки проекта)
 .cursor/
 
-# Демо-видео только локально; боевой ролик — volume/config/night_loop.mp4 (каталог config в git не входит)
-volume/config_example/night_loop.mp4
+# Демо-видео только локально; боевой ролик — config/night_loop.mp4 (каталог config в git не входит)
+config_example/night_loop.mp4
 
 .DS_Store

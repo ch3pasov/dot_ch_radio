@@ -56,9 +56,9 @@ def is_night_loop_video_window_utc(now: datetime | None = None) -> bool:
 
 
 def night_loop_file_path() -> Path:
-    """Ночное видео: только volume/config/night_loop.mp4."""
-    volume = Path(__file__).resolve().parent.parent / "volume"
-    return volume / "config" / "night_loop.mp4"
+    """Ночное видео: только config/night_loop.mp4."""
+    project_root = Path(__file__).resolve().parent.parent
+    return project_root / "config" / "night_loop.mp4"
 
 
 def night_loop_media_duration_sec(path: Path) -> float | None:

@@ -1,5 +1,7 @@
-# Не в контекст сборки — на рантайме приходит с хоста (compose volumes: .../volume:/app/volume)
+# Не в контекст сборки — на рантайме приходит с хоста (compose volumes)
 volume/
+config/
+content/sf7-custom-emoji-index.json
 
 .git
 __pycache__

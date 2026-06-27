@@ -1,4 +1,4 @@
-from volume.config.tg_ids import admins
+from config.tg_ids import admins
 
 
 def _only(allowlist):
