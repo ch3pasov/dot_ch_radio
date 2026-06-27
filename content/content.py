@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from libs.content_schema import folder, link, normalize_tree
+from libs.content_schema import folder, normalize_tree
 
 
 EMOJI_PACK_LINKS_PATH = Path(__file__).resolve().parent.parent / "config" / "emoji_pack_links.json"
@@ -21,6 +21,10 @@ SF7_WEIGHT_ORDER = [
 
 def _button_icon(icon_id):
     return {"button_icon": icon_id} if icon_id else {}
+
+
+def _custom_emoji_markdown(icon_id):
+    return f"![emoji](tg://emoji?id={icon_id}) " if icon_id else ""
 
 
 def _sf7_custom_emoji_id(symbols, symbol_name, weight):
@@ -77,17 +81,14 @@ def _build_sf7_emoji_pack_tree():
     def weight_icon(weight):
         return _sf7_custom_emoji_id(symbols, "textformat.size", weight)
 
-    def group_links(weight):
-        return [
-            link(
-                f"{group['title']} ({group['count']})",
-                pack_url(weight, group_id),
-                id=group_id,
-                button_style="primary",
-                **_button_icon(group_icon(group_id, weight)),
+    def group_link_lines(weight):
+        return "\n".join(
+            (
+                f"{_custom_emoji_markdown(group_icon(group_id, weight))}"
+                f"[{group['title']} ({group['count']})]({pack_url(weight, group_id)})"
             )
             for group_id, group in groups.items()
-        ]
+        )
 
     return folder(
         "SF7 эмодзипаки",
@@ -104,8 +105,8 @@ def _build_sf7_emoji_pack_tree():
                 id=weight.lower(),
                 button_style="primary",
                 children_columns=1,
+                description=group_link_lines(weight),
                 **_button_icon(weight_icon(weight)),
-                children=group_links(weight),
             )
             for weight in weights
         ],
