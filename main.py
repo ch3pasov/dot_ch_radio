@@ -312,10 +312,12 @@ async def answer_sf7_custom_emoji_search(event):
     weight_slug = event.pattern_match.group(1)
     query = event.pattern_match.group(2) or ""
     message_text = search_sf7_custom_emoji_html(weight_slug, query)
+    search_query = f"/sf7_search_{weight_slug} {query}".rstrip()
+    markup = [[Button.switch_inline("🔎 Искать SF7", query=f"{search_query} ", same_peer=True)]]
     if message_text is None:
-        await event.reply("Не знаю такую толщину SF7.")
+        await event.reply("Не знаю такую толщину SF7.", buttons=markup)
     else:
-        await event.reply(message_text, parse_mode="html")
+        await event.reply(message_text, buttons=markup, parse_mode="html")
     raise events.StopPropagation
 
 
