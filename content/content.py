@@ -24,8 +24,8 @@ def _button_icon(icon_id):
     return {"button_icon": icon_id} if icon_id else {}
 
 
-def _custom_emoji_html(icon_id):
-    return f'<tg-emoji emoji-id="{icon_id}">•</tg-emoji> ' if icon_id else ""
+def _custom_emoji_html(icon_id, fallback_emoji):
+    return f'<tg-emoji emoji-id="{icon_id}">{escape(fallback_emoji)}</tg-emoji> ' if icon_id else ""
 
 
 def _sf7_custom_emoji_id(symbols, symbol_name, weight):
@@ -79,13 +79,17 @@ def _build_sf7_emoji_pack_tree():
     def group_icon(group_id, weight):
         return _sf7_custom_emoji_id(symbols, group_icon_symbols.get(group_id), weight)
 
+    def group_fallback_emoji(group_id):
+        symbol = symbols.get(group_icon_symbols.get(group_id), {})
+        return symbol.get("primary_emoji") or "🔹"
+
     def weight_icon(weight):
         return _sf7_custom_emoji_id(symbols, "textformat.size", weight)
 
     def group_link_lines(weight):
         return "\n".join(
             (
-                f"{_custom_emoji_html(group_icon(group_id, weight))}"
+                f"{_custom_emoji_html(group_icon(group_id, weight), group_fallback_emoji(group_id))}"
                 f'<a href="{escape(pack_url(weight, group_id), quote=True)}">'
                 f"{escape(group['title'])} ({group['count']})"
                 "</a>"
