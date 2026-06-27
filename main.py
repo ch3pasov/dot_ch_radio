@@ -304,7 +304,7 @@ async def answer_wanted_search(event):
 
 
 @app_robot.on(events.NewMessage(
-    pattern=r'^/sf7_search_([a-z]+)(?:@\w+)?(?:\s+(.+))?$',
+    pattern=r'^(?:@dot_ch_bot\s+)?/sf7_search_([a-z]+)(?:@\w+)?(?:\s+(.+))?$',
     incoming=True,
     func=_is_private,
 ))
@@ -376,6 +376,9 @@ async def answer_invert_picture(event):
 async def answer_invert_mention(event):
     reply = await event.get_reply_message()
     text = event.raw_text or ""
+    command_text = text.removeprefix(MENTION).lstrip(' ')
+    if command_text.startswith("/sf7_search_"):
+        return
     # ответ от имени канала
     if getattr(event.message, "post", False) or (event.sender_id is not None and event.sender_id < 0):
         return await event.reply("💩")
