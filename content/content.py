@@ -319,7 +319,7 @@ def _build_sf7_emoji_pack_tree():
                     folder(
                         "Search",
                         id="search",
-                        switch_inline_query_current_chat=f"@dot_ch_bot /sf7_search_{weight.lower()} ",
+                        switch_inline_query_current_chat=f"/sf7_search_{weight.lower()} ",
                         **_button_icon(_sf7_custom_emoji_id(symbols, "magnifyingglass", weight)),
                     ),
                     *group_pages(weight),

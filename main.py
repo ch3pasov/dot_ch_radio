@@ -306,7 +306,7 @@ async def answer_wanted_search(event):
 @app_robot.on(events.NewMessage(
     pattern=r'^(?:@dot_ch_bot\s+)?/sf7_search_([a-z]+)(?:@\w+)?(?:\s+(.+))?$',
     incoming=True,
-    func=_is_private,
+    func=lambda e: _not_channel(e),
 ))
 async def answer_sf7_custom_emoji_search(event):
     weight_slug = event.pattern_match.group(1)
