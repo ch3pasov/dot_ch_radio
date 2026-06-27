@@ -1,4 +1,5 @@
 import json
+from html import escape
 from pathlib import Path
 
 from libs.content_schema import folder, normalize_tree
@@ -23,8 +24,8 @@ def _button_icon(icon_id):
     return {"button_icon": icon_id} if icon_id else {}
 
 
-def _custom_emoji_markdown(icon_id):
-    return f"![emoji](tg://emoji?id={icon_id}) " if icon_id else ""
+def _custom_emoji_html(icon_id):
+    return f'<tg-emoji emoji-id="{icon_id}">•</tg-emoji> ' if icon_id else ""
 
 
 def _sf7_custom_emoji_id(symbols, symbol_name, weight):
@@ -84,8 +85,10 @@ def _build_sf7_emoji_pack_tree():
     def group_link_lines(weight):
         return "\n".join(
             (
-                f"{_custom_emoji_markdown(group_icon(group_id, weight))}"
-                f"[{group['title']} ({group['count']})]({pack_url(weight, group_id)})"
+                f"{_custom_emoji_html(group_icon(group_id, weight))}"
+                f'<a href="{escape(pack_url(weight, group_id), quote=True)}">'
+                f"{escape(group['title'])} ({group['count']})"
+                "</a>"
             )
             for group_id, group in groups.items()
         )
@@ -106,6 +109,7 @@ def _build_sf7_emoji_pack_tree():
                 button_style="primary",
                 children_columns=1,
                 description=group_link_lines(weight),
+                parse_mode="html",
                 **_button_icon(weight_icon(weight)),
             )
             for weight in weights
