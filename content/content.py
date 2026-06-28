@@ -323,7 +323,6 @@ def _build_sf7_emoji_pack_tree():
             f"{links_config['packs_count']} эмодзипаков SF7: "
             f"{len(weights)} толщин × {len(groups)} групп."
         ),
-        beta_access=1,
         children_columns=1,
         **_button_icon(_sf7_custom_emoji_id(symbols, "square.grid.2x2", "Regular")),
         children=[
