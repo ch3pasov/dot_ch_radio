@@ -196,8 +196,6 @@ async def open_common_hashdict(deep_link, message, user_id):
                 text += f'\n{await get_bashkir_haiku()}'
             case "minecraft_server":
                 text += f'\n{await get_minecraft_server_info()}'
-            # case "nadezhdin":
-            #     text += f'\n{await get_nadezhdin()}'
     telegram_media = await _node_telegram_media(obj)
     await _safe_edit(
         message,
