@@ -31,6 +31,13 @@ class ContentTreeTests(unittest.TestCase):
             ["my_folder", "about_me", "my_data", "secret_place"],
         )
 
+    def test_radio_places_night_broadcast_last_and_enables_live_refresh(self):
+        radio = common_tree["children"]["radio"]
+
+        self.assertEqual(next(reversed(radio["children"])), "night_radio")
+        self.assertEqual(radio["custom"], "radio_now_playing")
+        self.assertEqual(radio["refresh"], 1)
+
     def test_author_titles_and_search_copy_are_preserved(self):
         children = common_tree["children"]
         tools = children["tools"]["children"]

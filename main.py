@@ -20,7 +20,11 @@ from programs.radio import (
     ensure_startup_stream,
     start_calls,
 )
-from programs.night_schedule import is_night_radio_lockout_utc, NIGHT_RADIO_SWITCH_BLOCKED
+from programs.night_schedule import (
+    NIGHT_RADIO_SWITCH_BLOCKED,
+    is_night_radio_lockout_utc,
+    radio_now_playing_text,
+)
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
 from programs.data_rights import (
     handle_data_rights_callback,
@@ -192,6 +196,8 @@ async def open_common_hashdict(deep_link, message, user_id):
     disable_web_page_preview = obj.get("disable_web_page_preview", 0)
     if "custom" in obj:
         match obj["custom"]:
+            case "radio_now_playing":
+                text += f'\n\n{radio_now_playing_text()}'
             case "bashkir_haiku":
                 text += f'\n{await get_bashkir_haiku()}'
             case "minecraft_server":

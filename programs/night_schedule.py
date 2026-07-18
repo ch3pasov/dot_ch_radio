@@ -61,6 +61,15 @@ def night_loop_file_path() -> Path:
     return project_root / "config" / "night_loop.mp4"
 
 
+def radio_now_playing_text(now: datetime | None = None) -> str:
+    """Describe the stream type selected by the radio schedule right now."""
+
+    night_media_available = night_loop_file_path().is_file()
+    if night_media_available and is_night_loop_video_window_utc(now):
+        return "**Сейчас играет:** ночной эфир."
+    return "**Сейчас играет:** обычный эфир."
+
+
 def night_loop_media_duration_sec(path: Path) -> float | None:
     """Длительность контейнера по ffprobe; None если не удалось (битый/пустой файл)."""
     try:
