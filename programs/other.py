@@ -1,11 +1,14 @@
-from config.minecraft_config import server_url
-import aiohttp
-from PIL import Image
-import numpy as np
+import asyncio
 import io
-from typing import Tuple, Dict, Any
-from urllib.parse import quote
 import re
+from typing import Any, Dict, Tuple
+from urllib.parse import quote
+
+import aiohttp
+import numpy as np
+from PIL import Image
+
+from config.minecraft_config import server_url
 
 
 async def aiohttp_get(url, type='text'):
@@ -296,8 +299,8 @@ async def invert_picture(photo):
     photo_bytes = io.BytesIO(raw)
     photo_bytes.name = "photo.jpg"  # Указываем имя файла (необязательно)
 
-    # Обрабатываем фото (версия 2, автоматический центр и радиус)
-    out = circle_inversion_bytes(photo_bytes, version=2)
+    # CPU-heavy pixel processing must not block Telegram's event loop or chat actions.
+    out = await asyncio.to_thread(circle_inversion_bytes, photo_bytes, version=2)
     out.name = "inverted.jpg"
     return out
 

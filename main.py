@@ -317,20 +317,22 @@ async def answer_invert_picture_common(event, message_with_content):
     else:
         markup = [[Button.url("🤖 К роботу", f"https://t.me/{bot_username}?start=invert_picture")]]
 
-    reply_message = await event.reply("🙏 Получил запрос, ждите (долго).")
-    # Скачиваем фото в оперативную память
-    photo = await message_with_content.download_media(file=bytes)
-    await reply_message.edit("🌚 Скачал фотку, ждите (тоже долго).")
-    processed_photo_bytes = await invert_picture(photo)
-    # Отправляем обработанное фото
-    await app_robot.send_file(
-        event.chat_id,
-        processed_photo_bytes,
-        reply_to=event.message.id,
-        buttons=markup,
-        allow_cache=False,
-    )
-    await reply_message.delete()
+    # Telegram has no download/processing action, so "typing" truthfully represents
+    # preparing the reply. The CPU-heavy transform runs outside the event loop.
+    async with app_robot.action(event.chat_id, "typing"):
+        photo = await message_with_content.download_media(file=bytes)
+        processed_photo_bytes = await invert_picture(photo)
+
+    # Use Telegram's native upload animation with real byte progress.
+    async with app_robot.action(event.chat_id, "photo") as upload_action:
+        await app_robot.send_file(
+            event.chat_id,
+            processed_photo_bytes,
+            reply_to=event.message.id,
+            buttons=markup,
+            allow_cache=False,
+            progress_callback=upload_action.progress,
+        )
 
 
 # invert_picture by command or directly in chat
