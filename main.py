@@ -6,10 +6,6 @@ from telethon import events, Button, utils
 from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
 from telethon.tl.types import (
     InputMediaDice,
-    KeyboardButtonCopy,
-    KeyboardButtonSimpleWebView,
-    KeyboardButtonUserProfile,
-    KeyboardButtonWebView,
     MessageMediaVenue,
 )
 
@@ -29,8 +25,9 @@ from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_
 from programs.data_rights import (
     handle_data_rights_callback,
     is_data_rights_callback,
-    load_message_effects,
 )
+from libs.message_effects import load_message_effects
+from libs.telegram_ui import build_button, build_child_rows
 from config.tg_ids import dot_ch_id
 from global_vars import app_robot, app_dj, loop, print
 
@@ -75,23 +72,6 @@ async def _node_telegram_media(obj):
     return media
 
 
-def _button_label(item):
-    return item.get("button_text") or item["name"]
-
-
-def _button_icon(item):
-    icon = item.get("button_icon")
-    return int(icon) if icon is not None else None
-
-
-def _button_style(item):
-    return item.get("button_style")
-
-
-def _raw_button_style(item):
-    return Button._get_style(_button_style(item), _button_icon(item))
-
-
 def _child_is_action_button(item):
     return any(
         key in item
@@ -108,64 +88,21 @@ def _child_is_action_button(item):
     )
 
 
-def _build_child_button(child_hash, item):
-    label = _button_label(item)
-    style = _button_style(item)
-    icon = _button_icon(item)
-
-    if "url" in item:
-        return Button.url(label, item["url"], style=style, icon=icon)
-    if "copy_text" in item:
-        return KeyboardButtonCopy(label, item["copy_text"], style=_raw_button_style(item))
-    if "web_app_url" in item:
-        return KeyboardButtonWebView(label, item["web_app_url"], style=_raw_button_style(item))
-    if "simple_web_app_url" in item:
-        return KeyboardButtonSimpleWebView(label, item["simple_web_app_url"], style=_raw_button_style(item))
-    if "callback_data" in item:
-        return Button.inline(label, data=item["callback_data"], style=style, icon=icon)
-    if item.get("button_type") == "user_profile" or "user_id" in item:
-        return KeyboardButtonUserProfile(label, int(item["user_id"]), style=_raw_button_style(item))
-    if "switch_inline_query_current_chat" in item:
-        return Button.switch_inline(
-            label,
-            query=item["switch_inline_query_current_chat"],
-            same_peer=True,
-            style=style,
-            icon=icon,
-        )
-    if "switch_inline_query" in item:
-        return Button.switch_inline(
-            label,
-            query=item["switch_inline_query"],
-            same_peer=bool(item.get("same_peer", False)),
-            style=style,
-            icon=icon,
-        )
-    return Button.inline(label, data=f"id={child_hash}", style=style, icon=icon)
-
-
 def _child_button_rows(children, obj, user_id):
-    columns = max(1, int(obj.get("children_columns", 1)))
-    rows = []
-    row = []
+    return build_child_rows(
+        children,
+        columns=obj.get("children_columns", 1),
+        include=lambda _child_hash, child: not child.get("beta_access", 0)
+        or user_id in beta_testers,
+    )
 
-    for child_hash, child in children.items():
-        if child.get("beta_access", 0) and user_id not in beta_testers:
-            continue
 
-        if child.get("break_before") and row:
-            rows.append(row)
-            row = []
+def _navigation_ui():
+    return common_hashdict[alias_dict["root"]]["navigation_ui"]
 
-        row.append(_build_child_button(child_hash, child))
 
-        if child.get("break_after") or len(row) >= columns:
-            rows.append(row)
-            row = []
-
-    if row:
-        rows.append(row)
-    return rows
+def _data_rights_ui():
+    return common_hashdict[alias_dict["my_data"]]
 
 
 async def _roll(chat_id, emoticon):
@@ -225,12 +162,31 @@ async def open_common_hashdict(deep_link, message, user_id):
         text += f'\n{obj["description"]}'
     if "children" in obj:
         buttons.extend(_child_button_rows(obj["children"], obj, user_id))
+    navigation_ui = _navigation_ui()
     if obj.get("refresh", 0):
-        buttons.append([Button.inline("🔄", data=f"refresh=1=id={path_hash}")])
-    share_button = Button.url("🔗", f"https://t.me/share/url?url={obj['share']}")
+        buttons.append(
+            [
+                build_button(
+                    navigation_ui["refresh"],
+                    default_callback_data=f"refresh=1=id={path_hash}",
+                )
+            ]
+        )
+    share_button = build_button(
+        navigation_ui["share"],
+        default_url=f"https://t.me/share/url?url={obj['share']}",
+    )
     if "parent" in obj:
         parent = obj["parent"]
-        buttons.append([Button.inline("⬅️", data=f"id={parent}"), share_button])
+        buttons.append(
+            [
+                build_button(
+                    navigation_ui["back"],
+                    default_callback_data=f"id={parent}",
+                ),
+                share_button,
+            ]
+        )
     else:
         buttons.append([share_button])
     disable_web_page_preview = obj.get("disable_web_page_preview", 0)
@@ -275,7 +231,7 @@ async def answer_common_hashdict(event):
     data = event.data.decode()
     msg = await event.get_message()
     if is_data_rights_callback(data):
-        result = await handle_data_rights_callback(event, app_robot)
+        result = await handle_data_rights_callback(event, app_robot, _data_rights_ui())
         if result == "home":
             await open_common_hashdict("my_data", msg, event.sender_id)
         return

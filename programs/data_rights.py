@@ -12,13 +12,13 @@ import io
 import logging
 import zipfile
 from datetime import datetime
-from typing import Iterable
+from typing import Any, Mapping
 from zoneinfo import ZoneInfo
 
-from telethon import Button
-from telethon.errors import MessageNotModifiedError, RPCError
-from telethon.tl.functions.messages import GetAvailableEffectsRequest
-from telethon.tl.types import KeyboardButtonCopy, KeyboardButtonStyle
+from telethon.errors import MessageNotModifiedError
+
+from libs.message_effects import resolve_message_effect, send_with_effect_retry
+from libs.telegram_ui import build_view_rows
 
 
 CALLBACK_PREFIX = "data_rights:"
@@ -31,7 +31,6 @@ CALLBACK_RECEIPT = f"{CALLBACK_PREFIX}receipt"
 
 TAKEOUT_FILENAME = "dot_ch_bot_takeout.zip"
 RECEIPT_FILENAME = "dot_ch_bot_nothing_deleted.txt"
-ZERO_SUMMARY = "@dot_ch_bot · найдено 0 · удалено 0 · хранится 0 Б"
 TAKEOUT_TIMEZONE = ZoneInfo("Europe/Berlin")
 
 DATASETS = (
@@ -42,65 +41,26 @@ DATASETS = (
     ("analytics", "Аналитика и трекинг"),
 )
 
-_MESSAGE_EFFECT_IDS: dict[str, int] = {}
 _LOGGER = logging.getLogger(__name__)
+_ERROR_VIEWS = {
+    CALLBACK_AUDIT: "error_audit",
+    CALLBACK_TAKEOUT: "error_takeout",
+    CALLBACK_DELETE: "error_delete",
+    CALLBACK_DELETE_CONFIRM: "error_delete_confirm",
+    CALLBACK_RECEIPT: "error_receipt",
+}
 
 
 def is_data_rights_callback(data: str) -> bool:
     return data.startswith(CALLBACK_PREFIX)
 
 
-def _callback_button(text: str, data: str, *, style: str | None = None):
-    payload = data.encode("ascii")
-    if len(payload) > 64:
-        raise ValueError("Telegram callback payload exceeds 64 bytes")
-    return Button.inline(text, data=payload, style=style)
+def _view_buttons(ui: Mapping[str, Any], view_name: str):
+    return build_view_rows(ui["views"][view_name], ui["actions"])
 
 
-def _copy_summary_button():
-    return KeyboardButtonCopy(
-        "📋 Скопировать итог",
-        ZERO_SUMMARY,
-        style=KeyboardButtonStyle(bg_success=True),
-    )
-
-
-def _home_button():
-    return _callback_button("↩️ В центр данных", CALLBACK_HOME)
-
-
-def _result_buttons():
-    return [
-        [_copy_summary_button()],
-        [
-            _callback_button("📦 Takeout", CALLBACK_TAKEOUT, style="primary"),
-            _callback_button("🗑 Удалить", CALLBACK_DELETE, style="danger"),
-        ],
-        [_home_button()],
-    ]
-
-
-def _delete_confirmation_buttons():
-    return [
-        [_callback_button("🗑 Удалить безвозвратно", CALLBACK_DELETE_CONFIRM, style="danger")],
-        [_home_button()],
-    ]
-
-
-def _deletion_result_buttons():
-    return [
-        [_copy_summary_button()],
-        [_callback_button("🧾 Получить акт", CALLBACK_RECEIPT, style="primary")],
-        [_home_button()],
-    ]
-
-
-def _error_buttons(retry_callback: str):
-    style = "danger" if retry_callback == CALLBACK_DELETE_CONFIRM else "primary"
-    return [
-        [_callback_button("↻ Повторить", retry_callback, style=style)],
-        [_home_button()],
-    ]
+def _action_effect_id(ui: Mapping[str, Any], action_name: str) -> int | None:
+    return resolve_message_effect(ui["actions"][action_name].get("message_effects", ()))
 
 
 def _takeout_zip_time(generated_at: datetime) -> tuple[int, int, int, int, int, int]:
@@ -167,38 +127,6 @@ def build_deletion_receipt() -> io.BytesIO:
     return output
 
 
-async def load_message_effects(user_client) -> int:
-    """Load Telegram's non-premium one-to-one effects once at startup.
-
-    Telegram only allows user accounts to query the effect catalogue, so the
-    already-required DJ client supplies the IDs. Failure is harmless: the
-    entire flow works without an animation.
-    """
-
-    try:
-        result = await user_client(GetAvailableEffectsRequest(hash=0))
-    except Exception:
-        _MESSAGE_EFFECT_IDS.clear()
-        return 0
-
-    loaded = {
-        effect.emoticon: effect.id
-        for effect in getattr(result, "effects", ())
-        if not getattr(effect, "premium_required", False)
-    }
-    _MESSAGE_EFFECT_IDS.clear()
-    _MESSAGE_EFFECT_IDS.update(loaded)
-    return len(loaded)
-
-
-def _message_effect_id(preferred_emoticons: Iterable[str]) -> int | None:
-    for emoticon in preferred_emoticons:
-        effect_id = _MESSAGE_EFFECT_IDS.get(emoticon)
-        if effect_id is not None:
-            return effect_id
-    return next(iter(_MESSAGE_EFFECT_IDS.values()), None)
-
-
 async def _edit(message, text: str, *, buttons=None):
     try:
         return await message.edit(
@@ -224,34 +152,31 @@ async def _send_memory_document(
     file_obj: io.BytesIO,
     *,
     caption: str,
-    effect_emoticons: Iterable[str],
+    ui: Mapping[str, Any],
+    action_name: str,
 ):
-    effect_id = _message_effect_id(effect_emoticons)
-    kwargs = {
-        "caption": caption,
-        "force_document": True,
-        "allow_cache": False,
-        "reply_to": message.id,
-        "buttons": [[_copy_summary_button()]],
-        "parse_mode": "markdown",
-        "message_effect_id": effect_id,
-    }
+    effect_id = _action_effect_id(ui, action_name)
+
     async with client.action(chat_id, "document") as action:
-        kwargs["progress_callback"] = action.progress
-        try:
+        async def send_with_progress(current_effect_id):
             file_obj.seek(0)
-            return await client.send_file(chat_id, file_obj, **kwargs)
-        except RPCError as error:
-            # A catalogue can change between startup and send. Retry only the
-            # effect-specific failure, never arbitrary network/flood errors.
-            if effect_id is None or "EFFECT" not in str(error).upper():
-                raise
-            kwargs["message_effect_id"] = None
-            file_obj.seek(0)
-            return await client.send_file(chat_id, file_obj, **kwargs)
+            return await client.send_file(
+                chat_id,
+                file_obj,
+                caption=caption,
+                force_document=True,
+                allow_cache=False,
+                reply_to=message.id,
+                buttons=_view_buttons(ui, "document"),
+                parse_mode="markdown",
+                message_effect_id=current_effect_id,
+                progress_callback=action.progress,
+            )
+
+        return await send_with_effect_retry(send_with_progress, effect_id)
 
 
-async def _run_audit(client, chat_id: int, message):
+async def _run_audit(client, chat_id: int, message, ui: Mapping[str, Any]):
     frames = [
         "**🔎 Аудит хранилищ**\n\n`█░░░░░░░░░ 10%`\nИщу хранилище профилей…",
         "**🔎 Аудит хранилищ**\n\n`███░░░░░░░ 30%`\nПрофили: хранилище не настроено.\nПроверяю историю запросов…",
@@ -273,11 +198,11 @@ async def _run_audit(client, chat_id: int, message):
         "У приложения нет базы пользователей, истории запросов, профилей "
         "или пользовательской аналитики. Telegram при этом обрабатывает "
         "сообщения и служебные данные по собственным правилам.",
-        buttons=_result_buttons(),
+        buttons=_view_buttons(ui, "result"),
     )
 
 
-async def _run_takeout(client, chat_id: int, message):
+async def _run_takeout(client, chat_id: int, message, ui: Mapping[str, Any]):
     frames = [
         "**📦 Takeout: полная выгрузка**\n\n`█░░░░░░░░░ 10%`\nГотовлю экспорт…",
         "**📦 Takeout: полная выгрузка**\n\n`███░░░░░░░ 30%`\nСоздаю data.txt…",
@@ -298,18 +223,19 @@ async def _run_takeout(client, chat_id: int, message):
             "Пользовательских данных: `0 Б`\n\n"
             "Архив собран в оперативной памяти и не сохранялся ботом."
         ),
-        effect_emoticons=("🎉", "👍"),
+        ui=ui,
+        action_name="takeout",
     )
     await _edit(
         message,
         "**✅ Takeout завершён**\n\n"
         "Экспортировано: `0` записей · `0 Б`\n"
         "Архив отправлен следующим сообщением. Внутри — пустой `data.txt`.",
-        buttons=_result_buttons(),
+        buttons=_view_buttons(ui, "result"),
     )
 
 
-async def _show_delete_confirmation(message):
+async def _show_delete_confirmation(message, ui: Mapping[str, Any]):
     await _edit(
         message,
         "**🗑 Безвозвратное удаление**\n\n"
@@ -318,11 +244,11 @@ async def _show_delete_confirmation(message):
         "Сообщения в этом чате находятся в Telegram и этой операцией не "
         "удаляются. Ими можно управлять средствами Telegram.\n\n"
         "**Действие нельзя отменить. Особенно если нечего отменять.**",
-        buttons=_delete_confirmation_buttons(),
+        buttons=_view_buttons(ui, "delete_confirmation"),
     )
 
 
-async def _run_deletion(client, chat_id: int, message):
+async def _run_deletion(client, chat_id: int, message, ui: Mapping[str, Any]):
     frames = [
         "**🗑 Удаление данных**\n\n`█░░░░░░░░░ 10%`\nЗакрываю канал записи… канал отсутствует.",
         "**🗑 Удаление данных**\n\n`███░░░░░░░ 30%`\nУдаляю профиль… таблица не существует.",
@@ -344,29 +270,21 @@ async def _run_deletion(client, chat_id: int, message):
         "Осталось у бота: `0 Б`\n\n"
         "Ни одна запись не была пропущена — записей не было. Сведения о "
         "самой операции приложение тоже не сохранило.",
-        buttons=_deletion_result_buttons(),
+        buttons=_view_buttons(ui, "deletion_result"),
     )
 
-    effect_id = _message_effect_id(("🎉", "🔥", "👍"))
-    kwargs = {"reply_to": message.id, "message_effect_id": effect_id}
-    try:
-        await client.send_message(
+    async def send(current_effect_id):
+        return await client.send_message(
             chat_id,
             "✨ **Готово.** Ваш цифровой след в хранилищах бота весит `0 Б`.",
-            **kwargs,
-        )
-    except RPCError as error:
-        if effect_id is None or "EFFECT" not in str(error).upper():
-            raise
-        kwargs["message_effect_id"] = None
-        await client.send_message(
-            chat_id,
-            "✨ **Готово.** Ваш цифровой след в хранилищах бота весит `0 Б`.",
-            **kwargs,
+            reply_to=message.id,
+            message_effect_id=current_effect_id,
         )
 
+    await send_with_effect_retry(send, _action_effect_id(ui, "delete_confirm"))
 
-async def _send_receipt(client, chat_id: int, message):
+
+async def _send_receipt(client, chat_id: int, message, ui: Mapping[str, Any]):
     receipt = build_deletion_receipt()
     await _send_memory_document(
         client,
@@ -378,11 +296,16 @@ async def _send_receipt(client, chat_id: int, message):
             "Официально подтверждает успешное удаление всех нуля объектов. "
             "Копия акта у бота не остаётся."
         ),
-        effect_emoticons=("👍", "🎉"),
+        ui=ui,
+        action_name="receipt",
     )
 
 
-async def handle_data_rights_callback(event, client) -> str | None:
+async def handle_data_rights_callback(
+    event,
+    client,
+    ui: Mapping[str, Any],
+) -> str | None:
     """Handle one stateless callback; return ``"home"`` for menu navigation."""
 
     data = event.data.decode("ascii", errors="strict")
@@ -397,22 +320,22 @@ async def handle_data_rights_callback(event, client) -> str | None:
     try:
         if data == CALLBACK_AUDIT:
             await event.answer("Начинаю аудит")
-            await _run_audit(client, event.chat_id, message)
+            await _run_audit(client, event.chat_id, message, ui)
         elif data == CALLBACK_TAKEOUT:
             await event.answer("Готовлю полную выгрузку")
-            await _run_takeout(client, event.chat_id, message)
+            await _run_takeout(client, event.chat_id, message, ui)
         elif data == CALLBACK_DELETE:
             await event.answer(
                 "Удаление касается хранилищ приложения. История чата в Telegram останется на месте.",
                 alert=True,
             )
-            await _show_delete_confirmation(message)
+            await _show_delete_confirmation(message, ui)
         elif data == CALLBACK_DELETE_CONFIRM:
             await event.answer("Безвозвратное удаление запущено")
-            await _run_deletion(client, event.chat_id, message)
+            await _run_deletion(client, event.chat_id, message, ui)
         elif data == CALLBACK_RECEIPT:
             await event.answer("Формирую акт в оперативной памяти")
-            await _send_receipt(client, event.chat_id, message)
+            await _send_receipt(client, event.chat_id, message, ui)
         else:
             await event.answer("Неизвестная операция центра данных", alert=True)
     except Exception as error:
@@ -424,6 +347,6 @@ async def handle_data_rights_callback(event, client) -> str | None:
             "**⚠️ Операция прервана**\n\n"
             "Telegram не принял один из шагов. Бот ничего не записал на диск "
             "и не создал незавершённую заявку — можно безопасно повторить.",
-            buttons=_error_buttons(data),
+            buttons=_view_buttons(ui, _ERROR_VIEWS.get(data, "error_audit")),
         )
     return "handled"

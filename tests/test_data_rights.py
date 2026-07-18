@@ -8,7 +8,11 @@ from telethon import TelegramClient
 from telethon.sessions import MemorySession
 from telethon.tl.types import ReplyInlineMarkup
 
+from content.content import common_tree
 from programs import data_rights
+
+
+DATA_RIGHTS_UI = common_tree["children"]["other"]["children"]["my_data"]
 
 
 class DataRightsArtifactsTests(unittest.TestCase):
@@ -50,12 +54,8 @@ class DataRightsArtifactsTests(unittest.TestCase):
 
     def test_performance_button_layouts_build_as_inline_markups(self):
         client = TelegramClient(MemorySession(), 1, "0" * 32)
-        layouts = (
-            data_rights._result_buttons(),
-            data_rights._delete_confirmation_buttons(),
-            data_rights._deletion_result_buttons(),
-        )
-        for layout in layouts:
+        for view_name in DATA_RIGHTS_UI["views"]:
+            layout = data_rights._view_buttons(DATA_RIGHTS_UI, view_name)
             self.assertIsInstance(client.build_reply_markup(layout), ReplyInlineMarkup)
 
 
@@ -73,7 +73,11 @@ class DataRightsCallbackTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_home_callback_requests_stateless_menu_navigation(self):
         event, _ = self._event(data_rights.CALLBACK_HOME)
-        result = await data_rights.handle_data_rights_callback(event, object())
+        result = await data_rights.handle_data_rights_callback(
+            event,
+            object(),
+            DATA_RIGHTS_UI,
+        )
         self.assertEqual(result, "home")
         event.answer.assert_awaited_once_with()
         event.get_message.assert_not_awaited()
@@ -81,18 +85,26 @@ class DataRightsCallbackTests(unittest.IsolatedAsyncioTestCase):
     async def test_audit_callback_is_answered_before_workflow(self):
         event, message = self._event(data_rights.CALLBACK_AUDIT)
         with patch.object(data_rights, "_run_audit", new=AsyncMock()) as run_audit:
-            result = await data_rights.handle_data_rights_callback(event, "client")
+            result = await data_rights.handle_data_rights_callback(
+                event,
+                "client",
+                DATA_RIGHTS_UI,
+            )
 
         self.assertEqual(result, "handled")
         event.answer.assert_awaited_once_with("Начинаю аудит")
-        run_audit.assert_awaited_once_with("client", 7, message)
+        run_audit.assert_awaited_once_with("client", 7, message, DATA_RIGHTS_UI)
 
     async def test_failed_workflow_leaves_retry_ui_without_personal_log_data(self):
         event, message = self._event(data_rights.CALLBACK_TAKEOUT)
         failed = AsyncMock(side_effect=RuntimeError("private payload"))
         with patch.object(data_rights, "_run_takeout", new=failed):
             with self.assertLogs(data_rights._LOGGER, level="ERROR") as captured:
-                result = await data_rights.handle_data_rights_callback(event, "client")
+                result = await data_rights.handle_data_rights_callback(
+                    event,
+                    "client",
+                    DATA_RIGHTS_UI,
+                )
 
         self.assertEqual(result, "handled")
         self.assertNotIn("private payload", "\n".join(captured.output))
