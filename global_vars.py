@@ -1,10 +1,11 @@
 import asyncio
 import logging
+import os
 import sys
 
 from telethon import TelegramClient
 
-from config.app import api_id, api_hash
+from config.app import api_id as configured_api_id, api_hash as configured_api_hash
 from libs.minimal_session import MinimalSQLiteSession
 
 formatter = logging.Formatter('%(asctime)s %(levelname)s [%(filename)s:%(lineno)s] %(message)s')
@@ -30,6 +31,8 @@ except RuntimeError:
     asyncio.set_event_loop(loop)
 
 SESSION_DIR = "volume/sessions"
+api_id = int(os.environ.get("TELEGRAM_API_ID") or configured_api_id)
+api_hash = os.environ.get("TELEGRAM_API_HASH") or configured_api_hash
 
 # robot_account — бот (интерфейс с inline-кнопками, callback, dice).
 app_robot = TelegramClient(
