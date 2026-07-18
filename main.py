@@ -3,7 +3,6 @@ import random
 from html import escape
 
 from telethon import events, Button, utils
-from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
 from telethon.tl.types import (
     InputMediaDice,
     MessageMediaVenue,
@@ -31,6 +30,8 @@ from programs.data_rights import (
     is_data_rights_callback,
 )
 from libs.message_effects import load_message_effects
+from libs.telegram_delivery import deliver_message
+from libs.telegram_navigation import is_refresh_callback, unwrap_refresh_callback
 from libs.telegram_ui import build_button, build_child_rows
 from config.tg_ids import dot_ch_id
 from global_vars import app_robot, app_dj, loop, print
@@ -45,25 +46,6 @@ def _is_private(event) -> bool:
 def _not_channel(event) -> bool:
     # Исключаем сообщения из broadcast-канала.
     return not (getattr(event, "is_channel", False) and not getattr(event, "is_group", False))
-
-
-async def _safe_edit(message, text, *, buttons=None, link_preview=True, file=None, parse_mode=()):
-    try:
-        return await message.edit(
-            text,
-            buttons=buttons or None,
-            link_preview=link_preview,
-            file=file,
-            parse_mode=parse_mode,
-        )
-    except MessageNotModifiedError:
-        return message
-    except ReplyMarkupTooLongError:
-        fallback = (
-            f"{text}\n\n"
-            "⚠️ Не смог отрисовать клавиатуру: Telegram отклонил слишком большую разметку."
-        )
-        return await message.edit(fallback, buttons=None, link_preview=link_preview, parse_mode=parse_mode)
 
 
 async def _node_telegram_media(obj):
@@ -115,11 +97,7 @@ async def _roll(chat_id, emoticon):
 
 
 async def open_common_hashdict(deep_link, message, user_id):
-    # refresh
-    if deep_link.startswith("refresh=1=id="):
-        message = await _safe_edit(message, "refreshing...")
-        await asyncio.sleep(1)
-        return await open_common_hashdict(deep_link[10:], message, user_id)
+    deep_link = unwrap_refresh_callback(deep_link)
 
     if deep_link == "":
         return await open_common_hashdict("root", message, user_id)
@@ -150,8 +128,12 @@ async def open_common_hashdict(deep_link, message, user_id):
     # common case
     if "radio_url" in obj:
         if is_night_radio_lockout_utc():
+            if message is None:
+                await open_common_hashdict("radio", None, user_id)
             return NIGHT_RADIO_SWITCH_BLOCKED
         await change_stream(obj['radio_url'], who_called="menu")
+        if message is None:
+            await open_common_hashdict("radio", None, user_id)
         return "▶️"
 
     buttons = []
@@ -203,8 +185,10 @@ async def open_common_hashdict(deep_link, message, user_id):
             case "minecraft_server":
                 text += f'\n{await get_minecraft_server_info()}'
     telegram_media = await _node_telegram_media(obj)
-    await _safe_edit(
+    await deliver_message(
+        app_robot,
         message,
+        user_id,
         text,
         buttons=buttons,
         link_preview=not disable_web_page_preview,
@@ -215,8 +199,8 @@ async def open_common_hashdict(deep_link, message, user_id):
 
 
 async def open_common_hashdict_create(deep_link, user_id):
-    new_message = await app_robot.send_message(user_id, "Загрузка")
-    return await open_common_hashdict(deep_link, new_message, user_id)
+    async with app_robot.action(user_id, "typing"):
+        return await open_common_hashdict(deep_link, None, user_id)
 
 
 @app_robot.on(events.NewMessage(pattern=r'^/start(?:\s+(\S+))?\s*$', incoming=True, func=_is_private))
@@ -233,15 +217,22 @@ async def answer_common_hashdict(event):
     if event.sender_id != event.chat_id:
         return
     data = event.data.decode()
-    msg = await event.get_message()
     if is_data_rights_callback(data):
         result = await handle_data_rights_callback(event, app_robot, _data_rights_ui())
         if result == "home":
+            msg = await event.get_message()
             await open_common_hashdict("my_data", msg, event.sender_id)
         return
+    refresh_callback = is_refresh_callback(data)
+    if refresh_callback:
+        await event.answer()
+    msg = await event.get_message()
     answer = await open_common_hashdict(data, msg, event.sender_id)
-    if answer:
-        await event.answer(answer)
+    if not refresh_callback:
+        if answer:
+            await event.answer(answer)
+        else:
+            await event.answer()
 
 
 async def answer_rus_to_katakana_common(event, message_with_content):
