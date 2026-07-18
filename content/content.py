@@ -352,6 +352,39 @@ common_tree = {
     "description": "👋 Добро пожаловать в корень дерева! Здесь начинается ваше путешествие по музыкальному миру и файлам.",
     "alias": "root",
     "children": {
+        "my_data": {
+            "name": "🗄 Мои данные",
+            "button_style": "primary",
+            "description": (
+                "**Центр управления данными**\n\n"
+                "Здесь можно проверить постоянные хранилища приложения, "
+                "получить полную выгрузку или безвозвратно удалить всё, что "
+                "бот хранит о вас.\n\n"
+                "Операции выполняются без регистрации заявки и относятся "
+                "только к данным самого приложения, не к истории чата в Telegram."
+            ),
+            "alias": "my_data",
+            "children_columns": 2,
+            "children": {
+                "audit": {
+                    "name": "🔎 Провести аудит",
+                    "callback_data": "data_rights:audit",
+                    "button_style": "success",
+                },
+                "takeout": {
+                    "name": "📦 Получить takeout",
+                    "callback_data": "data_rights:takeout",
+                    "button_style": "primary",
+                },
+                "delete": {
+                    "name": "🗑 Удалить всё",
+                    "callback_data": "data_rights:delete",
+                    "button_style": "danger",
+                    "break_before": True,
+                    "break_after": True,
+                },
+            },
+        },
         "radio": {
             "name": "📻 Радио",
             "description": "🎶 В этой секции вы найдете различные радиостанции и музыкальные потоки, доступные для прослушивания в https://t.me/ch_an?livestream",

@@ -53,5 +53,7 @@ For new media, upload the file to Telegram manually and paste its `file_id` into
 - `user_id` with `button_type="user_profile"`: opens a user profile.
 - `switch_inline_query`: opens inline mode, optionally with `same_peer=1`.
 - `switch_inline_query_current_chat`: opens inline mode in the current chat.
+- `callback_data`: dispatches an application-owned callback payload (maximum
+  64 bytes); the corresponding handler must remain stateless.
 
 Telegram supports semantic button colors via `primary`, `success`, and `danger`; arbitrary RGB colors are not exposed to bot inline keyboards.

@@ -21,6 +21,7 @@ children_params = [
     "web_app_url",
     "simple_web_app_url",
     "user_id",
+    "callback_data",
     "same_peer",
     "row",
     "break_before",

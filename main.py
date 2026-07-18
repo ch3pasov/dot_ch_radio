@@ -26,6 +26,11 @@ from programs.radio import (
 )
 from programs.night_schedule import is_night_radio_lockout_utc, NIGHT_RADIO_SWITCH_BLOCKED
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
+from programs.data_rights import (
+    handle_data_rights_callback,
+    is_data_rights_callback,
+    load_message_effects,
+)
 from config.tg_ids import dot_ch_id
 from global_vars import app_robot, app_dj, loop, print
 
@@ -98,6 +103,7 @@ def _child_is_action_button(item):
             "web_app_url",
             "simple_web_app_url",
             "user_id",
+            "callback_data",
         )
     )
 
@@ -115,6 +121,8 @@ def _build_child_button(child_hash, item):
         return KeyboardButtonWebView(label, item["web_app_url"], style=_raw_button_style(item))
     if "simple_web_app_url" in item:
         return KeyboardButtonSimpleWebView(label, item["simple_web_app_url"], style=_raw_button_style(item))
+    if "callback_data" in item:
+        return Button.inline(label, data=item["callback_data"], style=style, icon=icon)
     if item.get("button_type") == "user_profile" or "user_id" in item:
         return KeyboardButtonUserProfile(label, int(item["user_id"]), style=_raw_button_style(item))
     if "switch_inline_query_current_chat" in item:
@@ -266,6 +274,11 @@ async def answer_common_hashdict(event):
         return
     data = event.data.decode()
     msg = await event.get_message()
+    if is_data_rights_callback(data):
+        result = await handle_data_rights_callback(event, app_robot)
+        if result == "home":
+            await open_common_hashdict("my_data", msg, event.sender_id)
+        return
     answer = await open_common_hashdict(data, msg, event.sender_id)
     if answer:
         await event.answer(answer)
@@ -483,6 +496,8 @@ async def test_handler(event):
 async def amain():
     print('login in dj account')
     await app_dj.start()
+    effects_count = await load_message_effects(app_dj)
+    print(f"loaded {effects_count} non-premium message effects")
     print('login in robot account')
     await app_robot.start()
     if not disable_radio:
