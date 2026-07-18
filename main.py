@@ -210,7 +210,7 @@ async def open_common_hashdict(deep_link, message, user_id):
     if "radio_url" in obj:
         if is_night_radio_lockout_utc():
             return NIGHT_RADIO_SWITCH_BLOCKED
-        await change_stream(obj['radio_url'], who_called=user_id)
+        await change_stream(obj['radio_url'], who_called="menu")
         return "▶️"
 
     buttons = []
@@ -372,7 +372,13 @@ async def answer_invert_picture_common(event, message_with_content):
     await reply_message.edit("🌚 Скачал фотку, ждите (тоже долго).")
     processed_photo_bytes = await invert_picture(photo)
     # Отправляем обработанное фото
-    await event.reply(file=processed_photo_bytes, buttons=markup)
+    await app_robot.send_file(
+        event.chat_id,
+        processed_photo_bytes,
+        reply_to=event.message.id,
+        buttons=markup,
+        allow_cache=False,
+    )
     await reply_message.delete()
 
 
@@ -490,7 +496,7 @@ async def answer_vasilii_game(event):
 @app_robot.on(events.NewMessage(pattern=r'^/test(?:\s|$)', incoming=True, func=_is_private))
 @admin_only
 async def test_handler(event):
-    print(event.message.stringify())
+    print("admin invoked /test")
 
 
 async def amain():
@@ -504,7 +510,7 @@ async def amain():
         await start_calls()
     await ensure_startup_stream()
     me = await app_robot.get_me()
-    print(f"running as @{getattr(me, 'username', None)} (id={getattr(me, 'id', None)})")
+    print(f"running as @{getattr(me, 'username', None)}")
     await app_robot.run_until_disconnected()
 
 
