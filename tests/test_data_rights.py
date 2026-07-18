@@ -1,7 +1,6 @@
-import hashlib
-import json
 import unittest
 import zipfile
+from datetime import datetime, timezone
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
@@ -13,20 +12,24 @@ from programs import data_rights
 
 
 class DataRightsArtifactsTests(unittest.TestCase):
-    def test_takeout_is_deterministic_and_contains_zero_personal_records(self):
-        first = data_rights.build_takeout_archive().getvalue()
-        second = data_rights.build_takeout_archive().getvalue()
-        self.assertEqual(hashlib.sha256(first).digest(), hashlib.sha256(second).digest())
+    def test_takeout_contains_one_empty_file_with_generation_mtime(self):
+        generated_at = datetime(2026, 7, 18, 12, 34, 59, tzinfo=timezone.utc)
+        takeout = data_rights.build_takeout_archive(generated_at=generated_at)
 
-        with zipfile.ZipFile(data_rights.build_takeout_archive()) as archive:
-            self.assertEqual(sorted(archive.namelist()), ["README.txt", "manifest.json"])
-            manifest = json.loads(archive.read("manifest.json"))
+        self.assertEqual(takeout.name, data_rights.TAKEOUT_FILENAME)
+        with zipfile.ZipFile(takeout) as archive:
+            self.assertEqual(archive.namelist(), ["data.txt"])
+            self.assertEqual(archive.read("data.txt"), b"")
+            info = archive.getinfo("data.txt")
 
-        self.assertEqual(manifest["totals"], {"records": 0, "bytes": 0})
-        self.assertTrue(manifest["artifact"]["built_in_memory"])
-        self.assertFalse(manifest["artifact"]["saved_by_bot"])
-        self.assertFalse(manifest["artifact"]["personal_identifiers_included"])
-        self.assertTrue(all(dataset["records"] == 0 for dataset in manifest["datasets"]))
+        self.assertEqual(info.file_size, 0)
+        self.assertEqual(info.date_time, (2026, 7, 18, 14, 34, 58))
+
+    def test_takeout_generation_time_must_be_timezone_aware(self):
+        with self.assertRaisesRegex(ValueError, "timezone-aware"):
+            data_rights.build_takeout_archive(
+                generated_at=datetime(2026, 7, 18, 14, 34, 58)
+            )
 
     def test_receipt_contains_no_dynamic_identifier_or_timestamp(self):
         receipt = data_rights.build_deletion_receipt().getvalue().decode("utf-8")

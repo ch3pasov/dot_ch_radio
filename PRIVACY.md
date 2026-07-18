@@ -14,9 +14,11 @@ that update. They must not write it, message text, media or derived identifiers
 to application logs or files. User-supplied media processing stays in memory;
 uploads must use `allow_cache=False`.
 
-The takeout ZIP and deletion receipt are deterministic in-memory artifacts.
-They contain no user ID, name or request timestamp and are not written to the
-bot filesystem.
+The takeout ZIP is built in memory and contains exactly one zero-byte file,
+`data.txt`. The entry's modification time records when the archive was created
+in the `Europe/Berlin` time zone; this ZIP metadata is the takeout's only
+dynamic field. The deletion receipt remains a deterministic in-memory artifact.
+Neither artifact is written to the bot filesystem.
 
 Telegram itself transports and retains chats, documents and service data under
 Telegram's own settings and policies. The bot's application-side takeout and

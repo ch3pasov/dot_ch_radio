@@ -9,10 +9,11 @@ from __future__ import annotations
 
 import asyncio
 import io
-import json
 import logging
 import zipfile
+from datetime import datetime
 from typing import Iterable
+from zoneinfo import ZoneInfo
 
 from telethon import Button
 from telethon.errors import MessageNotModifiedError, RPCError
@@ -31,6 +32,7 @@ CALLBACK_RECEIPT = f"{CALLBACK_PREFIX}receipt"
 TAKEOUT_FILENAME = "dot_ch_bot_takeout.zip"
 RECEIPT_FILENAME = "dot_ch_bot_nothing_deleted.txt"
 ZERO_SUMMARY = "@dot_ch_bot · найдено 0 · удалено 0 · хранится 0 Б"
+TAKEOUT_TIMEZONE = ZoneInfo("Europe/Berlin")
 
 DATASETS = (
     ("profiles", "Профили пользователей"),
@@ -101,62 +103,44 @@ def _error_buttons(retry_callback: str):
     ]
 
 
-def takeout_manifest() -> dict:
-    """Return the complete, intentionally non-personal export manifest."""
+def _takeout_zip_time(generated_at: datetime) -> tuple[int, int, int, int, int, int]:
+    """Return the Berlin wall-clock time representable by a ZIP entry."""
 
-    return {
-        "format": "dot_ch_bot.takeout.v1",
-        "scope": "persistent user data stored by the bot application",
-        "datasets": [
-            {
-                "name": slug,
-                "records": 0,
-                "bytes": 0,
-                "storage": "not_configured",
-            }
-            for slug, _ in DATASETS
-        ],
-        "totals": {"records": 0, "bytes": 0},
-        "artifact": {
-            "built_in_memory": True,
-            "saved_by_bot": False,
-            "personal_identifiers_included": False,
-            "request_timestamp_included": False,
-        },
-        "telegram": {
-            "in_scope": False,
-            "note": "Telegram chat and service data are governed by Telegram, not stored by the bot application.",
-        },
-    }
-
-
-def _zip_add_text(archive: zipfile.ZipFile, name: str, text: str):
-    # A fixed ZIP timestamp keeps separate exports byte-for-byte identical and
-    # avoids smuggling request time into an otherwise empty takeout.
-    info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
-    info.compress_type = zipfile.ZIP_DEFLATED
-    info.external_attr = 0o644 << 16
-    archive.writestr(info, text.encode("utf-8"))
-
-
-def build_takeout_archive() -> io.BytesIO:
-    manifest = json.dumps(takeout_manifest(), ensure_ascii=False, indent=2, sort_keys=True) + "\n"
-    readme = (
-        "ПОЛНАЯ ВЫГРУЗКА ДАННЫХ @dot_ch_bot\n"
-        "====================================\n\n"
-        "В архиве находятся все пользовательские данные, которые постоянно\n"
-        "хранятся самим приложением: 0 записей, 0 байт.\n\n"
-        "Бот не создаёт профили, не сохраняет историю запросов, настройки,\n"
-        "присланные файлы или пользовательскую аналитику. Этот ZIP собран\n"
-        "целиком в оперативной памяти и не сохранён на файловой системе бота.\n\n"
-        "Сообщения и сам файл в Telegram относятся к инфраструктуре Telegram\n"
-        "и управляются настройками и политиками Telegram.\n"
+    if generated_at.tzinfo is None or generated_at.utcoffset() is None:
+        raise ValueError("generated_at must be timezone-aware")
+    local_time = generated_at.astimezone(TAKEOUT_TIMEZONE)
+    return (
+        local_time.year,
+        local_time.month,
+        local_time.day,
+        local_time.hour,
+        local_time.minute,
+        local_time.second - local_time.second % 2,
     )
+
+
+def _zip_add_empty_file(
+    archive: zipfile.ZipFile,
+    name: str,
+    *,
+    generated_at: datetime,
+):
+    info = zipfile.ZipInfo(name, date_time=_takeout_zip_time(generated_at))
+    info.compress_type = zipfile.ZIP_STORED
+    info.external_attr = 0o644 << 16
+    archive.writestr(info, b"")
+
+
+def build_takeout_archive(*, generated_at: datetime | None = None) -> io.BytesIO:
+    generated_at = generated_at or datetime.now(tz=TAKEOUT_TIMEZONE)
     output = io.BytesIO()
     output.name = TAKEOUT_FILENAME
     with zipfile.ZipFile(output, "w") as archive:
-        _zip_add_text(archive, "README.txt", readme)
-        _zip_add_text(archive, "manifest.json", manifest)
+        _zip_add_empty_file(
+            archive,
+            "data.txt",
+            generated_at=generated_at,
+        )
     output.seek(0)
     return output
 
@@ -295,11 +279,11 @@ async def _run_audit(client, chat_id: int, message):
 
 async def _run_takeout(client, chat_id: int, message):
     frames = [
-        "**📦 Takeout: полная выгрузка**\n\n`█░░░░░░░░░ 10%`\nСоставляю карту хранилищ…",
-        "**📦 Takeout: полная выгрузка**\n\n`███░░░░░░░ 30%`\nПрофили: 0 записей.\nИстория запросов: 0 записей.",
-        "**📦 Takeout: полная выгрузка**\n\n`██████░░░░ 60%`\nФайлы: 0 Б.\nНастройки и аналитика: 0 Б.",
-        "**📦 Takeout: полная выгрузка**\n\n`████████░░ 80%`\nФормирую manifest.json без персональных полей…",
-        "**📦 Takeout: полная выгрузка**\n\n`██████████ 100%`\nУпаковываю все 0 байт пользовательских данных…",
+        "**📦 Takeout: полная выгрузка**\n\n`█░░░░░░░░░ 10%`\nГотовлю экспорт…",
+        "**📦 Takeout: полная выгрузка**\n\n`███░░░░░░░ 30%`\nСоздаю data.txt…",
+        "**📦 Takeout: полная выгрузка**\n\n`██████░░░░ 60%`\nПроверяю содержимое: 0 Б.",
+        "**📦 Takeout: полная выгрузка**\n\n`████████░░ 80%`\nЗаписываю время формирования…",
+        "**📦 Takeout: полная выгрузка**\n\n`██████████ 100%`\nУпаковываю data.txt…",
     ]
     await _animate(message, frames)
     archive = build_takeout_archive()
@@ -320,8 +304,7 @@ async def _run_takeout(client, chat_id: int, message):
         message,
         "**✅ Takeout завершён**\n\n"
         "Экспортировано: `0` записей · `0 Б`\n"
-        "Архив отправлен следующим сообщением. В нём есть читаемый README "
-        "и машиночитаемый manifest — но нет ни одного персонального поля.",
+        "Архив отправлен следующим сообщением. Внутри — пустой `data.txt`.",
         buttons=_result_buttons(),
     )
 
