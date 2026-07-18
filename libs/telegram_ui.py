@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import unicodedata
 from collections.abc import Callable, Mapping
 from typing import Any
 
@@ -34,10 +35,99 @@ _ACTION_FIELDS = (
 )
 
 
+_ZERO_WIDTH_JOINER = "\u200d"
+_KEYCAP = "\u20e3"
+_EMOJI_PUNCTUATION_BASES = frozenset({"\u203c", "\u2049", "\u3030", "\u303d"})
+
+
+def _is_variation_selector(character: str) -> bool:
+    codepoint = ord(character)
+    return 0xFE00 <= codepoint <= 0xFE0F or 0xE0100 <= codepoint <= 0xE01EF
+
+
+def _is_emoji_modifier(character: str) -> bool:
+    return 0x1F3FB <= ord(character) <= 0x1F3FF
+
+
+def _is_regional_indicator(character: str) -> bool:
+    return 0x1F1E6 <= ord(character) <= 0x1F1FF
+
+
+def _is_emoji_tag(character: str) -> bool:
+    return 0xE0020 <= ord(character) <= 0xE007F
+
+
+def _is_symbol_base(character: str) -> bool:
+    return (
+        unicodedata.category(character).startswith("S")
+        or character in _EMOJI_PUNCTUATION_BASES
+    )
+
+
+def _consume_cluster_extensions(label: str, position: int) -> int:
+    while position < len(label):
+        character = label[position]
+        if (
+            _is_variation_selector(character)
+            or unicodedata.category(character).startswith("M")
+            or _is_emoji_modifier(character)
+            or _is_emoji_tag(character)
+        ):
+            position += 1
+            continue
+        if character == _ZERO_WIDTH_JOINER and position + 1 < len(label):
+            next_character = label[position + 1]
+            if _is_symbol_base(next_character):
+                position += 2
+                continue
+        break
+    return position
+
+
+def _strip_leading_symbol_cluster(label: str) -> str:
+    """Strip one leading emoji/symbol grapheme when whitespace follows it."""
+
+    if not label:
+        return label
+
+    first = label[0]
+    position = 0
+    if first in "#*0123456789":
+        # Digits, # and * are emoji only when they form a keycap sequence.
+        position = 1
+        while position < len(label) and _is_variation_selector(label[position]):
+            position += 1
+        if position >= len(label) or label[position] != _KEYCAP:
+            return label
+        position += 1
+    elif _is_regional_indicator(first):
+        # A flag is one grapheme made from two regional indicators.
+        position = 1
+        if position < len(label) and _is_regional_indicator(label[position]):
+            position += 1
+    elif _is_symbol_base(first):
+        position = 1
+    else:
+        return label
+
+    position = _consume_cluster_extensions(label, position)
+    if position >= len(label) or not label[position].isspace():
+        return label
+    return label[position:].lstrip()
+
+
 def _button_label(spec: Mapping[str, Any]) -> str:
-    label = spec.get("button_text") or spec.get("text") or spec.get("name")
+    has_explicit_override = "button_text" in spec
+    if has_explicit_override:
+        label = spec["button_text"]
+    else:
+        label = spec.get("text") or spec.get("name")
     if not isinstance(label, str) or not label:
         raise ValueError("Button must define a non-empty name, text, or button_text")
+    if spec.get("button_icon") is not None and not has_explicit_override:
+        label = _strip_leading_symbol_cluster(label)
+        if not label:
+            raise ValueError("Button label must contain text after its leading emoji/symbol")
     return label
 
 

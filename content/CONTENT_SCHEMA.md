@@ -13,11 +13,16 @@ folder(
     id="beta_tools",
     beta_access=1,
     children_columns=2,
-    children_button_style="primary",
     children=[
         link("Docs", "https://example.com", id="docs"),
         copy_button("Copy token", "abc123", id="copy_token", button_style="success"),
-        web_app("Open app", "https://example.com/app", id="app", button_icon=123456789),
+        web_app(
+            "Open app",
+            "https://example.com/app",
+            id="app",
+            button_style="primary",
+            button_icon=123456789,
+        ),
     ],
 )
 ```
@@ -55,6 +60,20 @@ references. Upload new media manually and store only its Bot API-style
   `custom_emoji_id` is normalized to this field.
 - `break_before` / `break_after`: boolean forced row breaks for content
   children.
+
+When `button_icon` is present, the renderer removes one redundant leading
+emoji or symbol cluster plus its following whitespace from the `name`/`text`
+label. This keeps a fallback title such as `"🗑 Удалить"` readable without a
+custom icon while rendering it as `"Удалить"` beside the custom icon. Textual
+prefixes such as `"SF7"` are not removed. An explicitly supplied
+`button_text` is always rendered verbatim and disables this de-duplication.
+
+Color is optional and intentionally sparse in the production tree. Leave
+folders, navigation, catalogs, and groups of equal choices neutral. Use
+`primary` for the page's main call to action, `success` for a safe action that
+delivers a positive result, and `danger` only for destructive flows.
+`children_button_style` remains available for deliberately homogeneous groups,
+but should not be used merely to color every child.
 
 Invalid styles, non-positive icons, `children_columns` outside 1–8, rows wider
 than 8, markups larger than 100 buttons, and callback payloads larger than 64
@@ -123,9 +142,9 @@ The root may define common presentation once:
 
 ```python
 "navigation_ui": {
-    "back": {"text": "⬅️", "button_style": "primary"},
-    "share": {"text": "🔗", "button_style": "success"},
-    "refresh": {"text": "🔄", "button_style": "primary"},
+    "back": {"text": "⬅️ Назад", "button_icon": 123},
+    "share": {"text": "🔗 Поделиться", "button_icon": 456},
+    "refresh": {"text": "🔄 Обновить", "button_icon": 789},
 }
 ```
 

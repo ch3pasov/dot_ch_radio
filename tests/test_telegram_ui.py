@@ -40,6 +40,51 @@ class TelegramButtonBuilderTests(unittest.TestCase):
         self.assertBuildsMarkup({"text": "Route"}, default_callback_data="id=abc")
         self.assertBuildsMarkup({"text": "Share"}, default_url="https://t.me/share/url")
 
+    def test_custom_icon_removes_one_redundant_leading_symbol_cluster(self):
+        cases = (
+            ("↩️ В центр данных", "В центр данных"),
+            ("🗑 Удалить", "Удалить"),
+            ("🛠 Инструменты", "Инструменты"),
+            ("👨‍👩‍👧‍👦 Семья", "Семья"),
+            ("🇩🇪 Германия", "Германия"),
+            ("1️⃣ Первый", "Первый"),
+            ("‼️ Срочно", "Срочно"),
+            ("🗑 🔥 Удалить", "🔥 Удалить"),
+        )
+        for label, expected in cases:
+            with self.subTest(label=label):
+                button = build_button(
+                    {"name": label, "button_icon": 42},
+                    default_callback_data="id=test",
+                )
+                self.assertEqual(button.text, expected)
+
+    def test_custom_icon_preserves_textual_prefix_and_unseparated_symbol(self):
+        for label in ("SF7 эмодзипаки", "# Раздел", "🛠Инструменты"):
+            with self.subTest(label=label):
+                button = build_button(
+                    {"name": label, "button_icon": 42},
+                    default_callback_data="id=test",
+                )
+                self.assertEqual(button.text, label)
+
+    def test_label_is_unchanged_without_icon_or_with_explicit_override(self):
+        without_icon = build_button(
+            {"name": "🗑 Удалить"},
+            default_callback_data="id=without-icon",
+        )
+        explicit_override = build_button(
+            {
+                "name": "🗑 Удалить",
+                "button_text": "🗑 Оставить как написано",
+                "button_icon": 42,
+            },
+            default_callback_data="id=override",
+        )
+
+        self.assertEqual(without_icon.text, "🗑 Удалить")
+        self.assertEqual(explicit_override.text, "🗑 Оставить как написано")
+
     def test_child_rows_honor_columns_breaks_filter_and_route_factory(self):
         children = OrderedDict(
             (

@@ -1,4 +1,5 @@
 import unittest
+import unicodedata
 from collections import OrderedDict
 from hashlib import md5
 
@@ -49,21 +50,71 @@ class ContentTreeTests(unittest.TestCase):
             "при принятии важных решений.",
         )
 
-    def test_every_visible_tree_button_has_an_allowed_style(self):
-        allowed_styles = {"primary", "success", "danger"}
-        danger_paths = []
+    def test_tree_colors_are_reserved_for_semantic_calls_to_action(self):
+        expected_styles = {
+            "root/radio/go_to_radio": "success",
+            "root/tools/invert_picture/invert_picture_command": "primary",
+            "root/tools/foreign_languages/katakana_racism/rus_to_katakana_command": "primary",
+            "root/tools/search_wanted/search_wanted_command": "primary",
+            "root/games/roblox/life_grid/go_to_life_grid": "primary",
+            "root/other/my_data/audit": "primary",
+            "root/other/my_data/takeout": "success",
+            "root/other/my_data/delete": "danger",
+        }
+        sf7_path = "root/other/my_folder/emojis_and_stickers/sf7_emoji_packs"
+        for weight in (
+            "ultralight",
+            "thin",
+            "light",
+            "regular",
+            "medium",
+            "semibold",
+            "bold",
+            "heavy",
+            "black",
+        ):
+            expected_styles[f"{sf7_path}/{weight}/search"] = "primary"
+
+        actual_styles = {}
 
         def walk(node, path="root"):
             self.assertNotIn("message_effects", node)
+            self.assertNotIn("children_button_style", node, path)
             for child_id, child in node.get("children", {}).items():
                 child_path = f"{path}/{child_id}"
-                self.assertIn(child.get("button_style"), allowed_styles, child_path)
-                if child["button_style"] == "danger":
-                    danger_paths.append(child_path)
+                if "button_style" in child:
+                    actual_styles[child_path] = child["button_style"]
                 walk(child, child_path)
 
         walk(common_tree)
-        self.assertEqual(danger_paths, ["root/other/my_data/delete"])
+        self.assertEqual(actual_styles, expected_styles)
+
+    def test_data_action_colors_match_workflow_semantics(self):
+        actions = common_tree["children"]["other"]["children"]["my_data"]["actions"]
+        actual_styles = {
+            action_id: action["button_style"]
+            for action_id, action in actions.items()
+            if "button_style" in action
+        }
+        self.assertEqual(
+            actual_styles,
+            {
+                "audit": "primary",
+                "takeout": "success",
+                "delete": "danger",
+                "delete_confirm": "danger",
+                "receipt": "success",
+                "retry_delete": "danger",
+                "retry_delete_confirm": "danger",
+            },
+        )
+        for action_id, action in actions.items():
+            if action.get("button_style") == "danger":
+                self.assertIn(
+                    action["callback_data"],
+                    {"data_rights:delete", "data_rights:delete_confirm"},
+                    action_id,
+                )
 
     def test_only_data_actions_carry_effect_preferences(self):
         my_data = common_tree["children"]["other"]["children"]["my_data"]
@@ -82,9 +133,9 @@ class ContentTreeTests(unittest.TestCase):
             },
         )
 
-    def test_navigation_is_primary_and_dead_nadezhdin_node_is_gone(self):
+    def test_navigation_is_neutral_and_dead_nadezhdin_node_is_gone(self):
         for action in common_tree["navigation_ui"].values():
-            self.assertEqual(action["button_style"], "primary")
+            self.assertNotIn("button_style", action)
             self.assertIsInstance(action.get("button_icon"), int)
 
         def all_ids(node):
@@ -93,6 +144,56 @@ class ContentTreeTests(unittest.TestCase):
                 yield from all_ids(child)
 
         self.assertNotIn("nadezhdin", set(all_ids(common_tree)))
+
+    def test_root_buttons_use_custom_icons_without_duplicate_emoji(self):
+        rows = build_child_rows(common_tree["children"])
+        self.assertEqual(
+            [button.text for row in rows for button in row],
+            ["Радио", "Инструменты и генераторы", "Игры", "Другое"],
+        )
+
+        share = build_button(
+            common_tree["navigation_ui"]["share"],
+            default_url="https://t.me/share/url",
+        )
+        self.assertEqual(share.text, "Поделиться")
+
+    def test_every_runtime_custom_icon_label_is_deduplicated(self):
+        specs = []
+
+        def collect(node, path="root"):
+            specs.extend(
+                (f"{path}/action:{action_id}", action)
+                for action_id, action in node.get("actions", {}).items()
+            )
+            for child_id, child in node.get("children", {}).items():
+                child_path = f"{path}/{child_id}"
+                specs.append((child_path, child))
+                collect(child, child_path)
+
+        collect(common_tree)
+        specs.extend(
+            (f"navigation:{action_id}", action)
+            for action_id, action in common_tree["navigation_ui"].items()
+        )
+
+        icon_count = 0
+        stripped_count = 0
+        for path, spec in specs:
+            if "button_icon" not in spec:
+                continue
+            icon_count += 1
+            original = spec.get("button_text") or spec.get("text") or spec.get("name")
+            button = build_button(spec, default_callback_data="id=icon-test")
+            starts_with_symbol = unicodedata.category(original[0]).startswith("S")
+            if starts_with_symbol and "button_text" not in spec:
+                stripped_count += 1
+                self.assertNotEqual(button.text, original, path)
+            else:
+                self.assertEqual(button.text, original, path)
+
+        self.assertEqual(icon_count, 76)
+        self.assertEqual(stripped_count, 30)
 
     def test_every_tree_markup_builds_offline_with_telegram_limits(self):
         client = TelegramClient(MemorySession(), 1, "0" * 32)

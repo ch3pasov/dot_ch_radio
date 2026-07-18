@@ -20,17 +20,6 @@ SF7_WEIGHT_ORDER = [
     "Black",
 ]
 SF7_WEIGHT_ICON_SYMBOL = "tray.full"
-SF7_WEIGHT_BUTTON_STYLES = {
-    "Ultralight": "primary",
-    "Thin": "primary",
-    "Light": "primary",
-    "Regular": "primary",
-    "Medium": "primary",
-    "Semibold": "primary",
-    "Bold": "primary",
-    "Heavy": "primary",
-    "Black": "primary",
-}
 SF7_GROUP_CATEGORIES = [
     (
         "symbols_numbers",
@@ -334,21 +323,18 @@ def _build_sf7_emoji_pack_tree():
             f"{len(weights)} толщин × {len(groups)} групп."
         ),
         children_columns=1,
-        children_button_style="primary",
         **_button_icon(_sf7_custom_emoji_id(symbols, "square.grid.2x2", "Regular")),
         children=[
             folder(
                 weight,
                 id=weight.lower(),
-                button_style=SF7_WEIGHT_BUTTON_STYLES[weight],
                 children_columns=1,
-                children_button_style="primary",
                 **_button_icon(weight_icon(weight)),
                 children=[
                     folder(
                         "Search",
                         id="search",
-                        button_style="success",
+                        button_style="primary",
                         switch_inline_query_current_chat=f"/sf7_search_{weight.lower()} ",
                         **_button_icon(_sf7_custom_emoji_id(symbols, "magnifyingglass", weight)),
                     ),
@@ -364,21 +350,17 @@ common_tree = {
     "name": "🌳 Корень",
     "description": "👋 Здесь собраны радио, инструменты, игры, файлы и другие разделы бота.",
     "alias": "root",
-    "children_button_style": "primary",
     "navigation_ui": {
         "back": {
             "text": "⬅️ Назад",
-            "button_style": "primary",
             **sf7_button_icon("chevron.left"),
         },
         "share": {
             "text": "📤 Поделиться",
-            "button_style": "primary",
             **sf7_button_icon("square.and.arrow.up"),
         },
         "refresh": {
             "text": "🔄 Обновить",
-            "button_style": "primary",
             **sf7_button_icon("arrow.clockwise"),
         },
     },
@@ -387,7 +369,6 @@ common_tree = {
             "name": "📻 Радио",
             "description": "🎶 В этой секции вы найдете различные радиостанции и музыкальные потоки, доступные для прослушивания в https://t.me/ch_an?livestream",
             "alias": "radio",
-            "children_button_style": "primary",
             **sf7_button_icon("radio"),
             "children": {
                 "go_to_radio": {
@@ -411,17 +392,14 @@ common_tree = {
                 "lofi_girl": {
                     "name": "🎧 LoFi Girl",
                     "radio_url": "https://live.lofiradio.ru/lofi_mp3_128",
-                    "button_style": "success",
                 },
                 "radio_jazz": {
                     "name": "🎷 Радио Jazz Москва 89.1 FM",
                     "radio_url": "https://nashe1.hostingradio.ru/jazz-256",
-                    "button_style": "success",
                 },
                 "andon_fm": {
                     "name": "🤖 Andon FM",
                     "alias": "andon_fm",
-                    "children_button_style": "success",
                     "description": (
                         "Четыре AI-радиостанции от [Andon Labs](https://andonlabs.com/radio): агенты ведут эфир "
                         "круглосуточно (музыка, расписание, потоки через Live365).\n\n"
@@ -455,12 +433,10 @@ common_tree = {
                 "gta": {
                     "name": "🚗 GTA радио",
                     "description": "🎮 Откройте для себя музыкальный мир серии игр GTA.\nPowered by https://gtaradio.net",
-                    "children_button_style": "primary",
                     "children": {
                         "sa": {
                             "name": "🌆 GTA San Andreas",
                             "description": "🏜️ Исследуйте разнообразные музыкальные станции из игры GTA San Andreas.",
-                            "children_button_style": "success",
                             "children": {
                                 "bounce-fm": {
                                     "name": "🎶 Bounce FM",
@@ -511,7 +487,6 @@ common_tree = {
                         "vc": {
                             "name": "🏝️ GTA Vice City",
                             "description": "🌴 Окунитесь в атмосферу 80-х с радиостанциями GTA Vice City.",
-                            "children_button_style": "success",
                             "children": {
                                 "emotion": {
                                     "name": "💖 Emotion 98.3",
@@ -554,7 +529,6 @@ common_tree = {
                         "3": {
                             "name": "🌃 GTA III",
                             "description": "🌉 Откройте для себя музыкальное наследие GTA III с его уникальными радиостанциями.",
-                            "children_button_style": "success",
                             "children": {
                                 "head": {
                                     "name": "🎧 Head Radio",
@@ -599,12 +573,10 @@ common_tree = {
                 "orthodox_radio": {
                     "name": "🕊️ Православное Радио",
                     "description": "🙏 Подборка православных радиостанций, включающая чтения, молитвы и обучающие программы.",
-                    "children_button_style": "primary",
                     "children": {
                         "readings": {
                             "name": "📖 Чтения",
                             "description": "📘 Радиостанции, вещающие чтения Евангелия и Псалтиря.",
-                            "children_button_style": "success",
                             "children": {
                                 "evangelie_sinod": {
                                     "name": "✝️ Евангелие (Синодальный перевод)",
@@ -643,7 +615,6 @@ common_tree = {
                         "prayers": {
                             "name": "🙏 Азбука Молитвы",
                             "description": "Школа молитвы от портала «Азбука веры»: https://azbyka.ru/1/molitva. Powered by @azprayer",
-                            "children_button_style": "success",
                             "children": {
                                 "azbyka-molitvy": {
                                     "name": "🔔 Азбука Молитвы",
@@ -654,7 +625,6 @@ common_tree = {
                         "education": {
                             "name": "🎓 Образование",
                             "description": "🏫 Радиостанции с обучающими программами и беседами на духовные темы.",
-                            "children_button_style": "success",
                             "children": {
                                 "vera": {
                                     "name": "🌟 Радио Вера",
@@ -669,7 +639,6 @@ common_tree = {
                         "foreigns": {
                             "name": "🌍 Иностранные Радиостанции",
                             "description": "🎙️ Подборка православных радиостанций из-за рубежа, представляющих различные культуры и языки.",
-                            "children_button_style": "success",
                             "children": {
                                 "ancient-faith-music": {
                                     "name": "🇺🇸 Ancient Faith (Музыка) - США",
@@ -689,7 +658,6 @@ common_tree = {
             "name": "🛠 Инструменты и генераторы",
             "description": "Изображения, языковые генераторы, погода и поиск по фотографии.",
             "alias": "tools",
-            "children_button_style": "primary",
             **sf7_button_icon("wrench.and.screwdriver"),
             "children": {
                 "invert_picture": {
@@ -697,17 +665,16 @@ common_tree = {
                     "description": '🔘 Инвертирует изображение. [По-настоящему!](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) Относительно окружности!',
                     "telegram_file_id": 'BQADAgAD7pwAAm8JmUmhLedYHQzukAI',
                     "alias": "invert_picture",
-                    "children_button_style": "success",
                     "children": {
                         "invert_picture_command": {
                             "name": "🔘 Инвертировать картинку",
                             "switch_inline_query_current_chat": "invert_picture (приложи фотографию к этому сообщению и отправляй)",
+                            "button_style": "primary",
                         }
                     }
                 },
                 "foreign_languages": {
                     "name": "🌐 Что-то на иностранном",
-                    "children_button_style": "primary",
                     **sf7_button_icon("globe"),
                     "children": {
                         "katakana_racism": {
@@ -715,11 +682,11 @@ common_tree = {
                             "description": 'Переводит любой текст с русского на японскую транслитерацию через катакану. Перевод генерируется [вот тут](https://nippon.temerov.org/rus_kana.php). Ещё раз, простите.',
                             "telegram_file_id": 'BQADAgAD7ZwAAm8JmUnXVfb1QoFRYgI',
                             "alias": "rus_to_katakana",
-                            "children_button_style": "success",
                             "children": {
                                 "rus_to_katakana_command": {
                                     "name": "🔡 Перевести текст",
                                     "switch_inline_query_current_chat": "rus_to_katakana ",
+                                    "button_style": "primary",
                                 }
                             }
                         },
@@ -729,7 +696,6 @@ common_tree = {
                             "custom": "bashkir_haiku",
                             "refresh": 1,
                             "alias": "bashkir_haiku",
-                            "children_button_style": "success",
                             "children": {
                                 "haiku_contest": {
                                     "name": "🌸 Конкурс башкирских хокку",
@@ -755,12 +721,12 @@ common_tree = {
                     "name": "🔍 Поиск по розыску",
                     "description": "👤 Инструмент для проверки нахождения людей в розыске. Обратите внимание: точность результатов не гарантируется, и данная система не должна использоваться как единственный источник информации при принятии важных решений.",
                     "alias": "search_wanted",
-                    "children_button_style": "success",
                     **sf7_button_icon("magnifyingglass"),
                     "children": {
                         "search_wanted_command": {
                             "name": "🔍 Проверить фото",
                             "switch_inline_query_current_chat": "search_wanted (приложи фотографию к этому сообщению и отправляй)",
+                            "button_style": "primary",
                         }
                     }
                 },
@@ -770,7 +736,6 @@ common_tree = {
             "name": "🎮 Игры",
             "description": "Игры в Telegram, Roblox и Игра Василия™️.",
             "alias": "games",
-            "children_button_style": "primary",
             **sf7_button_icon("gamecontroller"),
             "children": {
                 "vasilii_game": {
@@ -782,7 +747,6 @@ common_tree = {
                 "telegram": {
                     "name": "📱 Телеграм веб-игры",
                     "description": "Запускаются прямо в Telegram.",
-                    "children_button_style": "success",
                     "children": {
                         "subway_surfers": {
                             "name": "🏄 Subway Surfers 👮‍♂️",
@@ -800,7 +764,6 @@ common_tree = {
                 },
                 "roblox": {
                     "name": "🧱 Roblox",
-                    "children_button_style": "primary",
                     "children": {
                         "life_grid": {
                             "name": "🧬 Life Grid",
@@ -809,11 +772,11 @@ common_tree = {
                                 "См. [пост](https://t.me/ch_an/2393)."
                             ),
                             "alias": "life_grid",
-                            "children_button_style": "success",
                             "children": {
                                 "go_to_life_grid": {
                                     "name": "🎮 Открыть в Roblox",
                                     "url": "https://www.roblox.com/share?code=ef23b71d9a2525459993f5074f0b90f4&type=ExperienceDetails",
+                                    "button_style": "primary",
                                 },
                             },
                         },
@@ -823,13 +786,11 @@ common_tree = {
         },
         "other": {
             "name": "📦 Другое",
-            "children_button_style": "primary",
             **sf7_button_icon("archivebox"),
             "children": {
                 "my_folder": {
                     "name": "📂 Моя папка",
                     "description": "📁 Здесь вы найдёте личные файлы, изображения и аудиозаписи, сохранённые мной.",
-                    "children_button_style": "primary",
                     **sf7_button_icon("folder"),
                     "children": {
                         "shortcuts": {
@@ -837,7 +798,6 @@ common_tree = {
                             "description": "🔧 Здесь собраны мои скрипты для программы [Shortcuts](https://apps.apple.com/us/app/shortcuts/id915249334), помогающие автоматизировать повседневные задачи.",
                             "disable_web_page_preview": 1,
                             "alias": "shortcuts",
-                            "children_button_style": "success",
                             "children": {
                                 "add_leetcode_daily_problem_solving_event": {
                                     "name": "📆 Add LeetCode daily problem solving event.shortcut",
@@ -893,24 +853,20 @@ common_tree = {
                         "emojis_and_stickers": {
                             "name": "😊 Папка для стикерпаков и эмодзипаков",
                             "alias": "emojis_and_stickers",
-                            "children_button_style": "primary",
                             "children": {
                                 "new_apple_icons_emojis": {
                                     "name": "🍎🫙 Liquid Glass",
                                     "url": "https://t.me/addemoji/AppleAppsIcons",
-                                    "button_style": "success",
                                 },
                                 "old_apple_icons_emojis": {
                                     "name": "🍏 Старые иконки приложений  Apple",
                                     "url": "https://t.me/addemoji/AppleIconsIOS",
-                                    "button_style": "success",
                                 },
                                 "sf7_emoji_packs": _build_sf7_emoji_pack_tree(),
                             }
                         },
                         "other": {
                             "name": "Другое",
-                            "children_button_style": "success",
                             "children": {
                                 "photo.jpg": {
                                     "name": "🖼️ photo.png",
@@ -954,7 +910,6 @@ common_tree = {
                     "name": "🔗 Ссылки на меня",
                     "description": "👤 Здесь вы найдете ссылки на меня.",
                     "alias": "about_me",
-                    "children_button_style": "success",
                     **sf7_button_icon("person.crop.circle"),
                     "children": {
                         "telegram_channel": {
@@ -987,25 +942,22 @@ common_tree = {
                     ),
                     "alias": "my_data",
                     "children_columns": 2,
-                    "children_button_style": "success",
                     **sf7_button_icon("externaldrive"),
                     "actions": {
                         "audit": {
                             "text": "🔎 Провести аудит",
                             "callback_data": "data_rights:audit",
-                            "button_style": "success",
+                            "button_style": "primary",
                             **sf7_button_icon("magnifyingglass"),
                         },
                         "home": {
                             "text": "↩️ В центр данных",
                             "callback_data": "data_rights:home",
-                            "button_style": "primary",
                             **sf7_button_icon("house"),
                         },
                         "copy_summary": {
                             "text": "📋 Скопировать итог",
                             "copy_text": "@dot_ch_bot · найдено 0 · удалено 0 · хранится 0 Б",
-                            "button_style": "success",
                             **sf7_button_icon("rectangle.on.rectangle"),
                         },
                         "takeout": {
@@ -1038,19 +990,17 @@ common_tree = {
                         "retry_audit": {
                             "text": "↻ Повторить",
                             "callback_data": "data_rights:audit",
-                            "button_style": "success",
                             **sf7_button_icon("arrow.clockwise"),
                         },
                         "retry_takeout": {
                             "text": "↻ Повторить",
                             "callback_data": "data_rights:takeout",
-                            "button_style": "success",
                             **sf7_button_icon("arrow.clockwise"),
                         },
                         "retry_delete": {
                             "text": "↻ Повторить",
                             "callback_data": "data_rights:delete",
-                            "button_style": "success",
+                            "button_style": "danger",
                             **sf7_button_icon("arrow.clockwise"),
                         },
                         "retry_delete_confirm": {
@@ -1062,7 +1012,6 @@ common_tree = {
                         "retry_receipt": {
                             "text": "↻ Повторить",
                             "callback_data": "data_rights:receipt",
-                            "button_style": "success",
                             **sf7_button_icon("arrow.clockwise"),
                         },
                     },
@@ -1093,11 +1042,13 @@ common_tree = {
                         "audit": {
                             "name": "🔎 Провести аудит",
                             "callback_data": "data_rights:audit",
+                            "button_style": "primary",
                             **sf7_button_icon("magnifyingglass"),
                         },
                         "takeout": {
                             "name": "📦 Получить takeout",
                             "callback_data": "data_rights:takeout",
+                            "button_style": "success",
                             **sf7_button_icon("shippingbox"),
                         },
                         "delete": {
@@ -1114,19 +1065,16 @@ common_tree = {
                     "name": "🔒 NDA папка",
                     "beta_access": 1,
                     "description": "👀 Если вы её видите, то вам это разрешили.",
-                    "children_button_style": "primary",
                     **sf7_button_icon("lock"),
                     "children": {
                         "clique": {
                             "name": "㊙️ Клика",
                             "url": "https://t.me/sCliqueBot",
-                            "button_style": "success",
                         },
                         "delo": {
                             "name": "🤫 Дело",
                             "description": "См. [пост](https://t.me/ch_an/1884).",
                             "alias": "delo",
-                            "children_button_style": "success",
                             "children": {
                                 "go_to_delo": {
                                     "name": "🎧 Перейти к ДЕЛУ",
@@ -1140,7 +1088,6 @@ common_tree = {
                             "refresh": 1,
                             "alias": "minecraft_server",
                             "disable_web_page_preview": 1,
-                            "children_button_style": "success",
                             "children": {
                                 "server-map": {
                                     "name": "🗺️ Карта сервера",
