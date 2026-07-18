@@ -7,12 +7,15 @@ Telethon-сессии авторизованы. Безопасно для про
     python scripts/check_login.py
 """
 import asyncio
+import os
 
 from telethon import TelegramClient
 
-from config.app import api_id, api_hash
+from config.app import api_id as configured_api_id, api_hash as configured_api_hash
 
 SESSION_DIR = "volume/sessions"
+api_id = int(os.environ.get("TELEGRAM_API_ID") or configured_api_id)
+api_hash = os.environ.get("TELEGRAM_API_HASH") or configured_api_hash
 
 
 async def check(name: str):

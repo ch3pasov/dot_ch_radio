@@ -1,6 +1,9 @@
 # Content Tree DSL
 
-`content/content.py` may still use plain dictionaries, but new sections can use helpers from `libs.content_schema`.
+`content/content.py` may use plain dictionaries or helpers from
+`libs.content_schema`. `normalize_tree()` copies and validates the complete
+tree at import time; handlers render the normalized data without keeping a
+user's current page or any other navigation state.
 
 ```python
 from libs.content_schema import folder, link, copy_button, web_app, user_profile
@@ -10,48 +13,135 @@ folder(
     id="beta_tools",
     beta_access=1,
     children_columns=2,
+    children_button_style="primary",
     children=[
-        link("Docs", "https://example.com", id="docs", button_color="primary"),
-        copy_button("Copy token", "abc123", id="copy_token", button_color="success"),
-        web_app("Open app", "https://example.com/app", id="app", custom_emoji_id=123456789),
+        link("Docs", "https://example.com", id="docs"),
+        copy_button("Copy token", "abc123", id="copy_token", button_style="success"),
+        web_app("Open app", "https://example.com/app", id="app", button_icon=123456789),
     ],
 )
 ```
 
 ## Node fields
 
-- `id`: stable path segment when children are written as a list.
+- `id`: path segment when `children` is written as a list. It is removed from
+  the normalized node; route hashes still derive from the actual tree path.
 - `name`: visible title and default button label.
 - `description`: message body below the title. Markdown is used by default.
-- `parse_mode`: override text parser for this node, for example `"markdown"`, `"html"`, or `None`.
-- `children`: either the legacy `{id: node}` dict or a list of nodes with `id`.
-- `children_columns`: how many child buttons to place in one row. Defaults to `1`.
-- `beta_access`: inherited by descendants; hidden from non-beta users.
-- `alias`: stable `/start` deep-link alias.
-- `refresh`: adds a refresh button.
-- `disable_web_page_preview`: disables link previews for the node message.
+- `parse_mode`: text parser override such as `"markdown"`, `"html"`, or `None`.
+- `children`: legacy `{id: node}` mapping or a list of nodes with `id`.
+- `children_columns`: number of child buttons in a row, from 1 through 8.
+- `children_button_style`: default style for immediate children that do not
+  specify their own style. It does not flow through grandchildren.
+- `beta_access`: inherited visibility restriction.
+- `alias`: `/start` deep-link alias.
+- `refresh`: adds the configured refresh navigation button.
+- `disable_web_page_preview`: disables the node's link preview.
 
 ## Telegram media
 
-Use `telegram_file_id` directly on a content node to attach Telegram media by Bot API-style `file_id`. Runtime code never downloads bucket files and does not depend on archive `chat_id` / `message_id` references. Old bucket-preview links should not be kept in descriptions.
+Use `telegram_file_id` to attach media already uploaded to Telegram. Runtime
+code does not download archive-chat files or keep `chat_id` / `message_id`
+references. Upload new media manually and store only its Bot API-style
+`file_id` in the node.
 
-For new media, upload the file to Telegram manually and paste its `file_id` into the relevant node as `telegram_file_id`.
+## Button presentation
 
-## Button fields
+- `button_text`: label override; `name` remains the page title. Standalone UI
+  specs may use `text` instead.
+- `button_style`: `primary`, `success`, or `danger`. The legacy alias
+  `button_color` is normalized to this field.
+- `button_icon`: positive custom-emoji document ID. The legacy alias
+  `custom_emoji_id` is normalized to this field.
+- `break_before` / `break_after`: boolean forced row breaks for content
+  children.
 
-- `button_text`: label override for the button while keeping `name` as page title.
-- `button_style` / `button_color`: `primary`, `success`, or `danger`.
-- `button_icon` / `custom_emoji_id`: custom emoji document id for Telegram clients that support button icons.
-- `break_before` / `break_after`: force row breaks around a button.
+Invalid styles, non-positive icons, `children_columns` outside 1–8, rows wider
+than 8, markups larger than 100 buttons, and callback payloads larger than 64
+UTF-8 bytes are rejected before rendering.
 
-## Action nodes
+## Telegram actions
 
-- `url`: opens a URL.
-- `copy_text`: renders a copy-to-clipboard button.
-- `web_app_url`: renders a WebView button.
-- `simple_web_app_url`: renders a Simple WebView button.
-- `user_id` with `button_type="user_profile"`: opens a user profile.
-- `switch_inline_query`: opens inline mode, optionally with `same_peer=1`.
-- `switch_inline_query_current_chat`: opens inline mode in the current chat.
+A button may define one action target:
 
-Telegram supports semantic button colors via `primary`, `success`, and `danger`; arbitrary RGB colors are not exposed to bot inline keyboards.
+- `url`: open an external URL.
+- `copy_text`: copy text to the clipboard.
+- `web_app_url`: open a WebView.
+- `simple_web_app_url`: open a Simple WebView.
+- `user_id` with `button_type="user_profile"`: open a user profile.
+- `switch_inline_query`: open inline mode; `same_peer=True` keeps the peer.
+- `switch_inline_query_current_chat`: open inline mode in the current chat.
+- `callback_data`: dispatch a stateless application callback, at most 64 bytes.
+
+Content children without an explicit target receive their generated
+`id=<route-hash>` callback from the renderer.
+
+## Hidden actions and named views
+
+Workflow UI that is not part of the route tree lives next to its page:
+
+```python
+{
+    "name": "My data",
+    "actions": {
+        "takeout": {
+            "text": "Takeout",
+            "callback_data": "data_rights:takeout",
+            "button_style": "success",
+            "message_effects": ["🎉", "👍"],
+        },
+        "copy_result": {
+            "text": "Copy result",
+            "copy_text": "stored: 0 B",
+        },
+    },
+    "views": {
+        "result": {
+            "rows": [
+                ["copy_result"],
+                ["takeout", {"text": "Docs", "url": "https://example.com"}],
+            ],
+        },
+    },
+}
+```
+
+- `actions` is an `{action_id: button spec}` mapping. Actions do not create
+  routes and do not appear unless a page or workflow chooses a view.
+- `views` is `{view_id: {rows: [[...]]}}`. Each cell is an action ID from the
+  same node or a complete inline button spec. Unknown IDs fail normalization.
+- `message_effects` is a non-empty priority-ordered `list[str]`. It is allowed
+  only on named actions that send a new message or document. Page edits and
+  inline view specs cannot request an effect.
+- Effect IDs are resolved from Telegram's catalogue in process memory. If the
+  catalogue is unavailable, no effect is sent. Only an effect-specific RPC
+  rejection is retried without the effect.
+
+## Shared navigation UI
+
+The root may define common presentation once:
+
+```python
+"navigation_ui": {
+    "back": {"text": "⬅️", "button_style": "primary"},
+    "share": {"text": "🔗", "button_style": "success"},
+    "refresh": {"text": "🔄", "button_style": "primary"},
+}
+```
+
+Only `back`, `share`, and `refresh` are accepted. These specs intentionally
+omit action targets; the renderer supplies the current parent callback, share
+URL, or refresh callback. `navigation_ui` is root-only and is copied into the
+route renderer as common static configuration.
+
+## Renderer API
+
+`libs.telegram_ui` provides the common Telethon 1.43.2 implementation:
+
+- `build_button(spec, default_callback_data=..., default_url=...)`;
+- `build_child_rows(children, columns=..., callback_data_for=..., include=...)`;
+- `build_view_rows(view, actions)`.
+
+The functions return Telethon button objects/rows and repeat Telegram limit
+checks at the rendering boundary. Tests use `MemorySession` and never connect
+to Telegram.

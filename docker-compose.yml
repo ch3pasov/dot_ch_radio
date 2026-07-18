@@ -6,6 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     image: dotchradio:latest
+    environment:
+      TELEGRAM_API_ID: "${TELEGRAM_API_ID:-}"
+      TELEGRAM_API_HASH: "${TELEGRAM_API_HASH:-}"
     logging:
       driver: json-file
       options:

@@ -128,21 +128,21 @@ if not disable_radio:
     @app_robot.on(events.NewMessage(pattern=r'^/pause(?:\s|$)', func=_is_private))
     @admin_only
     async def pause_handler(event):
-        print(f"{event.sender_id} calls pause")
+        print("admin calls pause")
         result = await app_dj_calls.pause_stream(dot_ch_id)
         await app_robot.send_message(event.sender_id, str(result))
 
     @app_robot.on(events.NewMessage(pattern=r'^/resume(?:\s|$)', func=_is_private))
     @admin_only
     async def resume_handler(event):
-        print(f"{event.sender_id} calls resume")
+        print("admin calls resume")
         result = await app_dj_calls.resume_stream(dot_ch_id)
         await app_robot.send_message(event.sender_id, str(result))
 
     @app_robot.on(events.NewMessage(pattern=r'^/time(?:\s|$)', func=_is_private))
     @admin_only
     async def time_handler(event):
-        print(f"{event.sender_id} calls time")
+        print("admin calls time")
         result = await app_dj_calls.played_time(dot_ch_id)
         await app_robot.send_message(event.sender_id, str(result))
 
@@ -152,7 +152,7 @@ if not disable_radio:
         url = event.pattern_match.group(1)
         await change_stream(
             url,
-            who_called=event.sender_id
+            who_called="admin_command"
         )
         await app_robot.send_message(
             event.sender_id,
@@ -250,7 +250,7 @@ if not disable_radio:
             try:
                 await _edit_participant_muted(call, p.user_id, True)
             except Exception as e:
-                print(f"night mute sweep user {p.user_id}: {e}")
+                print(f"night mute sweep failed: {type(e).__name__}")
 
     async def _unmute_sweep_after_night():
         global _last_input_group_call
@@ -264,7 +264,7 @@ if not disable_radio:
             try:
                 await _edit_participant_muted(call, p.user_id, False)
             except Exception as e:
-                print(f"day unmute sweep user {p.user_id}: {e}")
+                print(f"day unmute sweep failed: {type(e).__name__}")
 
     # главный обработчик событий в войсчате
     @app_dj.on(events.Raw(types=UpdateGroupCallParticipants))
@@ -279,7 +279,7 @@ if not disable_radio:
                 continue
 
             if participant.left:
-                print(f"user {participant_id} left")
+                print("participant left")
                 continue
 
             if is_night_radio_lockout_utc():
@@ -287,25 +287,25 @@ if not disable_radio:
                     # Только при входе: иначе при muted=True (слушатель) каждый
                     # UpdateGroupCallParticipants даёт лавину EditGroupCallParticipant и 400 PARTICIPANT_JOIN_MISSING.
                     if participant.just_joined and participant.muted:
-                        print(f"user {participant_id} admin, unmute on join")
+                        print("admin participant unmute on join")
                         try:
                             await _edit_participant_muted(call, participant_id, False)
                         except Exception as e:
-                            print(f"night admin unmute user {participant_id}: {e}")
+                            print(f"night admin unmute failed: {type(e).__name__}")
                 elif participant.just_joined:
-                    print(f"user {participant_id} night mute on join")
+                    print("participant night mute on join")
                     try:
                         await _edit_participant_muted(call, participant_id, True)
                     except Exception as e:
-                        print(f"night mute user {participant_id}: {e}")
+                        print(f"night mute failed: {type(e).__name__}")
             elif participant.just_joined:
-                print(f"user {participant_id} just joined")
+                print("participant joined")
                 try:
                     await _edit_participant_muted(call, participant_id, False)
                 except Exception as e:
-                    print(f"day unmute on join user {participant_id}: {e}")
+                    print(f"day unmute on join failed: {type(e).__name__}")
             if participant.raise_hand_rating:
-                print(f"user {participant_id} raise hand with rating {participant.raise_hand_rating}")
+                print("participant raised hand")
 else:
     async def start_calls():
         print("Radio is disabled")
