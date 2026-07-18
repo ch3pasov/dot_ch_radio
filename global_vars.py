@@ -5,6 +5,7 @@ import sys
 from telethon import TelegramClient
 
 from config.app import api_id, api_hash
+from libs.minimal_session import MinimalSQLiteSession
 
 formatter = logging.Formatter('%(asctime)s %(levelname)s [%(filename)s:%(lineno)s] %(message)s')
 handler_fancy_stdout = logging.StreamHandler(sys.stdout)
@@ -31,10 +32,18 @@ except RuntimeError:
 SESSION_DIR = "volume/sessions"
 
 # robot_account — бот (интерфейс с inline-кнопками, callback, dice).
-app_robot = TelegramClient(f"{SESSION_DIR}/robot_account", api_id, api_hash)
+app_robot = TelegramClient(
+    MinimalSQLiteSession(f"{SESSION_DIR}/robot_account"),
+    api_id,
+    api_hash,
+)
 # В контенте перемешаны Markdown (**bold**, [t](u), ||spoiler||) и HTML (<i>, <code>).
 # По умолчанию рендерим Markdown; HTML включаем точечно через parse_mode='html'.
 app_robot.parse_mode = "markdown"
 
 # dj_account — пользователь, который ведёт групповой звонок (радио) через pytgcalls.
-app_dj = TelegramClient(f"{SESSION_DIR}/dj_account", api_id, api_hash)
+app_dj = TelegramClient(
+    MinimalSQLiteSession(f"{SESSION_DIR}/dj_account"),
+    api_id,
+    api_hash,
+)
