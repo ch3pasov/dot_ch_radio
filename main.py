@@ -31,7 +31,11 @@ from programs.data_rights import (
 )
 from libs.message_effects import load_message_effects
 from libs.telegram_delivery import deliver_message
-from libs.telegram_navigation import is_refresh_callback, unwrap_refresh_callback
+from libs.telegram_navigation import (
+    answer_refresh_callback,
+    is_refresh_callback,
+    unwrap_refresh_callback,
+)
 from libs.telegram_ui import build_button, build_child_rows
 from config.tg_ids import dot_ch_id
 from global_vars import app_robot, app_dj, loop, print
@@ -185,7 +189,7 @@ async def open_common_hashdict(deep_link, message, user_id):
             case "minecraft_server":
                 text += f'\n{await get_minecraft_server_info()}'
     telegram_media = await _node_telegram_media(obj)
-    await deliver_message(
+    return await deliver_message(
         app_robot,
         message,
         user_id,
@@ -195,7 +199,6 @@ async def open_common_hashdict(deep_link, message, user_id):
         file=telegram_media,
         parse_mode=parse_mode,
     )
-    return None
 
 
 async def open_common_hashdict_create(deep_link, user_id):
@@ -224,15 +227,14 @@ async def answer_common_hashdict(event):
             await open_common_hashdict("my_data", msg, event.sender_id)
         return
     refresh_callback = is_refresh_callback(data)
-    if refresh_callback:
-        await event.answer()
     msg = await event.get_message()
     answer = await open_common_hashdict(data, msg, event.sender_id)
-    if not refresh_callback:
-        if answer:
-            await event.answer(answer)
-        else:
-            await event.answer()
+    if refresh_callback:
+        await answer_refresh_callback(event, answer)
+    elif isinstance(answer, str) and answer:
+        await event.answer(answer)
+    else:
+        await event.answer()
 
 
 async def answer_rus_to_katakana_common(event, message_with_content):

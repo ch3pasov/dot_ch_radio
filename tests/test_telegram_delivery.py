@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock
 
 from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
 
-from libs.telegram_delivery import deliver_message
+from libs.telegram_delivery import DeliveryResult, deliver_message
 
 
 class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
@@ -23,7 +23,7 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
             parse_mode="html",
         )
 
-        self.assertEqual(result, "sent")
+        self.assertEqual(result, DeliveryResult("sent", changed=True))
         send_message.assert_awaited_once_with(
             123,
             "Final page",
@@ -39,7 +39,7 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
 
         result = await deliver_message(client, message, 123, "Updated page")
 
-        self.assertEqual(result, "edited")
+        self.assertEqual(result, DeliveryResult("edited", changed=True))
         client.send_message.assert_not_awaited()
         message.edit.assert_awaited_once_with(
             "Updated page",
@@ -57,7 +57,8 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
 
         result = await deliver_message(client, message, 123, "Same page")
 
-        self.assertIs(result, message)
+        self.assertIs(result.message, message)
+        self.assertFalse(result.changed)
         client.send_message.assert_not_awaited()
 
     async def test_oversized_markup_falls_back_without_placeholder_or_media(self):
@@ -75,7 +76,7 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
             file="media",
         )
 
-        self.assertEqual(result, "fallback")
+        self.assertEqual(result, DeliveryResult("fallback", changed=True))
         self.assertEqual(send_message.await_count, 2)
         fallback_call = send_message.await_args_list[1]
         self.assertIn("Telegram отклонил", fallback_call.args[1])
@@ -101,7 +102,8 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
             buttons=[["too many"]],
         )
 
-        self.assertIs(result, message)
+        self.assertIs(result.message, message)
+        self.assertFalse(result.changed)
         self.assertEqual(message.edit.await_count, 2)
         client.send_message.assert_not_awaited()
 

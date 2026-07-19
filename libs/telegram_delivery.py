@@ -2,9 +2,18 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
 from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
+
+
+@dataclass(frozen=True)
+class DeliveryResult:
+    """The delivered Telegram message and whether its visible state changed."""
+
+    message: Any
+    changed: bool
 
 
 async def deliver_message(
@@ -18,7 +27,7 @@ async def deliver_message(
     file=None,
     parse_mode: Any = (),
 ):
-    """Send a new final page or edit an existing menu message in one step."""
+    """Send or edit one final page and report whether Telegram changed it."""
 
     async def deliver(body: str, *, markup, media):
         kwargs = {
@@ -28,15 +37,17 @@ async def deliver_message(
             "parse_mode": parse_mode,
         }
         if message is None:
-            return await client.send_message(chat_id, body, **kwargs)
-        return await message.edit(body, **kwargs)
+            delivered = await client.send_message(chat_id, body, **kwargs)
+        else:
+            delivered = await message.edit(body, **kwargs)
+        return DeliveryResult(delivered, changed=True)
 
     try:
         return await deliver(text, markup=buttons, media=file)
     except MessageNotModifiedError:
         if message is None:
             raise
-        return message
+        return DeliveryResult(message, changed=False)
     except ReplyMarkupTooLongError:
         fallback = (
             f"{text}\n\n"
@@ -47,4 +58,4 @@ async def deliver_message(
         except MessageNotModifiedError:
             if message is None:
                 raise
-            return message
+            return DeliveryResult(message, changed=False)
