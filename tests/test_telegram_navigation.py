@@ -28,8 +28,11 @@ class TelegramNavigationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(unwrap_refresh_callback(callback), callback)
 
     def test_refresh_feedback_describes_changed_and_current_pages(self):
-        self.assertEqual(refresh_feedback_text(changed=True), "Обновлено")
-        self.assertEqual(refresh_feedback_text(changed=False), "Уже актуально")
+        self.assertIsNone(refresh_feedback_text(changed=True))
+        self.assertEqual(
+            refresh_feedback_text(changed=False),
+            "Обновлено (ничего не изменилось)",
+        )
 
     async def test_refresh_callback_answers_once_after_a_changed_page(self):
         event = SimpleNamespace(answer=AsyncMock())
@@ -39,7 +42,7 @@ class TelegramNavigationTests(unittest.IsolatedAsyncioTestCase):
             DeliveryResult(message="edited", changed=True),
         )
 
-        event.answer.assert_awaited_once_with("Обновлено", cache_time=0)
+        event.answer.assert_awaited_once_with(cache_time=0)
 
     async def test_refresh_callback_answers_once_after_an_unchanged_page(self):
         event = SimpleNamespace(answer=AsyncMock())
@@ -49,7 +52,10 @@ class TelegramNavigationTests(unittest.IsolatedAsyncioTestCase):
             DeliveryResult(message="same", changed=False),
         )
 
-        event.answer.assert_awaited_once_with("Уже актуально", cache_time=0)
+        event.answer.assert_awaited_once_with(
+            "Обновлено (ничего не изменилось)",
+            cache_time=0,
+        )
 
     async def test_refresh_callback_preserves_router_errors(self):
         event = SimpleNamespace(answer=AsyncMock())

@@ -3,8 +3,7 @@
 from libs.telegram_delivery import DeliveryResult
 
 REFRESH_CALLBACK_PREFIX = "refresh=1="
-REFRESH_CHANGED_FEEDBACK = "Обновлено"
-REFRESH_UNCHANGED_FEEDBACK = "Уже актуально"
+REFRESH_UNCHANGED_FEEDBACK = "Обновлено (ничего не изменилось)"
 
 
 def is_refresh_callback(value: str) -> bool:
@@ -17,10 +16,10 @@ def unwrap_refresh_callback(value: str) -> str:
     return value
 
 
-def refresh_feedback_text(changed: bool) -> str:
-    """Return concise native CallbackQuery feedback for a completed refresh."""
+def refresh_feedback_text(changed: bool) -> str | None:
+    """Return feedback only when a refresh has no visible result of its own."""
 
-    return REFRESH_CHANGED_FEEDBACK if changed else REFRESH_UNCHANGED_FEEDBACK
+    return None if changed else REFRESH_UNCHANGED_FEEDBACK
 
 
 async def answer_refresh_callback(event, result) -> None:
@@ -32,4 +31,7 @@ async def answer_refresh_callback(event, result) -> None:
         feedback = result
     else:
         feedback = refresh_feedback_text(changed=True)
-    await event.answer(feedback, cache_time=0)
+    if feedback is None:
+        await event.answer(cache_time=0)
+    else:
+        await event.answer(feedback, cache_time=0)
