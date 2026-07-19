@@ -1,4 +1,14 @@
 from config.debug import disable_radio
+from get_hashdict import common_hashdict
+from programs.radio_status import RadioPlaybackStatus
+
+
+_playback_status = RadioPlaybackStatus(common_hashdict)
+
+
+def current_station_name() -> str | None:
+    return _playback_status.current_station_name
+
 
 if not disable_radio:
     import asyncio
@@ -118,6 +128,7 @@ if not disable_radio:
                 join_as=_RADIO_JOIN_AS,
             ),
         )
+        _playback_status.record_stream(media)
 
     async def get_participants(chat_id):
         return await app_dj_calls.get_participants(chat_id)

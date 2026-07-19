@@ -15,6 +15,7 @@ from get_hashdict import common_hashdict, alias_dict
 from decorators import admin_only
 from programs.radio import (
     change_stream,
+    current_station_name,
     leave_group_call,
     ensure_startup_stream,
     start_calls,
@@ -138,6 +139,11 @@ async def open_common_hashdict(deep_link, message, user_id):
         await change_stream(obj['radio_url'], who_called="menu")
         if message is None:
             await open_common_hashdict("radio", None, user_id)
+        else:
+            parent_hash = obj.get("parent")
+            parent = common_hashdict.get(parent_hash, {})
+            if parent.get("custom") == "radio_now_playing":
+                await open_common_hashdict(f"id={parent_hash}", message, user_id)
         return "▶️"
 
     buttons = []
@@ -183,7 +189,7 @@ async def open_common_hashdict(deep_link, message, user_id):
     if "custom" in obj:
         match obj["custom"]:
             case "radio_now_playing":
-                text += f'\n\n{radio_now_playing_text()}'
+                text += f'\n\n{radio_now_playing_text(station_name=current_station_name())}'
             case "bashkir_haiku":
                 text += f'\n{await get_bashkir_haiku()}'
             case "minecraft_server":
