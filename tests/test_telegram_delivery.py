@@ -1,10 +1,19 @@
 import unittest
 from types import SimpleNamespace
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
-from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
+from telethon.errors import (
+    MessageNotModifiedError,
+    ReplyMarkupTooLongError,
+    VoiceMessagesForbiddenError,
+)
 
-from libs.telegram_delivery import DeliveryResult, deliver_message
+from libs.telegram_delivery import (
+    DeliveryResult,
+    VideoNoteDeliveryResult,
+    deliver_message,
+    deliver_video_note_with_fallback,
+)
 
 
 class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
@@ -106,6 +115,61 @@ class TelegramDeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(result.changed)
         self.assertEqual(message.edit.await_count, 2)
         client.send_message.assert_not_awaited()
+
+
+class VideoNoteDeliveryTests(unittest.IsolatedAsyncioTestCase):
+    async def test_video_note_is_used_when_telegram_accepts_it(self):
+        media = SimpleNamespace(seek=AsyncMock())
+        send_video_note = AsyncMock(return_value="round-message")
+        send_video = AsyncMock()
+
+        result = await deliver_video_note_with_fallback(
+            media,
+            send_video_note=send_video_note,
+            send_video=send_video,
+        )
+
+        self.assertEqual(
+            result,
+            VideoNoteDeliveryResult("round-message", as_video_note=True),
+        )
+        send_video_note.assert_awaited_once_with()
+        send_video.assert_not_awaited()
+
+    async def test_privacy_rejection_rewinds_and_sends_regular_video(self):
+        media = SimpleNamespace(seek=Mock())
+        send_video_note = AsyncMock(
+            side_effect=VoiceMessagesForbiddenError(None)
+        )
+        send_video = AsyncMock(return_value="regular-video")
+
+        result = await deliver_video_note_with_fallback(
+            media,
+            send_video_note=send_video_note,
+            send_video=send_video,
+        )
+
+        self.assertEqual(
+            result,
+            VideoNoteDeliveryResult("regular-video", as_video_note=False),
+        )
+        media.seek.assert_called_once_with(0)
+        send_video.assert_awaited_once_with()
+
+    async def test_unrelated_delivery_errors_are_not_hidden(self):
+        media = SimpleNamespace(seek=Mock())
+        send_video_note = AsyncMock(side_effect=RuntimeError("network failure"))
+        send_video = AsyncMock()
+
+        with self.assertRaisesRegex(RuntimeError, "network failure"):
+            await deliver_video_note_with_fallback(
+                media,
+                send_video_note=send_video_note,
+                send_video=send_video,
+            )
+
+        media.seek.assert_not_called()
+        send_video.assert_not_awaited()
 
 
 if __name__ == "__main__":

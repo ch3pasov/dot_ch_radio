@@ -5,7 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from telethon.errors import MessageNotModifiedError, ReplyMarkupTooLongError
+from telethon.errors import (
+    MessageNotModifiedError,
+    ReplyMarkupTooLongError,
+    VoiceMessagesForbiddenError,
+)
 
 
 @dataclass(frozen=True)
@@ -14,6 +18,32 @@ class DeliveryResult:
 
     message: Any
     changed: bool
+
+
+@dataclass(frozen=True)
+class VideoNoteDeliveryResult:
+    """A sent inverted video and whether Telegram accepted it as a round note."""
+
+    message: Any
+    as_video_note: bool
+
+
+async def deliver_video_note_with_fallback(
+    media,
+    *,
+    send_video_note,
+    send_video,
+):
+    """Fall back to a regular video when voice-message privacy blocks a note."""
+
+    try:
+        message = await send_video_note()
+    except VoiceMessagesForbiddenError:
+        # Telethon may have consumed the stream before Telegram rejects the media.
+        media.seek(0)
+        message = await send_video()
+        return VideoNoteDeliveryResult(message, as_video_note=False)
+    return VideoNoteDeliveryResult(message, as_video_note=True)
 
 
 async def deliver_message(

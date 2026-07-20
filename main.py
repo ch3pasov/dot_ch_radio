@@ -33,7 +33,10 @@ from programs.data_rights import (
     is_data_rights_callback,
 )
 from libs.message_effects import load_message_effects
-from libs.telegram_delivery import deliver_message
+from libs.telegram_delivery import (
+    deliver_message,
+    deliver_video_note_with_fallback,
+)
 from libs.telegram_navigation import (
     answer_refresh_callback,
     is_refresh_callback,
@@ -370,26 +373,65 @@ async def answer_invert_video_note_common(event, message_with_content):
         await status_message.edit("😔 Не получилось инвертировать этот кружочек.")
         return
 
-    async with app_robot.action(event.chat_id, "round") as upload_action:
-        await app_robot.send_file(
-            event.chat_id,
-            processed_video_note,
-            reply_to=event.message.id,
-            buttons=markup,
-            allow_cache=False,
-            progress_callback=upload_action.progress,
+    def video_attribute(*, round_message):
+        return [DocumentAttributeVideo(
+            duration=processed_video_note.duration,
+            w=processed_video_note.width,
+            h=processed_video_note.height,
+            round_message=round_message,
             supports_streaming=True,
-            video_note=True,
-            mime_type="video/mp4",
-            attributes=[DocumentAttributeVideo(
-                duration=processed_video_note.duration,
-                w=processed_video_note.width,
-                h=processed_video_note.height,
-                round_message=True,
+        )]
+
+    async def send_video_note():
+        async with app_robot.action(event.chat_id, "round") as upload_action:
+            return await app_robot.send_file(
+                event.chat_id,
+                processed_video_note,
+                reply_to=event.message.id,
+                buttons=markup,
+                allow_cache=False,
+                progress_callback=upload_action.progress,
                 supports_streaming=True,
-            )],
+                video_note=True,
+                mime_type="video/mp4",
+                attributes=video_attribute(round_message=True),
+            )
+
+    async def send_video():
+        privacy_explanation = (
+            "🔒 Telegram не разрешает боту отправить тебе видеокружок из-за "
+            "настройки приватности «Голосовые сообщения». Поэтому отправляю "
+            "обычным видео."
         )
-    await status_message.delete()
+        await status_message.edit(privacy_explanation)
+        async with app_robot.action(event.chat_id, "video") as upload_action:
+            return await app_robot.send_file(
+                event.chat_id,
+                processed_video_note,
+                caption=privacy_explanation,
+                reply_to=event.message.id,
+                buttons=markup,
+                allow_cache=False,
+                progress_callback=upload_action.progress,
+                supports_streaming=True,
+                video_note=False,
+                mime_type="video/mp4",
+                attributes=video_attribute(round_message=False),
+            )
+
+    try:
+        await deliver_video_note_with_fallback(
+            processed_video_note,
+            send_video_note=send_video_note,
+            send_video=send_video,
+        )
+    except Exception:
+        await status_message.edit(
+            "😔 Инверсия готова, но Telegram не принял результат."
+        )
+        raise
+    else:
+        await status_message.delete()
 
 
 # invert_picture by command or directly in chat
