@@ -1,5 +1,6 @@
 import asyncio
 import io
+import os
 import re
 from typing import Any, Dict, Tuple
 from urllib.parse import quote
@@ -11,12 +12,12 @@ from PIL import Image
 from config.minecraft_config import server_url
 
 
-async def aiohttp_get(url, type='text'):
+async def aiohttp_get(url, type='text', *, params=None):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
     }
     async with aiohttp.ClientSession(headers=headers) as session:
-        async with session.get(url) as resp:
+        async with session.get(url, params=params) as resp:
             match type:
                 case 'text':
                     return await resp.text()
@@ -30,8 +31,8 @@ async def aiohttp_get_text(url) -> str:
     return await aiohttp_get(url, 'text')
 
 
-async def aiohttp_get_json(url) -> Dict[str, Any]:
-    result = await aiohttp_get(url, 'json')
+async def aiohttp_get_json(url, *, params=None) -> Dict[str, Any]:
+    result = await aiohttp_get(url, 'json', params=params)
     if not isinstance(result, dict):
         raise TypeError(f"Expected a dict, got {type(result).__name__}")
     return result
@@ -47,7 +48,26 @@ async def get_bashkir_haiku():
 
 
 async def get_weather(lat, lon):
-    weather_data: Dict[str, Any] = await aiohttp_get_json(f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&lang=ru&appid=OPENWEATHER_API_KEY_REMOVED')
+    api_key = os.environ.get('OPENWEATHER_API_KEY')
+    if not api_key:
+        raise RuntimeError('Погода недоступна: OpenWeather API не настроен.')
+
+    try:
+        weather_data: Dict[str, Any] = await aiohttp_get_json(
+            'https://api.openweathermap.org/data/2.5/weather',
+            params={
+                'lat': lat,
+                'lon': lon,
+                'units': 'metric',
+                'lang': 'ru',
+                'appid': api_key,
+            },
+        )
+    except (aiohttp.ClientError, asyncio.TimeoutError):
+        weather_data = None
+
+    if weather_data is None:
+        raise RuntimeError('Не удалось получить погоду от OpenWeather.') from None
 
     temperature = weather_data['main']['temp']
     temperature_feels = weather_data['main']['feels_like']
