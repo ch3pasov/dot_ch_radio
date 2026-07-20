@@ -63,6 +63,16 @@ class ContentTreeTests(unittest.TestCase):
             "при принятии важных решений.",
         )
 
+    def test_circle_inversion_copy_covers_photos_and_video_notes(self):
+        tools = common_tree["children"]["tools"]
+        inversion = tools["children"]["invert_picture"]
+        video_notes = tools["children"]["invert_video_note"]
+
+        self.assertIn("фотографий и видеокружков", tools["description"])
+        self.assertIn("фотографии и видеокружки", inversion["description"])
+        self.assertIn("относительно окружности", inversion["description"])
+        self.assertIn("`@dot_ch_bot`", video_notes["description"])
+
     def test_tree_colors_are_reserved_for_semantic_calls_to_action(self):
         expected_styles = {
             "root/radio/go_to_radio": "success",
