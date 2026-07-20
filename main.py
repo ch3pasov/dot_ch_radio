@@ -399,10 +399,15 @@ async def answer_invert_video_note_common(event, message_with_content):
 
     async def send_video():
         privacy_explanation = (
-            "🔒 Telegram не разрешает боту отправить тебе видеокружок из-за "
-            "настройки приватности «Голосовые сообщения». Поэтому отправляю "
-            "обычным видео."
+            "🔒 Telegram запретил боту прислать тебе видеокружок.\n\n"
+            "Чтобы разрешить: Настройки → Конфиденциальность → Голосовые "
+            f"сообщения. Добавь {MENTION} в «Всегда разрешать» или выбери «Все».\n\n"
+            "Кнопка ниже откроет нужный раздел. Пока отправляю обычным видео."
         )
+        privacy_markup = [[Button.url(
+            "⚙️ Настройки голосовых",
+            "tg://settings/privacy/voice",
+        )], *markup]
         await status_message.edit(privacy_explanation)
         async with app_robot.action(event.chat_id, "video") as upload_action:
             return await app_robot.send_file(
@@ -410,7 +415,7 @@ async def answer_invert_video_note_common(event, message_with_content):
                 processed_video_note,
                 caption=privacy_explanation,
                 reply_to=event.message.id,
-                buttons=markup,
+                buttons=privacy_markup,
                 allow_cache=False,
                 progress_callback=upload_action.progress,
                 supports_streaming=True,
