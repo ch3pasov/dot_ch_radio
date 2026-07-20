@@ -16,7 +16,13 @@ class ContentTreeTests(unittest.TestCase):
         self.assertEqual(list(root_children), ["radio", "tools", "games", "other"])
         self.assertEqual(
             list(root_children["tools"]["children"]),
-            ["invert_picture", "foreign_languages", "weather", "search_wanted"],
+            [
+                "invert_picture",
+                "invert_video_note",
+                "foreign_languages",
+                "weather",
+                "search_wanted",
+            ],
         )
         self.assertEqual(
             list(root_children["games"]["children"]),
@@ -199,8 +205,8 @@ class ContentTreeTests(unittest.TestCase):
             else:
                 self.assertEqual(button.text, original, path)
 
-        self.assertEqual(icon_count, 76)
-        self.assertEqual(stripped_count, 30)
+        self.assertEqual(icon_count, 77)
+        self.assertEqual(stripped_count, 31)
 
     def test_every_tree_markup_builds_offline_with_telegram_limits(self):
         client = TelegramClient(MemorySession(), 1, "0" * 32)

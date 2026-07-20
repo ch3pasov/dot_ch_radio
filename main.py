@@ -4,6 +4,7 @@ from html import escape
 
 from telethon import events, Button, utils
 from telethon.tl.types import (
+    DocumentAttributeVideo,
     InputMediaDice,
     MessageMediaVenue,
 )
@@ -26,6 +27,7 @@ from programs.night_schedule import (
     radio_now_playing_text,
 )
 from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
+from programs.video_inversion import VideoInversionError, invert_video_note
 from programs.data_rights import (
     handle_data_rights_callback,
     is_data_rights_callback,
@@ -343,6 +345,53 @@ async def answer_invert_picture_common(event, message_with_content):
         )
 
 
+async def answer_invert_video_note_common(event, message_with_content):
+    if event.is_private:
+        markup = [[Button.switch_inline(
+            "🔘 Инвертировать ещё кружочек",
+            query="invert_video_note (пришли кружочек роботу)",
+            same_peer=True,
+        )]]
+    else:
+        markup = [[Button.url(
+            "🤖 К роботу",
+            f"https://t.me/{bot_username}?start=invert_video_note",
+        )]]
+
+    status_message = await event.reply("🙏 Получил кружочек, готовлю инверсию.")
+    try:
+        async with app_robot.action(event.chat_id, "record-round"):
+            video_note = await message_with_content.download_media(file=bytes)
+            if not video_note:
+                raise VideoInversionError("Telegram returned no video data.")
+            await status_message.edit("🌚 Инвертирую кружочек.")
+            processed_video_note = await invert_video_note(video_note)
+    except VideoInversionError:
+        await status_message.edit("😔 Не получилось инвертировать этот кружочек.")
+        return
+
+    async with app_robot.action(event.chat_id, "round") as upload_action:
+        await app_robot.send_file(
+            event.chat_id,
+            processed_video_note,
+            reply_to=event.message.id,
+            buttons=markup,
+            allow_cache=False,
+            progress_callback=upload_action.progress,
+            supports_streaming=True,
+            video_note=True,
+            mime_type="video/mp4",
+            attributes=[DocumentAttributeVideo(
+                duration=processed_video_note.duration,
+                w=processed_video_note.width,
+                h=processed_video_note.height,
+                round_message=True,
+                supports_streaming=True,
+            )],
+        )
+    await status_message.delete()
+
+
 # invert_picture by command or directly in chat
 @app_robot.on(events.NewMessage(
     incoming=True,
@@ -352,6 +401,17 @@ async def answer_invert_picture_common(event, message_with_content):
 ))
 async def answer_invert_picture(event):
     await answer_invert_picture_common(event, event.message)
+    raise events.StopPropagation
+
+
+# A private video note is an explicit request. In groups the feature is only
+# activated by replying to a note with a mention, so ordinary chat is untouched.
+@app_robot.on(events.NewMessage(
+    incoming=True,
+    func=lambda e: e.video_note is not None and _is_private(e),
+))
+async def answer_invert_video_note(event):
+    await answer_invert_video_note_common(event, event.message)
     raise events.StopPropagation
 
 
@@ -378,6 +438,9 @@ async def answer_invert_mention(event):
     if reply and reply.photo:
         # инвертировать фотку собеседника
         return await answer_invert_picture_common(event, reply)
+    if reply and reply.video_note:
+        # инвертировать видеокружок собеседника
+        return await answer_invert_video_note_common(event, reply)
     if text.removeprefix(MENTION).lstrip(' ') != "":
         # перевести текст в катакану
         return await answer_rus_to_katakana_common(event, event.message)

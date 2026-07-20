@@ -675,6 +675,16 @@ common_tree = {
                         }
                     }
                 },
+                "invert_video_note": {
+                    "name": "🌀 Инверсия видеокружков",
+                    "description": (
+                        "Инвертирует видеокружок относительно окружности. "
+                        "В личном чате просто пришли кружочек. В группе ответь "
+                        "на него сообщением `@dot_ch_bot`."
+                    ),
+                    "alias": "invert_video_note",
+                    **sf7_button_icon("video.circle"),
+                },
                 "foreign_languages": {
                     "name": "🌐 Что-то на иностранном",
                     **sf7_button_icon("globe"),

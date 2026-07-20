@@ -12,7 +12,8 @@ every process start.
 Handlers may use the sender/chat ID from the current Telegram update to answer
 that update. They must not write it, message text, media or derived identifiers
 to application logs or files. User-supplied media processing stays in memory;
-uploads must use `allow_cache=False`.
+video-note inversion gives FFmpeg anonymous memory-backed file descriptors
+instead of filesystem paths. Uploads must use `allow_cache=False`.
 
 The takeout ZIP is built in memory and contains exactly one zero-byte file,
 `data.txt`. The entry's modification time records when the archive was created
