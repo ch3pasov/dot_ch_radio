@@ -2,6 +2,10 @@
 config
 volume/sessions/
 
+.env
+.env.*
+!.env.example
+
 *_account.session*
 *.db*
 *.mp3
