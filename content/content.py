@@ -668,32 +668,35 @@ common_tree = {
                 "invert_picture": {
                     "name": "💫 Правильная инверсия™️",
                     "description": (
-                        "🔘 Инвертирует фотографии и видеокружки "
+                        "Инвертирует фотографии и видеокружки "
                         "[по-настоящему](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) — "
-                        "относительно окружности.\n\n"
-                        "Фотографию приложи к сообщению через кнопку ниже. "
-                        "Видеокружок в личке просто пришли боту; в группе ответь "
-                        "на нужный кружочек сообщением `@dot_ch_bot`."
+                        "относительно окружности.\n\nВыбери формат ниже."
                     ),
                     "telegram_file_id": 'BQADAgAD7pwAAm8JmUmhLedYHQzukAI',
                     "alias": "invert_picture",
                     "children": {
-                        "invert_picture_command": {
-                            "name": "🔘 Инвертировать картинку",
-                            "switch_inline_query_current_chat": "invert_picture (приложи фотографию к этому сообщению и отправляй)",
-                            "button_style": "primary",
+                        "photo": {
+                            "name": "Инверсия фотографий",
+                            "description": "Приложи фотографию к сообщению через кнопку ниже.",
+                            **sf7_button_icon("photo"),
+                            "children": {
+                                "invert_picture_command": {
+                                    "name": "🔘 Инвертировать картинку",
+                                    "switch_inline_query_current_chat": "invert_picture (приложи фотографию к этому сообщению и отправляй)",
+                                    "button_style": "primary",
+                                }
+                            },
+                        },
+                        "video_note": {
+                            "name": "Инверсия видеокружков",
+                            "description": (
+                                "В личном чате просто пришли кружочек; в группе ответь "
+                                "на нужный кружочек сообщением `@dot_ch_bot`."
+                            ),
+                            "alias": "invert_video_note",
+                            **sf7_button_icon("video.circle"),
                         }
-                    }
-                },
-                "invert_video_note": {
-                    "name": "🌀 Инверсия видеокружков",
-                    "description": (
-                        "Та же геометрическая инверсия — для видеокружков. "
-                        "В личном чате просто пришли кружочек; в группе ответь "
-                        "на нужный кружочек сообщением `@dot_ch_bot`."
-                    ),
-                    "alias": "invert_video_note",
-                    **sf7_button_icon("video.circle"),
+                    },
                 },
                 "foreign_languages": {
                     "name": "🌐 Что-то на иностранном",

@@ -103,8 +103,14 @@ class ContentIndexTests(unittest.TestCase):
         self.assertEqual(list(root["children"]), [stable_hash(path) for path in expected_root_paths])
         self.assertEqual(aliases["my_data"], stable_hash("/other/my_data"))
         self.assertEqual(aliases["life_grid"], stable_hash("/games/roblox/life_grid"))
+        self.assertEqual(aliases["invert_picture"], stable_hash("/tools/invert_picture"))
+        self.assertEqual(
+            aliases["invert_video_note"],
+            stable_hash("/tools/invert_picture/video_note"),
+        )
         self.assertNotIn(stable_hash("/my_data"), index)
         self.assertNotIn(stable_hash("/web_games"), index)
+        self.assertNotIn(stable_hash("/tools/invert_video_note"), index)
 
         nda = index[stable_hash("/other/secret_place")]
         minecraft = index[stable_hash("/other/secret_place/minecraft_server")]
