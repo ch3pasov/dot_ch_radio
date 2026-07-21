@@ -114,7 +114,8 @@ if not disable_radio:
                 if not night_loop_has_video_stream(src):
                     print(f"{who_called} warning: в night_loop нет видеодорожки — в стриме не будет картинки")
         else:
-            assert media.startswith('http://') or media.startswith('https://'), 'url must be http[s]?://...'
+            if not media.startswith(("http://", "https://")):
+                raise ValueError("radio URL must use HTTP or HTTPS")
             print(f"{who_called} calls change_stream to {media}")
             stream_arg = media
         await app_dj_calls.play(
