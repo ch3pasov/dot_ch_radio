@@ -1,7 +1,9 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.10-slim
 
-RUN apt update && apt install -y cmake gcc ffmpeg
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends cmake gcc ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1

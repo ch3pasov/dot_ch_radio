@@ -32,7 +32,7 @@ INHERITED_FIELDS = ("beta_access",)
 
 
 def stable_hash(value: str) -> str:
-    return hashlib.md5(value.encode()).hexdigest()
+    return hashlib.md5(value.encode(), usedforsecurity=False).hexdigest()
 
 
 def build_content_index(

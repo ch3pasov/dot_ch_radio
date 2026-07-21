@@ -17,7 +17,7 @@ services:
         max-file: "5"
     container_name: dot_ch_radio
     volumes:
-      - ~/dockers/dot_ch_radio/volume:/app/volume
-      - ~/dockers/dot_ch_radio/config:/app/config
-      - ~/dockers/dot_ch_radio/content:/app/content
+      - "${DOT_CH_VOLUME_DIR:-./volume}:/app/volume"
+      - "${DOT_CH_CONFIG_DIR:-./config}:/app/config"
+      - "${DOT_CH_CONTENT_DIR:-./content}:/app/content"
     restart: unless-stopped

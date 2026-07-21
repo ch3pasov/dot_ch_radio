@@ -2,6 +2,10 @@
 config
 volume/sessions/
 
+.env
+.env.*
+!.env.example
+
 *_account.session*
 *.db*
 *.mp3
@@ -14,6 +18,10 @@ __pycache__/
 
 # Cursor (правила и локальные настройки проекта)
 .cursor/
+
+# Local agent instructions and permissions.
+.codex/
+AGENTS.md
 
 # Демо-видео только локально; боевой ролик — config/night_loop.mp4 (каталог config в git не входит)
 config_example/night_loop.mp4
