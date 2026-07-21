@@ -349,7 +349,7 @@ def _build_sf7_emoji_pack_tree():
 common_tree = {
     "name": "🌳 Корень",
     "description": "👋 Здесь собраны радио, инструменты, игры, файлы и другие разделы бота.",
-    "alias": "root",
+    "aliases": ["root"],
     "navigation_ui": {
         "back": {
             "text": "⬅️ Назад",
@@ -368,7 +368,7 @@ common_tree = {
         "radio": {
             "name": "📻 Радио",
             "description": "🎶 В этой секции вы найдете различные радиостанции и музыкальные потоки, доступные для прослушивания в https://t.me/ch_an?livestream",
-            "alias": "radio",
+            "aliases": ["radio"],
             "custom": "radio_now_playing",
             "refresh": 1,
             **sf7_button_icon("radio"),
@@ -389,7 +389,7 @@ common_tree = {
                 },
                 "andon_fm": {
                     "name": "🤖 Andon FM",
-                    "alias": "andon_fm",
+                    "aliases": ["andon_fm"],
                     "description": (
                         "Четыре AI-радиостанции от [Andon Labs](https://andonlabs.com/radio): агенты ведут эфир "
                         "круглосуточно (музыка, расписание, потоки через Live365).\n\n"
@@ -644,7 +644,7 @@ common_tree = {
                 },
                 "night_radio": {
                     "name": "🌙 Ночной эфир",
-                    "alias": "night_radio",
+                    "aliases": ["night_radio"],
                     "description": (
                         "По расписанию в канале включается **ночной режим**: вместо дневного радио идёт "
                         "отдельный ночной эфир.\n\n"
@@ -662,7 +662,7 @@ common_tree = {
                 "Инверсия фотографий и видеокружков, языковые генераторы, "
                 "погода и поиск по фотографии."
             ),
-            "alias": "tools",
+            "aliases": ["tools"],
             **sf7_button_icon("wrench.and.screwdriver"),
             "children": {
                 "invert_picture": {
@@ -670,31 +670,21 @@ common_tree = {
                     "description": (
                         "Инвертирует фотографии и видеокружки "
                         "[по-настоящему](https://ru.wikipedia.org/wiki/Инверсия_%28геометрия%29) — "
-                        "относительно окружности.\n\nВыбери формат ниже."
+                        "относительно окружности.\n\n"
+                        "**Фотографии**\n"
+                        "Приложи фотографию к сообщению через кнопку ниже.\n\n"
+                        "**Видеокружки**\n"
+                        "В личном чате просто пришли кружочек; в группе ответь "
+                        "на нужный кружочек сообщением `@dot_ch_bot`."
                     ),
                     "telegram_file_id": 'BQADAgAD7pwAAm8JmUmhLedYHQzukAI',
-                    "alias": "invert_picture",
+                    "aliases": ["invert_picture", "inversion"],
                     "children": {
-                        "photo": {
-                            "name": "Инверсия фотографий",
-                            "description": "Приложи фотографию к сообщению через кнопку ниже.",
+                        "invert_picture_command": {
+                            "name": "Инвертировать фотографию",
+                            "switch_inline_query_current_chat": "invert_picture (приложи фотографию к этому сообщению и отправляй)",
+                            "button_style": "primary",
                             **sf7_button_icon("photo"),
-                            "children": {
-                                "invert_picture_command": {
-                                    "name": "🔘 Инвертировать картинку",
-                                    "switch_inline_query_current_chat": "invert_picture (приложи фотографию к этому сообщению и отправляй)",
-                                    "button_style": "primary",
-                                }
-                            },
-                        },
-                        "video_note": {
-                            "name": "Инверсия видеокружков",
-                            "description": (
-                                "В личном чате просто пришли кружочек; в группе ответь "
-                                "на нужный кружочек сообщением `@dot_ch_bot`."
-                            ),
-                            "alias": "invert_video_note",
-                            **sf7_button_icon("video.circle"),
                         }
                     },
                 },
@@ -706,7 +696,7 @@ common_tree = {
                             "name": "🇯🇵 Руссуко-Японсукий пэрэводутику (простите)",
                             "description": 'Переводит любой текст с русского на японскую транслитерацию через катакану. Перевод генерируется [вот тут](https://nippon.temerov.org/rus_kana.php). Ещё раз, простите.',
                             "telegram_file_id": 'BQADAgAD7ZwAAm8JmUnXVfb1QoFRYgI',
-                            "alias": "rus_to_katakana",
+                            "aliases": ["rus_to_katakana"],
                             "children": {
                                 "rus_to_katakana_command": {
                                     "name": "🔡 Перевести текст",
@@ -720,7 +710,7 @@ common_tree = {
                             "description": "Хокку генерируются [вот тут](http://nevmenandr.net/cgi-bin/haiku.html).\n",
                             "custom": "bashkir_haiku",
                             "refresh": 1,
-                            "alias": "bashkir_haiku",
+                            "aliases": ["bashkir_haiku"],
                             "children": {
                                 "haiku_contest": {
                                     "name": "🌸 Конкурс башкирских хокку",
@@ -731,7 +721,7 @@ common_tree = {
                         "turkic_names": {
                             "name": "🪆 Тюркские имена",
                             "description": "Сгенерируй себе тюркское (мужское) имя!\n\nНажми: /start_turkic_name_game",
-                            "alias": "turkic_names",
+                            "aliases": ["turkic_names"],
                             "beta_access": 0,
                         },
                     }
@@ -739,13 +729,13 @@ common_tree = {
                 "weather": {
                     "name": "🌤️ Погода",
                     "description": "🌡️ Отправьте геопозицию в этот чат, чтобы получить погоду для указанного места.",
-                    "alias": "weather",
+                    "aliases": ["weather"],
                     **sf7_button_icon("cloud.sun"),
                 },
                 "search_wanted": {
                     "name": "🔍 Поиск по розыску",
                     "description": "👤 Инструмент для проверки нахождения людей в розыске. Обратите внимание: точность результатов не гарантируется, и данная система не должна использоваться как единственный источник информации при принятии важных решений.",
-                    "alias": "search_wanted",
+                    "aliases": ["search_wanted"],
                     **sf7_button_icon("magnifyingglass"),
                     "children": {
                         "search_wanted_command": {
@@ -760,14 +750,14 @@ common_tree = {
         "games": {
             "name": "🎮 Игры",
             "description": "Игры в Telegram, Roblox и Игра Василия™️.",
-            "alias": "games",
+            "aliases": ["games"],
             **sf7_button_icon("gamecontroller"),
             "children": {
                 "vasilii_game": {
                     "name": "🎲 Игра Василия™️ (post-wallet)",
                     "description": 'Василий предлагает сыграть в следующую ||уже бесплатную|| игру:\n- вы пишете /start_free_vasilii_game.\n- Василий 100 раз подбрасывает кубик 🎲\n- каждый раз, когда выпадает 4-6, ваш выигрыш удваивается\n- каждый раз, когда выпадает 1-3, ваш выигрыш уменьшается в 4 раза\n- ваш начальный выигрыш равен начальной ставке в 1000 вымышленных тугриков\n\nЧтобы сыграть в ИГРУ ВАСИЛИЯ™️, пришли сюда /start_free_vasilii_game. Пост-валлет версия, без крипты и кредитов 😎.\nПо мотивам [вот этого поста](https://t.me/ch_an/1864).',
                     "telegram_file_id": 'BQADAgAD8pwAAm8JmUlKxffmZspcsgI',
-                    "alias": "vasilii_game",
+                    "aliases": ["vasilii_game"],
                 },
                 "telegram": {
                     "name": "📱 Телеграм веб-игры",
@@ -796,7 +786,7 @@ common_tree = {
                                 "Да, я сделал Game of Life в Roblox.\n\n"
                                 "См. [пост](https://t.me/ch_an/2393)."
                             ),
-                            "alias": "life_grid",
+                            "aliases": ["life_grid"],
                             "children": {
                                 "go_to_life_grid": {
                                     "name": "🎮 Открыть в Roblox",
@@ -822,7 +812,7 @@ common_tree = {
                             "name": "🚀 Скрипты Shortcuts",
                             "description": "🔧 Здесь собраны мои скрипты для программы [Shortcuts](https://apps.apple.com/us/app/shortcuts/id915249334), помогающие автоматизировать повседневные задачи.",
                             "disable_web_page_preview": 1,
-                            "alias": "shortcuts",
+                            "aliases": ["shortcuts"],
                             "children": {
                                 "add_leetcode_daily_problem_solving_event": {
                                     "name": "📆 Add LeetCode daily problem solving event.shortcut",
@@ -877,7 +867,7 @@ common_tree = {
                         },
                         "emojis_and_stickers": {
                             "name": "😊 Папка для стикерпаков и эмодзипаков",
-                            "alias": "emojis_and_stickers",
+                            "aliases": ["emojis_and_stickers"],
                             "children": {
                                 "new_apple_icons_emojis": {
                                     "name": "🍎🫙 Liquid Glass",
@@ -934,7 +924,7 @@ common_tree = {
                 "about_me": {
                     "name": "🔗 Ссылки на меня",
                     "description": "👤 Здесь вы найдете ссылки на меня.",
-                    "alias": "about_me",
+                    "aliases": ["about_me"],
                     **sf7_button_icon("person.crop.circle"),
                     "children": {
                         "telegram_channel": {
@@ -969,7 +959,7 @@ common_tree = {
                         "Операции относятся только к данным самого приложения, "
                         "не к истории чата в Telegram."
                     ),
-                    "alias": "my_data",
+                    "aliases": ["my_data"],
                     "children_columns": 2,
                     **sf7_button_icon("externaldrive"),
                     "actions": {
@@ -1103,7 +1093,7 @@ common_tree = {
                         "delo": {
                             "name": "🤫 Дело",
                             "description": "См. [пост](https://t.me/ch_an/1884).",
-                            "alias": "delo",
+                            "aliases": ["delo"],
                             "children": {
                                 "go_to_delo": {
                                     "name": "🎧 Перейти к ДЕЛУ",
@@ -1115,7 +1105,7 @@ common_tree = {
                             "name": "⛏️ Анатолий Ч. | minecraft-сервер",
                             "custom": "minecraft_server",
                             "refresh": 1,
-                            "alias": "minecraft_server",
+                            "aliases": ["minecraft_server"],
                             "disable_web_page_preview": 1,
                             "children": {
                                 "server-map": {

@@ -3,6 +3,7 @@ import unittest
 from libs.content_schema import (
     MAX_BUTTONS_PER_MARKUP,
     normalize_tree,
+    validate_aliases,
     validate_button_icon,
     validate_button_style,
     validate_callback_data,
@@ -37,8 +38,24 @@ class PrimitiveValidationTests(unittest.TestCase):
             with self.subTest(invalid=invalid), self.assertRaises((TypeError, ValueError)):
                 validate_children_columns(invalid)
 
+    def test_aliases_are_non_empty_unique_strings(self):
+        self.assertEqual(
+            validate_aliases(["invert_picture", "inversion"]),
+            ["invert_picture", "inversion"],
+        )
+        for invalid in ([], "inversion", [""], ["with space"], [1], ["same", "same"]):
+            with self.subTest(invalid=invalid), self.assertRaises((TypeError, ValueError)):
+                validate_aliases(invalid)
+
 
 class TreeNormalizationTests(unittest.TestCase):
+    def test_alias_field_was_replaced_by_aliases(self):
+        tree = normalize_tree({"name": "root", "aliases": ["root", "home"]})
+        self.assertEqual(tree["aliases"], ["root", "home"])
+
+        with self.assertRaisesRegex(ValueError, "renamed to aliases"):
+            normalize_tree({"name": "root", "alias": "root"})
+
     def test_parent_default_style_applies_only_to_direct_children(self):
         tree = normalize_tree(
             {

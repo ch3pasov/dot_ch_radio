@@ -11,6 +11,16 @@ from libs.telegram_ui import build_button, build_child_rows
 
 
 class ContentTreeTests(unittest.TestCase):
+    def test_route_aliases_use_only_the_plural_field(self):
+        def walk(node, path="root"):
+            self.assertNotIn("alias", node, path)
+            if "aliases" in node:
+                self.assertIsInstance(node["aliases"], list, path)
+            for child_id, child in node.get("children", {}).items():
+                walk(child, f"{path}/{child_id}")
+
+        walk(common_tree)
+
     def test_top_level_navigation_and_confirmed_subtrees(self):
         root_children = common_tree["children"]
         self.assertEqual(list(root_children), ["radio", "tools", "games", "other"])
@@ -65,15 +75,14 @@ class ContentTreeTests(unittest.TestCase):
     def test_circle_inversion_copy_covers_photos_and_video_notes(self):
         tools = common_tree["children"]["tools"]
         inversion = tools["children"]["invert_picture"]
-        photo = inversion["children"]["photo"]
-        video_notes = inversion["children"]["video_note"]
 
         self.assertIn("фотографий и видеокружков", tools["description"])
         self.assertIn("фотографии и видеокружки", inversion["description"])
         self.assertIn("относительно окружности", inversion["description"])
-        self.assertEqual(list(inversion["children"]), ["photo", "video_note"])
-        self.assertIn("фотографию", photo["description"])
-        self.assertIn("`@dot_ch_bot`", video_notes["description"])
+        self.assertIn("**Фотографии**", inversion["description"])
+        self.assertIn("**Видеокружки**", inversion["description"])
+        self.assertIn("`@dot_ch_bot`", inversion["description"])
+        self.assertEqual(list(inversion["children"]), ["invert_picture_command"])
 
     def test_about_page_offers_the_agpl_source(self):
         about = common_tree["children"]["other"]["children"]["about_me"]
@@ -89,7 +98,7 @@ class ContentTreeTests(unittest.TestCase):
     def test_tree_colors_are_reserved_for_semantic_calls_to_action(self):
         expected_styles = {
             "root/radio/go_to_radio": "success",
-            "root/tools/invert_picture/photo/invert_picture_command": "primary",
+            "root/tools/invert_picture/invert_picture_command": "primary",
             "root/tools/foreign_languages/katakana_racism/rus_to_katakana_command": "primary",
             "root/tools/search_wanted/search_wanted_command": "primary",
             "root/games/roblox/life_grid/go_to_life_grid": "primary",
@@ -228,7 +237,7 @@ class ContentTreeTests(unittest.TestCase):
             else:
                 self.assertEqual(button.text, original, path)
 
-        self.assertEqual(icon_count, 78)
+        self.assertEqual(icon_count, 77)
         self.assertEqual(stripped_count, 30)
 
     def test_every_tree_markup_builds_offline_with_telegram_limits(self):

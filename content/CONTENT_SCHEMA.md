@@ -39,7 +39,8 @@ folder(
 - `children_button_style`: default style for immediate children that do not
   specify their own style. It does not flow through grandchildren.
 - `beta_access`: inherited visibility restriction.
-- `alias`: `/start` deep-link alias.
+- `aliases`: ordered non-empty list of `/start` deep-link aliases for the same
+  page. The first alias is used by «Поделиться».
 - `refresh`: adds the configured refresh navigation button.
 - `disable_web_page_preview`: disables the node's link preview.
 

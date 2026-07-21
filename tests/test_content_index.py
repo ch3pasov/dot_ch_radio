@@ -10,11 +10,11 @@ class ContentIndexTests(unittest.TestCase):
     def test_builds_paths_parents_shares_and_aliases(self):
         tree = {
             "name": "Root",
-            "alias": "root",
+            "aliases": ["root"],
             "children": {
                 "folder": {
                     "name": "Folder",
-                    "alias": "folder",
+                    "aliases": ["folder", "directory"],
                     "children": {
                         "page": {"name": "Page"},
                     },
@@ -27,7 +27,10 @@ class ContentIndexTests(unittest.TestCase):
         folder_hash = stable_hash("/folder")
         page_hash = stable_hash("/folder/page")
 
-        self.assertEqual(aliases, {"root": root_hash, "folder": folder_hash})
+        self.assertEqual(
+            aliases,
+            {"root": root_hash, "folder": folder_hash, "directory": folder_hash},
+        )
         self.assertEqual(index[folder_hash]["parent"], root_hash)
         self.assertEqual(index[page_hash]["parent"], folder_hash)
         self.assertEqual(index[page_hash]["share"], f"t.me/example_bot?start=id={page_hash}")
@@ -77,8 +80,8 @@ class ContentIndexTests(unittest.TestCase):
         tree = {
             "name": "Root",
             "children": {
-                "one": {"name": "One", "alias": "same"},
-                "two": {"name": "Two", "alias": "same"},
+                "one": {"name": "One", "aliases": ["same"]},
+                "two": {"name": "Two", "aliases": ["same"]},
             },
         }
 
@@ -104,13 +107,17 @@ class ContentIndexTests(unittest.TestCase):
         self.assertEqual(aliases["my_data"], stable_hash("/other/my_data"))
         self.assertEqual(aliases["life_grid"], stable_hash("/games/roblox/life_grid"))
         self.assertEqual(aliases["invert_picture"], stable_hash("/tools/invert_picture"))
+        self.assertEqual(aliases["inversion"], stable_hash("/tools/invert_picture"))
         self.assertEqual(
-            aliases["invert_video_note"],
-            stable_hash("/tools/invert_picture/video_note"),
+            index[aliases["inversion"]]["share"],
+            "t.me/example_bot?start=invert_picture",
         )
+        self.assertNotIn("invert_video_note", aliases)
         self.assertNotIn(stable_hash("/my_data"), index)
         self.assertNotIn(stable_hash("/web_games"), index)
         self.assertNotIn(stable_hash("/tools/invert_video_note"), index)
+        self.assertNotIn(stable_hash("/tools/invert_picture/photo"), index)
+        self.assertNotIn(stable_hash("/tools/invert_picture/video_note"), index)
 
         nda = index[stable_hash("/other/secret_place")]
         minecraft = index[stable_hash("/other/secret_place/minecraft_server")]

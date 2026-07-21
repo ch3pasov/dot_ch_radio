@@ -6,6 +6,8 @@ import hashlib
 from collections import deque
 from typing import Any, Mapping
 
+from libs.content_schema import validate_aliases
+
 
 CHILD_SUMMARY_FIELDS = (
     "url",
@@ -29,6 +31,14 @@ CHILD_SUMMARY_FIELDS = (
     "break_after",
 )
 INHERITED_FIELDS = ("beta_access",)
+
+
+def _node_aliases(item: Mapping[str, Any]) -> list[str]:
+    if "alias" in item:
+        raise ValueError("The alias field was renamed to aliases")
+    if "aliases" in item:
+        return validate_aliases(item["aliases"])
+    return []
 
 
 def stable_hash(value: str) -> str:
@@ -67,14 +77,14 @@ def build_content_index(
             indexed["parent"] = stable_hash(path.rsplit("/", 1)[0])
 
         indexed["share"] = f"t.me/{bot_username}?start=id={path_hash}"
-        alias = item.get("alias")
-        if alias is not None:
-            alias = str(alias)
+        aliases = _node_aliases(item)
+        for alias in aliases:
             previous_hash = alias_index.get(alias)
             if previous_hash is not None and previous_hash != path_hash:
                 raise ValueError(f"Duplicate content alias: {alias!r}")
             alias_index[alias] = path_hash
-            indexed["share"] = f"t.me/{bot_username}?start={alias}"
+        if aliases:
+            indexed["share"] = f"t.me/{bot_username}?start={aliases[0]}"
 
         children = item.get("children")
         if children is not None:

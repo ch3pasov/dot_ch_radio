@@ -358,7 +358,7 @@ async def answer_invert_video_note_common(event, message_with_content):
     else:
         markup = [[Button.url(
             "🤖 К роботу",
-            f"https://t.me/{bot_username}?start=invert_video_note",
+            f"https://t.me/{bot_username}?start=invert_picture",
         )]]
 
     status_message = await event.reply("🙏 Получил кружочек, готовлю инверсию.")

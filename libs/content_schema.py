@@ -119,6 +119,26 @@ def validate_message_effects(effects: list[str]) -> list[str]:
     return [effect.strip() for effect in effects]
 
 
+def _validate_alias(alias: str) -> str:
+    if not isinstance(alias, str):
+        raise TypeError("alias must be a non-empty string")
+    if not alias or alias != alias.strip() or any(character.isspace() for character in alias):
+        raise ValueError("alias must be a non-empty string without whitespace")
+    return alias
+
+
+def validate_aliases(aliases: list[str]) -> list[str]:
+    if not isinstance(aliases, list):
+        raise TypeError("aliases must be a non-empty list of strings")
+    if not aliases:
+        raise ValueError("aliases must not be empty")
+
+    normalized = [_validate_alias(alias) for alias in aliases]
+    if len(set(normalized)) != len(normalized):
+        raise ValueError("aliases must not contain duplicates")
+    return normalized
+
+
 def normalize_tree(tree: Mapping[str, Any]) -> dict[str, Any]:
     normalized = deepcopy(dict(tree))
     _normalize_node(normalized, is_root=True)
@@ -206,6 +226,11 @@ def normalize_button_spec(
 
 def _normalize_node(item: dict[str, Any], *, is_root: bool = False) -> None:
     _normalize_button_fields(item, allow_message_effects=False)
+
+    if "alias" in item:
+        raise ValueError("The alias field was renamed to aliases")
+    if "aliases" in item:
+        item["aliases"] = validate_aliases(item["aliases"])
 
     if "children_columns" in item:
         item["children_columns"] = validate_children_columns(item["children_columns"])
