@@ -328,7 +328,7 @@ async def answer_invert_picture_common(event, message_with_content):
     if event.is_private:
         markup = [[Button.switch_inline("🔘 Инвертировать картинку", query="invert_picture (приложи фотографию к этому сообщению и отправляй)", same_peer=True)]]
     else:
-        markup = [[Button.url("🤖 К роботу", f"https://t.me/{bot_username}?start=invert_picture")]]
+        markup = [[Button.url("🤖 К роботу", f"https://t.me/{bot_username}?start=inversion")]]
 
     # Telegram has no download/processing action, so "typing" truthfully represents
     # preparing the reply. The CPU-heavy transform runs outside the event loop.
@@ -358,7 +358,7 @@ async def answer_invert_video_note_common(event, message_with_content):
     else:
         markup = [[Button.url(
             "🤖 К роботу",
-            f"https://t.me/{bot_username}?start=invert_picture",
+            f"https://t.me/{bot_username}?start=inversion",
         )]]
 
     status_message = await event.reply("🙏 Получил кружочек, готовлю инверсию.")

@@ -110,7 +110,7 @@ class ContentIndexTests(unittest.TestCase):
         self.assertEqual(aliases["inversion"], stable_hash("/tools/invert_picture"))
         self.assertEqual(
             index[aliases["inversion"]]["share"],
-            "t.me/example_bot?start=invert_picture",
+            "t.me/example_bot?start=inversion",
         )
         self.assertNotIn("invert_video_note", aliases)
         self.assertNotIn(stable_hash("/my_data"), index)

@@ -82,6 +82,7 @@ class ContentTreeTests(unittest.TestCase):
         self.assertIn("**Фотографии**", inversion["description"])
         self.assertIn("**Видеокружки**", inversion["description"])
         self.assertIn("`@dot_ch_bot`", inversion["description"])
+        self.assertEqual(inversion["aliases"], ["inversion", "invert_picture"])
         self.assertEqual(list(inversion["children"]), ["invert_picture_command"])
 
     def test_about_page_offers_the_agpl_source(self):

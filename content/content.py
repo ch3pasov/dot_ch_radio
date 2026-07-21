@@ -678,7 +678,7 @@ common_tree = {
                         "на нужный кружочек сообщением `@dot_ch_bot`."
                     ),
                     "telegram_file_id": 'BQADAgAD7pwAAm8JmUmhLedYHQzukAI',
-                    "aliases": ["invert_picture", "inversion"],
+                    "aliases": ["inversion", "invert_picture"],
                     "children": {
                         "invert_picture_command": {
                             "name": "Инвертировать фотографию",
