@@ -29,6 +29,7 @@ class ContentTreeTests(unittest.TestCase):
             [
                 "invert_picture",
                 "foreign_languages",
+                "is_this_true",
                 "weather",
                 "search_wanted",
             ],
@@ -60,6 +61,7 @@ class ContentTreeTests(unittest.TestCase):
         other = children["other"]["children"]
 
         self.assertEqual(tools["foreign_languages"]["name"], "🌐 Что-то на иностранном")
+        self.assertEqual(tools["is_this_true"]["name"], "Is this true?")
         self.assertEqual(games["telegram"]["name"], "📱 Телеграм веб-игры")
         self.assertEqual(other["my_folder"]["name"], "📂 Моя папка")
         self.assertEqual(other["about_me"]["name"], "🔗 Ссылки на меня")
@@ -84,6 +86,18 @@ class ContentTreeTests(unittest.TestCase):
         self.assertIn("`@dot_ch_bot`", inversion["description"])
         self.assertEqual(inversion["aliases"], ["inversion", "invert_picture"])
         self.assertEqual(list(inversion["children"]), ["invert_picture_command"])
+
+    def test_group_mention_mechanics_are_documented(self):
+        tools = common_tree["children"]["tools"]["children"]
+        inversion_description = tools["invert_picture"]["description"]
+        katakana_description = tools["foreign_languages"]["children"]["katakana_racism"]["description"]
+        truth_description = tools["is_this_true"]["description"]
+
+        self.assertIn("приложи фотографию к сообщению с `@dot_ch_bot`", inversion_description)
+        self.assertIn("ответь `@dot_ch_bot` на нужную фотографию", inversion_description)
+        self.assertIn("`@dot_ch_bot текст`", katakana_description)
+        self.assertIn("ответь `@dot_ch_bot` на сообщение", katakana_description)
+        self.assertIn("`@dot_ch_bot is this true?`", truth_description)
 
     def test_about_page_offers_the_agpl_source(self):
         about = common_tree["children"]["other"]["children"]["about_me"]
@@ -238,7 +252,7 @@ class ContentTreeTests(unittest.TestCase):
             else:
                 self.assertEqual(button.text, original, path)
 
-        self.assertEqual(icon_count, 77)
+        self.assertEqual(icon_count, 78)
         self.assertEqual(stripped_count, 30)
 
     def test_every_tree_markup_builds_offline_with_telegram_limits(self):
