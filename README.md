@@ -103,3 +103,13 @@ generated emoji index read-only, and runs the complete `unittest` suite:
 ```bash
 ./scripts/run_tests.sh
 ```
+
+## License
+
+Copyright © 2023–2026 Anatolii Chepasov.
+
+The project is licensed under the
+[GNU Affero General Public License v3.0 only](LICENSE). If you modify the bot
+and make that version available to users over a network, you must offer those
+users its corresponding source code under the same license. Dependencies keep
+their own licenses.
