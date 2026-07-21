@@ -9,6 +9,8 @@ stations into the channel's group call.
 [Open the channel](https://t.me/ch_an) ·
 [Privacy model](PRIVACY.md)
 
+<a href="https://t.me/ch_an/2105"><img src="docs/assets/circle-inversion.jpg" width="560" alt="A self-portrait after geometric circle inversion"></a>
+
 ## What it does
 
 - keeps a Telegram group-call radio running, switches stations from the bot,
