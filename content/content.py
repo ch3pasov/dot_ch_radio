@@ -949,6 +949,10 @@ common_tree = {
                         "website": {
                             "name": "😎 Веб-сайт",
                             "url": "https://anatoliy.ch/"
+                        },
+                        "source_code": {
+                            "name": "⌨️ Исходный код · AGPL-3.0",
+                            "url": "https://github.com/ch3pasov/dot_ch_radio",
                         }
                     }
                 },

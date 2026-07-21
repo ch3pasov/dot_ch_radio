@@ -73,6 +73,17 @@ class ContentTreeTests(unittest.TestCase):
         self.assertIn("относительно окружности", inversion["description"])
         self.assertIn("`@dot_ch_bot`", video_notes["description"])
 
+    def test_about_page_offers_the_agpl_source(self):
+        about = common_tree["children"]["other"]["children"]["about_me"]
+
+        self.assertEqual(
+            about["children"]["source_code"],
+            {
+                "name": "⌨️ Исходный код · AGPL-3.0",
+                "url": "https://github.com/ch3pasov/dot_ch_radio",
+            },
+        )
+
     def test_tree_colors_are_reserved_for_semantic_calls_to_action(self):
         expected_styles = {
             "root/radio/go_to_radio": "success",
