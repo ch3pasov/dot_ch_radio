@@ -318,6 +318,7 @@ def _build_sf7_emoji_pack_tree():
 
     return folder(
         "SF7 эмодзипаки",
+        aliases=["sf7_emojis"],
         description=(
             f"{links_config['packs_count']} эмодзипаков SF7: "
             f"{len(weights)} толщин × {len(groups)} групп."

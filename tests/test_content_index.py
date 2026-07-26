@@ -106,9 +106,17 @@ class ContentIndexTests(unittest.TestCase):
         self.assertEqual(list(root["children"]), [stable_hash(path) for path in expected_root_paths])
         self.assertEqual(aliases["my_data"], stable_hash("/other/my_data"))
         self.assertEqual(aliases["life_grid"], stable_hash("/games/roblox/life_grid"))
+        self.assertEqual(
+            aliases["sf7_emojis"],
+            stable_hash("/other/my_folder/emojis_and_stickers/sf7_emoji_packs"),
+        )
         self.assertEqual(aliases["invert_picture"], stable_hash("/tools/invert_picture"))
         self.assertEqual(aliases["inversion"], stable_hash("/tools/invert_picture"))
         self.assertEqual(aliases["is_this_true"], stable_hash("/tools/is_this_true"))
+        self.assertEqual(
+            index[aliases["sf7_emojis"]]["share"],
+            "t.me/example_bot?start=sf7_emojis",
+        )
         self.assertEqual(
             index[aliases["inversion"]]["share"],
             "t.me/example_bot?start=inversion",
