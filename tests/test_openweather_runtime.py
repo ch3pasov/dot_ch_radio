@@ -128,8 +128,8 @@ class RuntimeSecretInjectionTests(unittest.TestCase):
         compose = (ROOT / 'docker-compose.yml').read_text(encoding='utf-8')
 
         self.assertIn('nofile:', compose)
-        self.assertIn('soft: 65536', compose)
-        self.assertIn('hard: 65536', compose)
+        self.assertIn('soft: 1024', compose)
+        self.assertIn('hard: 1024', compose)
 
     def test_direct_compose_bypass_requires_all_three_credentials(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
