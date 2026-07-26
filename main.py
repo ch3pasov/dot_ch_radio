@@ -26,7 +26,7 @@ from programs.night_schedule import (
     is_night_radio_lockout_utc,
     radio_now_playing_text,
 )
-from programs.other import get_bashkir_haiku, get_weather, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
+from programs.other import get_bashkir_haiku, get_weather_response, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
 from programs.video_inversion import VideoInversionError, invert_video_note
 from programs.data_rights import (
     handle_data_rights_callback,
@@ -511,7 +511,10 @@ async def answer_location(event):
         geo = media.geo
     else:
         geo = event.message.geo
-    await app_robot.send_message(event.chat_id, await get_weather(geo.lat, geo.long))
+    await app_robot.send_message(
+        event.chat_id,
+        await get_weather_response(geo.lat, geo.long),
+    )
     await open_common_hashdict_create("weather", event.chat_id)
     raise events.StopPropagation
 

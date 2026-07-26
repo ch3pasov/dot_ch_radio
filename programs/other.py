@@ -76,6 +76,18 @@ async def get_weather(lat, lon):
     return f"В {weather_data['name']} {str(temperature)}℃\nОщущается как {temperature_feels}℃\nСкорость ветра {wind_speed}м/с"
 
 
+WEATHER_UNAVAILABLE_MESSAGE = (
+    "Не получилось получить погоду. Попробуйте отправить геопозицию ещё раз чуть позже."
+)
+
+
+async def get_weather_response(lat, lon):
+    try:
+        return await get_weather(lat, lon)
+    except RuntimeError:
+        return WEATHER_UNAVAILABLE_MESSAGE
+
+
 minecaft_server_info = """Присоединяйтесь к нашему Minecraft серверу!
 
 Адрес java-сервера: `{server_url}`

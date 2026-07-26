@@ -15,6 +15,10 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     container_name: dot_ch_radio
     volumes:
       - "${DOT_CH_VOLUME_DIR:-./volume}:/app/volume"

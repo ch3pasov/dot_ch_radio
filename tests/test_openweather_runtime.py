@@ -93,6 +93,16 @@ class OpenWeatherTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn(credential_marker, str(caught.exception))
         self.assertIsNone(caught.exception.__context__)
 
+    async def test_weather_response_is_friendly_when_provider_is_unavailable(self):
+        with patch.object(
+            other,
+            'get_weather',
+            new=AsyncMock(side_effect=RuntimeError('provider unavailable')),
+        ):
+            result = await other.get_weather_response(52.52, 13.405)
+
+        self.assertEqual(result, other.WEATHER_UNAVAILABLE_MESSAGE)
+
     def test_source_contains_no_embedded_openweather_credential(self):
         source = Path(other.__file__).read_text(encoding='utf-8')
 
@@ -113,6 +123,13 @@ class RuntimeSecretInjectionTests(unittest.TestCase):
             'OPENWEATHER_API_KEY: "${OPENWEATHER_API_KEY:-}"',
             compose,
         )
+
+    def test_compose_reserves_file_descriptors_for_webrtc(self):
+        compose = (ROOT / 'docker-compose.yml').read_text(encoding='utf-8')
+
+        self.assertIn('nofile:', compose)
+        self.assertIn('soft: 65536', compose)
+        self.assertIn('hard: 65536', compose)
 
     def test_direct_compose_bypass_requires_all_three_credentials(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
