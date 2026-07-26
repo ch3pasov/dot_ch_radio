@@ -1,6 +1,11 @@
 from config.debug import disable_radio
 from get_hashdict import common_hashdict
 from programs.radio_status import RadioPlaybackStatus
+from programs.radio_socket_guard import (
+    DEFAULT_SOCKET_RECYCLE_THRESHOLD,
+    count_open_socket_descriptors,
+    should_recycle_socket_connection,
+)
 
 
 _playback_status = RadioPlaybackStatus(common_hashdict)
@@ -54,7 +59,10 @@ if not disable_radio:
     _last_night_target_key: str | None = None
     _last_input_group_call = None
     _stream_end_recovery_lock = asyncio.Lock()
+    _stream_change_lock = asyncio.Lock()
     _last_stream_end_recovery_at = 0.0
+    _current_stream_media: Union[str, Path] | None = None
+    _socket_reconnect_pending = False
     _ADMINS = frozenset(admins)
 
     # Идентичность, под которой dj-аккаунт заходит в войс (вещает «от канала-радио»).
@@ -81,12 +89,13 @@ if not disable_radio:
             return "random_first"
         return None
 
-    async def change_stream(
+    async def _change_stream_locked(
         media: Union[str, Path],
         who_called: str = "",
         *,
         night_loop_segment: Optional[Literal["random_first", "full"]] = None,
     ):
+        global _current_stream_media
         ffmpeg_parameters = None
         if isinstance(media, Path):
             src = media.resolve()
@@ -130,6 +139,80 @@ if not disable_radio:
             ),
         )
         _playback_status.record_stream(media)
+        _current_stream_media = media
+
+    async def change_stream(
+        media: Union[str, Path],
+        who_called: str = "",
+        *,
+        night_loop_segment: Optional[Literal["random_first", "full"]] = None,
+    ):
+        async with _stream_change_lock:
+            await _change_stream_locked(
+                media,
+                who_called=who_called,
+                night_loop_segment=night_loop_segment,
+            )
+
+    async def _maintain_radio_socket_capacity():
+        global _socket_reconnect_pending
+
+        socket_count = count_open_socket_descriptors()
+        if not should_recycle_socket_connection(
+            socket_count,
+            reconnect_pending=_socket_reconnect_pending,
+        ):
+            return
+
+        async with _stream_change_lock:
+            media = _current_stream_media
+            if media is None:
+                return
+
+            if not _socket_reconnect_pending:
+                print(
+                    "radio socket guard: recycling WebRTC connection at "
+                    f"{socket_count} open sockets "
+                    f"(threshold {DEFAULT_SOCKET_RECYCLE_THRESHOLD})"
+                )
+                try:
+                    await app_dj_calls._binding.stop(dot_ch_id)
+                except Exception as error:
+                    print(
+                        "radio socket guard: local stop failed with "
+                        f"{type(error).__name__}"
+                    )
+                    return
+                _socket_reconnect_pending = True
+
+            try:
+                night_segment: Optional[Literal["full"]] = None
+                if isinstance(media, Path) and is_night_loop_media_path(
+                    media.resolve()
+                ):
+                    night_segment = "full"
+                await _change_stream_locked(
+                    media,
+                    who_called="radio_socket_guard",
+                    night_loop_segment=night_segment,
+                )
+            except Exception as error:
+                print(
+                    "radio socket guard: reconnect failed with "
+                    f"{type(error).__name__}; will retry"
+                )
+                return
+
+            _socket_reconnect_pending = False
+            print(
+                "radio socket guard: WebRTC connection restored with "
+                f"{count_open_socket_descriptors()} open sockets"
+            )
+
+    async def _radio_socket_guard_loop():
+        while True:
+            await asyncio.sleep(60)
+            await _maintain_radio_socket_capacity()
 
     async def get_participants(chat_id):
         return await app_dj_calls.get_participants(chat_id)
@@ -236,6 +319,7 @@ if not disable_radio:
         # Иначе первый тик _night_scheduler_loop сразу снова вызовет change_stream с тем же key (первый кусок дважды).
         _last_night_target_key = _media_key(target)
         asyncio.get_running_loop().create_task(_night_scheduler_loop())
+        asyncio.get_running_loop().create_task(_radio_socket_guard_loop())
 
     async def _edit_participant_muted(call, participant_id, muted: bool):
         peer = await app_dj.get_input_entity(participant_id)
