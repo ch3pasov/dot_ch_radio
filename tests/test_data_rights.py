@@ -35,12 +35,6 @@ class DataRightsArtifactsTests(unittest.TestCase):
                 generated_at=datetime(2026, 7, 18, 14, 34, 58)
             )
 
-    def test_receipt_contains_no_dynamic_identifier_or_timestamp(self):
-        receipt = data_rights.build_deletion_receipt().getvalue().decode("utf-8")
-        self.assertIn("Найдено объектов: 0", receipt)
-        self.assertIn("Telegram ID", receipt)
-        self.assertNotIn("2026-", receipt)
-
     def test_all_callback_payloads_fit_telegram_limit(self):
         callbacks = (
             data_rights.CALLBACK_HOME,
@@ -48,7 +42,6 @@ class DataRightsArtifactsTests(unittest.TestCase):
             data_rights.CALLBACK_TAKEOUT,
             data_rights.CALLBACK_DELETE,
             data_rights.CALLBACK_DELETE_CONFIRM,
-            data_rights.CALLBACK_RECEIPT,
         )
         self.assertTrue(all(len(callback.encode("utf-8")) <= 64 for callback in callbacks))
 

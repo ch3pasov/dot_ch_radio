@@ -27,10 +27,8 @@ CALLBACK_AUDIT = f"{CALLBACK_PREFIX}audit"
 CALLBACK_TAKEOUT = f"{CALLBACK_PREFIX}takeout"
 CALLBACK_DELETE = f"{CALLBACK_PREFIX}delete"
 CALLBACK_DELETE_CONFIRM = f"{CALLBACK_PREFIX}delete_confirm"
-CALLBACK_RECEIPT = f"{CALLBACK_PREFIX}receipt"
 
 TAKEOUT_FILENAME = "dot_ch_bot_takeout.zip"
-RECEIPT_FILENAME = "dot_ch_bot_nothing_deleted.txt"
 TAKEOUT_TIMEZONE = ZoneInfo("Europe/Berlin")
 
 DATASETS = (
@@ -47,7 +45,6 @@ _ERROR_VIEWS = {
     CALLBACK_TAKEOUT: "error_takeout",
     CALLBACK_DELETE: "error_delete",
     CALLBACK_DELETE_CONFIRM: "error_delete_confirm",
-    CALLBACK_RECEIPT: "error_receipt",
 }
 
 
@@ -101,28 +98,6 @@ def build_takeout_archive(*, generated_at: datetime | None = None) -> io.BytesIO
             "data.txt",
             generated_at=generated_at,
         )
-    output.seek(0)
-    return output
-
-
-def build_deletion_receipt() -> io.BytesIO:
-    text = (
-        "АКТ ОБ ОТСУТСТВИИ ДАННЫХ № 0\n"
-        "================================\n\n"
-        "Область проверки: постоянные хранилища приложения @dot_ch_bot\n"
-        "Найдено объектов: 0\n"
-        "Удалено объектов: 0\n"
-        "Освобождено: 0 байт\n"
-        "Осталось в хранилищах бота: 0 байт\n"
-        "Статус: NOTHING_TO_DELETE\n\n"
-        "Приложение не сохранило идентификатор запроса, имя пользователя,\n"
-        "Telegram ID, время операции или копию этого акта. Документ был\n"
-        "сформирован в оперативной памяти.\n\n"
-        "Это перформативный технический акт, а не юридическая справка.\n"
-        "История чата в Telegram находится вне хранилищ приложения.\n"
-    )
-    output = io.BytesIO(text.encode("utf-8"))
-    output.name = RECEIPT_FILENAME
     output.seek(0)
     return output
 
@@ -284,23 +259,6 @@ async def _run_deletion(client, chat_id: int, message, ui: Mapping[str, Any]):
     await send_with_effect_retry(send, _action_effect_id(ui, "delete_confirm"))
 
 
-async def _send_receipt(client, chat_id: int, message, ui: Mapping[str, Any]):
-    receipt = build_deletion_receipt()
-    await _send_memory_document(
-        client,
-        chat_id,
-        message,
-        receipt,
-        caption=(
-            "**🧾 Акт № 0**\n\n"
-            "Официально подтверждает успешное удаление всех нуля объектов. "
-            "Копия акта у бота не остаётся."
-        ),
-        ui=ui,
-        action_name="receipt",
-    )
-
-
 async def handle_data_rights_callback(
     event,
     client,
@@ -333,9 +291,6 @@ async def handle_data_rights_callback(
         elif data == CALLBACK_DELETE_CONFIRM:
             await event.answer("Безвозвратное удаление запущено")
             await _run_deletion(client, event.chat_id, message, ui)
-        elif data == CALLBACK_RECEIPT:
-            await event.answer("Формирую акт в оперативной памяти")
-            await _send_receipt(client, event.chat_id, message, ui)
         else:
             await event.answer("Неизвестная операция центра данных", alert=True)
     except Exception as error:

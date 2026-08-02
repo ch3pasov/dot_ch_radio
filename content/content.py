@@ -1018,13 +1018,6 @@ common_tree = {
                             "message_effects": ["🎉", "🔥", "👍"],
                             **sf7_button_icon("trash"),
                         },
-                        "receipt": {
-                            "text": "🧾 Получить акт",
-                            "callback_data": "data_rights:receipt",
-                            "button_style": "success",
-                            "message_effects": ["👍", "🎉"],
-                            **sf7_button_icon("receipt"),
-                        },
                         "retry_audit": {
                             "text": "↻ Повторить",
                             "callback_data": "data_rights:audit",
@@ -1047,11 +1040,6 @@ common_tree = {
                             "button_style": "danger",
                             **sf7_button_icon("arrow.clockwise"),
                         },
-                        "retry_receipt": {
-                            "text": "↻ Повторить",
-                            "callback_data": "data_rights:receipt",
-                            **sf7_button_icon("arrow.clockwise"),
-                        },
                     },
                     "views": {
                         "result": {
@@ -1065,16 +1053,13 @@ common_tree = {
                         "delete_confirmation": {
                             "rows": [["delete_confirm"], ["home"]],
                         },
-                        "deletion_result": {
-                            "rows": [["copy_summary"], ["receipt"], ["home"]],
-                        },
+                        "deletion_result": {"rows": [["copy_summary"], ["home"]]},
                         "error_audit": {"rows": [["retry_audit"], ["home"]]},
                         "error_takeout": {"rows": [["retry_takeout"], ["home"]]},
                         "error_delete": {"rows": [["retry_delete"], ["home"]]},
                         "error_delete_confirm": {
                             "rows": [["retry_delete_confirm"], ["home"]],
                         },
-                        "error_receipt": {"rows": [["retry_receipt"], ["home"]]},
                     },
                     "children": {
                         "audit": {

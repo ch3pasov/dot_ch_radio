@@ -18,8 +18,7 @@ instead of filesystem paths. Uploads must use `allow_cache=False`.
 The takeout ZIP is built in memory and contains exactly one zero-byte file,
 `data.txt`. The entry's modification time records when the archive was created
 in the `Europe/Berlin` time zone; this ZIP metadata is the takeout's only
-dynamic field. The deletion receipt remains a deterministic in-memory artifact.
-Neither artifact is written to the bot filesystem.
+dynamic field. The archive is never written to the bot filesystem.
 
 Telegram itself transports and retains chats, documents and service data under
 Telegram's own settings and policies. The bot's application-side takeout and

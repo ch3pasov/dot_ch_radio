@@ -163,7 +163,6 @@ class ContentTreeTests(unittest.TestCase):
                 "takeout": "success",
                 "delete": "danger",
                 "delete_confirm": "danger",
-                "receipt": "success",
                 "retry_delete": "danger",
                 "retry_delete_confirm": "danger",
             },
@@ -189,7 +188,6 @@ class ContentTreeTests(unittest.TestCase):
             {
                 "takeout": ["🎉", "👍"],
                 "delete_confirm": ["🎉", "🔥", "👍"],
-                "receipt": ["👍", "🎉"],
             },
         )
 
@@ -252,8 +250,8 @@ class ContentTreeTests(unittest.TestCase):
             else:
                 self.assertEqual(button.text, original, path)
 
-        self.assertEqual(icon_count, 78)
-        self.assertEqual(stripped_count, 30)
+        self.assertEqual(icon_count, 76)
+        self.assertEqual(stripped_count, 28)
 
     def test_every_tree_markup_builds_offline_with_telegram_limits(self):
         client = TelegramClient(MemorySession(), 1, "0" * 32)
