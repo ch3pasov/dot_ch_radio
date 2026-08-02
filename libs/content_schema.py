@@ -227,6 +227,11 @@ def normalize_button_spec(
 def _normalize_node(item: dict[str, Any], *, is_root: bool = False) -> None:
     _normalize_button_fields(item, allow_message_effects=False)
 
+    if "title_icon" in item:
+        item["title_icon"] = validate_button_icon(item["title_icon"])
+        if item.get("parse_mode") != "html":
+            raise ValueError("title_icon requires parse_mode='html'")
+
     if "alias" in item:
         raise ValueError("The alias field was renamed to aliases")
     if "aliases" in item:

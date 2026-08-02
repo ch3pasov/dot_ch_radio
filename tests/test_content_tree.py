@@ -110,6 +110,14 @@ class ContentTreeTests(unittest.TestCase):
             },
         )
 
+    def test_data_center_uses_an_sf_icon_in_its_message_title(self):
+        my_data = common_tree["children"]["other"]["children"]["my_data"]
+
+        self.assertEqual(my_data["name"], "Мои данные")
+        self.assertEqual(my_data["parse_mode"], "html")
+        self.assertIsInstance(my_data["title_icon"], int)
+        self.assertNotIn("🗄", my_data["name"])
+
     def test_tree_colors_are_reserved_for_semantic_calls_to_action(self):
         expected_styles = {
             "root/radio/go_to_radio": "success",
@@ -251,7 +259,7 @@ class ContentTreeTests(unittest.TestCase):
                 self.assertEqual(button.text, original, path)
 
         self.assertEqual(icon_count, 76)
-        self.assertEqual(stripped_count, 28)
+        self.assertEqual(stripped_count, 27)
 
     def test_every_tree_markup_builds_offline_with_telegram_limits(self):
         client = TelegramClient(MemorySession(), 1, "0" * 32)

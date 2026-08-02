@@ -26,6 +26,14 @@ class PrimitiveValidationTests(unittest.TestCase):
             with self.subTest(invalid=invalid), self.assertRaises((TypeError, ValueError)):
                 validate_button_icon(invalid)
 
+    def test_title_icon_is_validated_like_a_button_icon(self):
+        tree = normalize_tree({"name": "Page", "title_icon": "123456", "parse_mode": "html"})
+        self.assertEqual(tree["title_icon"], 123456)
+        with self.assertRaises((TypeError, ValueError)):
+            normalize_tree({"name": "Page", "title_icon": 0, "parse_mode": "html"})
+        with self.assertRaisesRegex(ValueError, "parse_mode='html'"):
+            normalize_tree({"name": "Page", "title_icon": 123456})
+
     def test_callback_limit_is_counted_in_utf8_bytes(self):
         self.assertEqual(validate_callback_data("🔥" * 16), "🔥" * 16)
         with self.assertRaisesRegex(ValueError, "64-byte"):

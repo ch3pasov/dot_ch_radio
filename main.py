@@ -49,6 +49,23 @@ from global_vars import app_robot, app_dj, loop, print
 MENTION = f"@{bot_username}"
 
 
+def _page_title(obj, parse_mode):
+    """Render a page title, optionally prefixed with a custom Telegram emoji."""
+
+    title_icon = obj.get("title_icon")
+    if title_icon is None:
+        if parse_mode == "html":
+            return f'<b>{escape(obj["name"])}</b>'
+        return f'**{obj["name"]}**'
+
+    if parse_mode != "html":
+        raise ValueError("title_icon requires parse_mode='html'")
+    return (
+        f'<tg-emoji emoji-id="{title_icon}">🗄</tg-emoji> '
+        f'<b>{escape(obj["name"])}</b>'
+    )
+
+
 def _is_private(event) -> bool:
     return bool(getattr(event, "is_private", False))
 
@@ -155,10 +172,7 @@ async def open_common_hashdict(deep_link, message, user_id):
     text = ""
     parse_mode = obj.get("parse_mode", ())
     if not obj.get("hide_name", 0):
-        if parse_mode == "html":
-            text += f'<b>{escape(obj["name"])}</b>'
-        else:
-            text += f'**{obj["name"]}**'
+        text += _page_title(obj, parse_mode)
     if "description" in obj:
         text += f'\n{obj["description"]}'
     if "children" in obj:

@@ -151,6 +151,13 @@ def sf7_button_icon(symbol_name, weight="Regular"):
     return _button_icon(_sf7_custom_emoji_id(_sf7_symbols(), symbol_name, weight))
 
 
+def sf7_title_icon(symbol_name, weight="Regular"):
+    """Return a Telegram message-title icon by its SF7 symbol name."""
+
+    icon_id = _sf7_custom_emoji_id(_sf7_symbols(), symbol_name, weight)
+    return {"title_icon": icon_id} if icon_id else {}
+
+
 def _custom_emoji_html(icon_id, fallback_emoji):
     return f'<tg-emoji emoji-id="{icon_id}">{escape(fallback_emoji)}</tg-emoji> ' if icon_id else ""
 
@@ -969,9 +976,10 @@ common_tree = {
                     }
                 },
                 "my_data": {
-                    "name": "🗄 Мои данные",
+                    "name": "Мои данные",
+                    "parse_mode": "html",
                     "description": (
-                        "**Центр управления данными**\n\n"
+                        "<b>Центр управления данными</b>\n\n"
                         "Здесь можно проверить постоянные хранилища приложения, "
                         "получить полную выгрузку или безвозвратно удалить всё, что "
                         "бот хранит о вас.\n\n"
@@ -981,6 +989,7 @@ common_tree = {
                     "aliases": ["my_data"],
                     "children_columns": 2,
                     **sf7_button_icon("externaldrive"),
+                    **sf7_title_icon("externaldrive"),
                     "actions": {
                         "audit": {
                             "text": "🔎 Провести аудит",
