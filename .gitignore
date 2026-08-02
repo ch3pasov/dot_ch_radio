@@ -1,6 +1,7 @@
 # Local runtime/config data.
 config
 volume/sessions/
+volume/buildx/
 
 .env
 .env.*
