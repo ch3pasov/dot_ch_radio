@@ -48,7 +48,6 @@ if not disable_radio:
 
     import pytgcalls
     from pytgcalls import filters as pytgcalls_filters
-    from pytgcalls.types.raw import VideoParameters
 
     app_dj_calls = pytgcalls.PyTgCalls(app_dj)
     # app_dj_calls.start() — переносим в main.py (нужен запущенный event loop)
@@ -98,7 +97,6 @@ if not disable_radio:
     ):
         global _current_stream_media
         ffmpeg_parameters = None
-        video_parameters = pytgcalls.types.VideoQuality.HD_720p
         if isinstance(media, Path):
             src = media.resolve()
             if not src.is_file():
@@ -106,14 +104,6 @@ if not disable_radio:
             print(f"{who_called} calls change_stream to file {src}")
             stream_arg: Union[str, Path] = src
             if is_night_loop_media_path(src):
-                # The prepared night master is 720p25. Matching its frame rate
-                # avoids PyTgCalls duplicating frames to its 30 fps default.
-                video_parameters = VideoParameters(
-                    width=1280,
-                    height=720,
-                    frame_rate=25,
-                    adjust_by_height=False,
-                )
                 seg = night_loop_segment or "full"
                 if seg == "random_first":
                     clip_params = night_loop_random_first_clip_ffmpeg_parameters_for_path(src)
@@ -142,7 +132,6 @@ if not disable_radio:
             pytgcalls.types.MediaStream(
                 str(stream_arg),
                 audio_parameters=pytgcalls.types.AudioQuality.HIGH,
-                video_parameters=video_parameters,
                 ffmpeg_parameters=ffmpeg_parameters,
             ),
             config=pytgcalls.types.GroupCallConfig(
