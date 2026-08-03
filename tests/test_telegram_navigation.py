@@ -33,6 +33,10 @@ class TelegramNavigationTests(unittest.IsolatedAsyncioTestCase):
             refresh_feedback_text(changed=False),
             "Обновлено (ничего не изменилось)",
         )
+        self.assertEqual(
+            refresh_feedback_text(changed=False, locale="en"),
+            "Refreshed (nothing changed)",
+        )
 
     async def test_refresh_callback_answers_once_after_a_changed_page(self):
         event = SimpleNamespace(answer=AsyncMock())

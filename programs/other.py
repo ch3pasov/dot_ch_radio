@@ -10,6 +10,7 @@ import numpy as np
 from PIL import Image
 
 from config.minecraft_config import server_url
+from libs.i18n import RU, localized, normalize_locale
 
 
 async def aiohttp_get(url, type='text', *, params=None):
@@ -47,10 +48,14 @@ async def get_bashkir_haiku():
     )
 
 
-async def get_weather(lat, lon):
+async def get_weather(lat, lon, *, locale=RU):
     api_key = os.environ.get('OPENWEATHER_API_KEY')
     if not api_key:
-        raise RuntimeError('Погода недоступна: OpenWeather API не настроен.')
+        raise RuntimeError(localized(
+            locale,
+            ru='Погода недоступна: OpenWeather API не настроен.',
+            en='Weather is unavailable: the OpenWeather API is not configured.',
+        ))
 
     try:
         weather_data: Dict[str, Any] = await aiohttp_get_json(
@@ -59,7 +64,7 @@ async def get_weather(lat, lon):
                 'lat': lat,
                 'lon': lon,
                 'units': 'metric',
-                'lang': 'ru',
+                'lang': normalize_locale(locale),
                 'appid': api_key,
             },
         )
@@ -67,13 +72,33 @@ async def get_weather(lat, lon):
         weather_data = None
 
     if weather_data is None:
-        raise RuntimeError('Не удалось получить погоду от OpenWeather.') from None
+        raise RuntimeError(localized(
+            locale,
+            ru='Не удалось получить погоду от OpenWeather.',
+            en='OpenWeather did not return the weather.',
+        )) from None
 
     temperature = weather_data['main']['temp']
     temperature_feels = weather_data['main']['feels_like']
     wind_speed = weather_data['wind']['speed']
 
-    return f"В {weather_data['name']} {str(temperature)}℃\nОщущается как {temperature_feels}℃\nСкорость ветра {wind_speed}м/с"
+    return localized(
+        locale,
+        ru=(
+            "В {place} {temperature}℃\n"
+            "Ощущается как {feels_like}℃\n"
+            "Скорость ветра {wind_speed}м/с"
+        ),
+        en=(
+            "{place}: {temperature}℃\n"
+            "Feels like {feels_like}℃\n"
+            "Wind speed: {wind_speed} m/s"
+        ),
+        place=weather_data['name'],
+        temperature=str(temperature),
+        feels_like=temperature_feels,
+        wind_speed=wind_speed,
+    )
 
 
 WEATHER_UNAVAILABLE_MESSAGE = (
@@ -81,11 +106,15 @@ WEATHER_UNAVAILABLE_MESSAGE = (
 )
 
 
-async def get_weather_response(lat, lon):
+async def get_weather_response(lat, lon, *, locale=RU):
     try:
-        return await get_weather(lat, lon)
+        return await get_weather(lat, lon, locale=locale)
     except RuntimeError:
-        return WEATHER_UNAVAILABLE_MESSAGE
+        return localized(
+            locale,
+            ru=WEATHER_UNAVAILABLE_MESSAGE,
+            en="Couldn't get the weather. Please send the location again a little later.",
+        )
 
 
 minecaft_server_info = """Присоединяйтесь к нашему Minecraft серверу!
@@ -108,21 +137,41 @@ status_online = """**Онлайн**
 status_offline = """**Оффлайн**"""
 
 
-async def get_minecraft_server_info():
+async def get_minecraft_server_info(*, locale=RU):
     response = await aiohttp_get_json(f'https://api.mcsrvstat.us/2/{server_url}')
     if not response['online']:
-        status = status_offline
+        status = localized(locale, ru=status_offline, en="**Offline**")
     else:
-        status = status_online.format(
+        status = localized(
+            locale,
+            ru=status_online,
+            en=(
+                "**Online**\n{description}\nVersion **{version_name}**\n"
+                "Players: **{players_online}/{players_max}**\n{players_list}\n"
+            ),
             version_name=response['version'],
             players_online=response['players']['online'],
             players_max=response['players']['max'],
-            players_list='\n'.join([f"- [{player}](https://crafty.gg/players/{player})" for player in response['players']['list']]) if 'list' in response['players'] else '',
-            description=response['motd']['clean'][0]
+            players_list='\n'.join(
+                f"- [{player}](https://crafty.gg/players/{player})"
+                for player in response['players'].get('list', [])
+            ),
+            description=response['motd']['clean'][0],
         )
-    return minecaft_server_info.format(
+    return localized(
+        locale,
+        ru=minecaft_server_info,
+        en=(
+            "Join our Minecraft server!\n\n"
+            "Java server address: `{server_url}`\n\n"
+            "There are only three rules:\n"
+            "**1.** Follow the laws of the Russian Federation (do not kill, steal, incite hatred, etc.)\n"
+            "**2.** Do not use software or mods that give you an advantage.\n"
+            "**3.** Do not stress-test the server.\n\n"
+            "Server status: {status}\n"
+        ),
         server_url=server_url,
-        status=status
+        status=status,
     )
 
 
@@ -370,7 +419,7 @@ slot_symbols = [
 ]
 
 
-def get_turkic_name(roll_1: int, roll_2: int, roll_slot: int) -> str:
+def get_turkic_name(roll_1: int, roll_2: int, roll_slot: int, *, locale=RU) -> dict[str, str]:
     name_1_obj = name_1[roll_1]
     name_2_obj = name_2[roll_2]
     jackpot_obj = None
@@ -380,12 +429,42 @@ def get_turkic_name(roll_1: int, roll_2: int, roll_slot: int) -> str:
     roll_2_emoji = dice_nums[roll_2]
     roll_slot_out = slot_symbols[roll_slot % 4] + slot_symbols[(roll_slot >> 2) % 4] + slot_symbols[(roll_slot >> 4)]
     name = f"{name_1_obj}{name_2_obj}{jackpot_obj if jackpot_obj else ''}"
-    message_text = (
-        f"Кубик 1: {roll_1_emoji} = {name_1_obj}-\nКубик 2: {roll_2_emoji} = -{name_2_obj}\n" +
-        f"Слот: {roll_slot_out}{' 🎰 -' + jackpot_obj if jackpot_obj else ''}\n\n" + f"Имя: **{name}**"
+    message_text = localized(
+        locale,
+        ru=(
+            "Кубик 1: {roll_1_emoji} = {name_1_obj}-\n"
+            "Кубик 2: {roll_2_emoji} = -{name_2_obj}\n"
+            "Слот: {roll_slot_out}{jackpot_suffix}\n\n"
+            "Имя: **{name}**"
+        ),
+        en=(
+            "Die 1: {roll_1_emoji} = {name_1_obj}-\n"
+            "Die 2: {roll_2_emoji} = -{name_2_obj}\n"
+            "Slot: {roll_slot_out}{jackpot_suffix}\n\n"
+            "Name: **{name}**"
+        ),
+        roll_1_emoji=roll_1_emoji,
+        name_1_obj=name_1_obj,
+        roll_2_emoji=roll_2_emoji,
+        name_2_obj=name_2_obj,
+        roll_slot_out=roll_slot_out,
+        jackpot_suffix=' 🎰 -' + jackpot_obj if jackpot_obj else '',
+        name=name,
     )
-    share_text = (
-        f"У меня выпало тюркское имя {name} ({roll_1_emoji}+{roll_2_emoji}+{roll_slot_out}).\nПопробуй: t.me/dot_ch_bot?start=turkic_names"
+    share_text = localized(
+        locale,
+        ru=(
+            "У меня выпало тюркское имя {name} ({roll_1_emoji}+{roll_2_emoji}+{roll_slot_out}).\n"
+            "Попробуй: t.me/dot_ch_bot?start=turkic_names"
+        ),
+        en=(
+            "I rolled the Turkic name {name} ({roll_1_emoji}+{roll_2_emoji}+{roll_slot_out}).\n"
+            "Try it: t.me/dot_ch_bot?start=turkic_names"
+        ),
+        name=name,
+        roll_1_emoji=roll_1_emoji,
+        roll_2_emoji=roll_2_emoji,
+        roll_slot_out=roll_slot_out,
     )
     share_url = f"https://t.me/share/url?url={quote(share_text)}"
     return {

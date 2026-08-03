@@ -17,6 +17,8 @@ stations into the channel's group call.
   restores interrupted streams and follows a separate day/night schedule;
 - renders a declarative content tree with stable deep links, Telegram button
   styles, custom emoji icons and stateless navigation;
+- renders that tree and all interactive responses in Russian or English from
+  each sender's current Telegram interface language, with English as fallback;
 - performs geometric circle inversion on photographs and Telegram video notes;
 - searches the project's SF Symbols 7 custom-emoji catalogue;
 - provides small channel tools: weather, text generators, games and a
@@ -59,6 +61,11 @@ The production process contains two Telethon clients:
 Both clients use the same event loop. The content tree is normalized and
 validated on startup; its schema is described in
 [content/CONTENT_SCHEMA.md](content/CONTENT_SCHEMA.md).
+
+Language selection is stateless. A Russian Telegram interface receives the
+Russian UI; every other or missing language code receives English. Changing
+Telegram's interface language and reopening the menu is enough—there is no
+per-user language setting in the bot.
 
 ## Run it
 

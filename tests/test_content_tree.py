@@ -44,7 +44,7 @@ class ContentTreeTests(unittest.TestCase):
         )
         self.assertEqual(
             list(root_children["other"]["children"]),
-            ["my_folder", "about_me", "my_data", "secret_place"],
+            ["my_folder", "about_me", "language", "my_data", "secret_place"],
         )
 
     def test_radio_places_night_broadcast_last_and_enables_live_refresh(self):
@@ -258,8 +258,8 @@ class ContentTreeTests(unittest.TestCase):
             else:
                 self.assertEqual(button.text, original, path)
 
-        self.assertEqual(icon_count, 76)
-        self.assertEqual(stripped_count, 27)
+        self.assertEqual(icon_count, 77)
+        self.assertEqual(stripped_count, 28)
 
     def test_every_tree_markup_builds_offline_with_telegram_limits(self):
         client = TelegramClient(MemorySession(), 1, "0" * 32)

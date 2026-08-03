@@ -3,7 +3,9 @@ from functools import lru_cache
 from html import escape
 from pathlib import Path
 
+from content.localization import localize_content_tree
 from libs.content_schema import folder, normalize_tree
+from libs.i18n import EN, RU, localized, normalize_locale
 
 
 EMOJI_PACK_LINKS_PATH = Path(__file__).resolve().parent.parent / "config" / "emoji_pack_links.json"
@@ -198,16 +200,23 @@ def _sf7_search_line(symbol_name, symbol, weight):
     return f"{_custom_emoji_html(icon_id, fallback_emoji)}<code>{escape(symbol_name)}</code>"
 
 
-def search_sf7_custom_emoji_html(weight_slug, query, limit=40):
+def search_sf7_custom_emoji_html(weight_slug, query, limit=40, *, locale=RU):
     weight = _weight_name(weight_slug)
     if weight is None:
         return None
 
     normalized_query = query.strip().lower()
     if len(normalized_query) < 2:
-        return (
-            f"<b>{escape(weight)}</b>\n"
-            f"Напиши запрос подлиннее: <code>/sf7_search_{weight.lower()} tray</code>"
+        return localized(
+            locale,
+            ru=(
+                f"<b>{escape(weight)}</b>\n"
+                f"Напиши запрос подлиннее: <code>/sf7_search_{weight.lower()} tray</code>"
+            ),
+            en=(
+                f"<b>{escape(weight)}</b>\n"
+                f"Use a longer query: <code>/sf7_search_{weight.lower()} tray</code>"
+            ),
         )
 
     symbols = _sf7_symbols()
@@ -230,15 +239,30 @@ def search_sf7_custom_emoji_html(weight_slug, query, limit=40):
             break
 
     if not matches:
-        return (
-            f"<b>{escape(weight)}</b>\n"
-            f"По запросу <code>{escape(query.strip())}</code> ничего не нашлось."
+        return localized(
+            locale,
+            ru=(
+                f"<b>{escape(weight)}</b>\n"
+                f"По запросу <code>{escape(query.strip())}</code> ничего не нашлось."
+            ),
+            en=(
+                f"<b>{escape(weight)}</b>\n"
+                f"Nothing found for <code>{escape(query.strip())}</code>."
+            ),
         )
 
-    return (
-        f"<b>{escape(weight)}</b>\n"
-        f"{len(matches)} результатов по <code>{escape(query.strip())}</code>\n\n"
-        + "\n".join(matches)
+    return localized(
+        locale,
+        ru=(
+            f"<b>{escape(weight)}</b>\n"
+            f"{len(matches)} результатов по <code>{escape(query.strip())}</code>\n\n"
+            + "\n".join(matches)
+        ),
+        en=(
+            f"<b>{escape(weight)}</b>\n"
+            f"{len(matches)} results for <code>{escape(query.strip())}</code>\n\n"
+            + "\n".join(matches)
+        ),
     )
 
 
@@ -975,6 +999,17 @@ common_tree = {
                         }
                     }
                 },
+                "language": {
+                    "name": "🌐 Язык бота",
+                    "description": (
+                        "Бот выбирает язык по языку интерфейса Telegram. Если Telegram на русском, "
+                        "бот отвечает по-русски; для всех остальных языков используется английский.\n\n"
+                        "Чтобы изменить язык: **Telegram → Настройки → Язык**. После изменения "
+                        "заново откройте меню или отправьте /start."
+                    ),
+                    "aliases": ["language"],
+                    **sf7_button_icon("character.bubble"),
+                },
                 "my_data": {
                     "name": "Мои данные",
                     "parse_mode": "html",
@@ -1147,6 +1182,14 @@ common_tree = {
 }
 
 common_tree = normalize_tree(common_tree)
+common_trees = {
+    RU: common_tree,
+    EN: localize_content_tree(common_tree, EN),
+}
+
+
+def content_tree_for_locale(locale):
+    return common_trees[normalize_locale(locale)]
 
 startup_url = "https://zvukipro.com/uploads/files/2020-12/1609413715_the-microsoft-sound.mp3"
 
@@ -1158,3 +1201,25 @@ wanted_not_found = """**🔍 Проверка завершена**
 wanted_found = """**🔍 Проверка завершена**
 
 В результате проверки фотографии по базам данных розыска информация о наличии на фото лиц, находящихся в розыске, **была обнаружена**. Это означает, что среди изображений на фотографии найдены совпадения с данными розыска."""
+
+
+def wanted_not_found_text(locale=RU):
+    return localized(
+        locale,
+        ru=wanted_not_found,
+        en=(
+            "**🔍 Check complete**\n\n"
+            "The photo was checked against wanted-person databases. No matches were found."
+        ),
+    )
+
+
+def wanted_found_text(locale=RU):
+    return localized(
+        locale,
+        ru=wanted_found,
+        en=(
+            "**🔍 Check complete**\n\n"
+            "The photo was checked against wanted-person databases. One or more matches were found."
+        ),
+    )

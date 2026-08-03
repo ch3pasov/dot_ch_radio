@@ -71,6 +71,27 @@ class OpenWeatherTests(unittest.IsolatedAsyncioTestCase):
 
         request.assert_not_awaited()
 
+    async def test_weather_uses_english_provider_copy_for_fallback_locale(self):
+        request = AsyncMock(
+            return_value={
+                'name': 'Berlin',
+                'main': {'temp': 21, 'feels_like': 20},
+                'wind': {'speed': 3},
+            }
+        )
+
+        with (
+            patch.dict(os.environ, {'OPENWEATHER_API_KEY': 'test-api-key'}, clear=True),
+            patch.object(other, 'aiohttp_get_json', new=request),
+        ):
+            result = await other.get_weather(52.52, 13.405, locale='en')
+
+        self.assertEqual(request.await_args.kwargs['params']['lang'], 'en')
+        self.assertEqual(
+            result,
+            'Berlin: 21℃\nFeels like 20℃\nWind speed: 3 m/s',
+        )
+
     async def test_client_errors_do_not_expose_request_credentials(self):
         credential_marker = 'test-api-key'
         request = AsyncMock(

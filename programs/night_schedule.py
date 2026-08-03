@@ -7,6 +7,8 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
+from libs.i18n import RU, localized
+
 # Полуинтервал ночного эфира по UTC: [start, end) = [18:15:00Z, 03:00:00Z)
 NIGHT_STREAM_START_HOUR = 18
 NIGHT_STREAM_START_MINUTE = 15
@@ -17,6 +19,17 @@ NIGHT_RADIO_SWITCH_BLOCKED = (
     "🌙 Сейчас ночной эфир [18:15, 03:00) UTC. "
     "Обычные станции недоступны — слушайте ночной стрим в канале."
 )
+
+
+def night_radio_switch_blocked(locale=RU):
+    return localized(
+        locale,
+        ru=NIGHT_RADIO_SWITCH_BLOCKED,
+        en=(
+            "🌙 The night broadcast is live from 18:15 to 03:00 UTC. "
+            "Regular stations are unavailable; listen to the night stream in the channel."
+        ),
+    )
 
 # Первый фрагмент ночного лупа: случайный старт в файле, затем полный ролик с начала (после stream_end).
 NIGHT_LOOP_FIRST_CLIP_SEC = 8
@@ -65,15 +78,29 @@ def radio_now_playing_text(
     now: datetime | None = None,
     *,
     station_name: str | None = None,
+    locale=RU,
 ) -> str:
     """Describe the scheduled mode and the active daytime station, when known."""
 
     night_media_available = night_loop_file_path().is_file()
     if night_media_available and is_night_loop_video_window_utc(now):
-        return "**Сейчас играет:** ночной эфир."
+        return localized(
+            locale,
+            ru="**Сейчас играет:** ночной эфир.",
+            en="**Now playing:** night broadcast.",
+        )
     if station_name:
-        return f"**Сейчас играет:** {station_name}."
-    return "**Сейчас играет:** обычный эфир."
+        return localized(
+            locale,
+            ru="**Сейчас играет:** {station_name}.",
+            en="**Now playing:** {station_name}.",
+            station_name=station_name,
+        )
+    return localized(
+        locale,
+        ru="**Сейчас играет:** обычный эфир.",
+        en="**Now playing:** regular broadcast.",
+    )
 
 
 def night_loop_media_duration_sec(path: Path) -> float | None:

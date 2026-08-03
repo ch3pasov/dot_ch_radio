@@ -165,3 +165,16 @@ route renderer as common static configuration.
 The functions return Telethon button objects/rows and repeat Telegram limit
 checks at the rendering boundary. Tests use `MemorySession` and never connect
 to Telegram.
+
+## Localization
+
+The canonical tree in `content/content.py` is Russian. `content/localization.py`
+produces an English presentation copy by translating visible string values;
+route keys, aliases, callback payloads, URLs and media IDs remain unchanged.
+Both normalized trees are indexed at startup, and tests require their route
+hashes and aliases to be identical. The English tree is also checked for
+untranslated Cyrillic interface text.
+
+Handlers select the tree from the current sender's Telegram `lang_code` for
+every event. `ru` variants use Russian; every other or missing code falls back
+to English. The bot does not persist a user's language or navigation state.

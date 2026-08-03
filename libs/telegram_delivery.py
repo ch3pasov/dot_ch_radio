@@ -11,6 +11,8 @@ from telethon.errors import (
     VoiceMessagesForbiddenError,
 )
 
+from libs.i18n import RU, localized
+
 
 @dataclass(frozen=True)
 class DeliveryResult:
@@ -56,6 +58,7 @@ async def deliver_message(
     link_preview: bool = True,
     file=None,
     parse_mode: Any = (),
+    locale=RU,
 ):
     """Send or edit one final page and report whether Telegram changed it."""
 
@@ -81,7 +84,11 @@ async def deliver_message(
     except ReplyMarkupTooLongError:
         fallback = (
             f"{text}\n\n"
-            "⚠️ Не смог отрисовать клавиатуру: Telegram отклонил слишком большую разметку."
+            + localized(
+                locale,
+                ru="⚠️ Не смог отрисовать клавиатуру: Telegram отклонил слишком большую разметку.",
+                en="⚠️ Couldn't render the keyboard: Telegram rejected an oversized layout.",
+            )
         )
         try:
             return await deliver(fallback, markup=None, media=None)

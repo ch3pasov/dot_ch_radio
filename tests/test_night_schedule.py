@@ -76,6 +76,21 @@ class RadioNowPlayingTests(unittest.TestCase):
                     "**Сейчас играет:** обычный эфир.",
                 )
 
+    def test_status_has_an_english_variant(self):
+        with TemporaryDirectory() as temporary_directory:
+            missing_media = Path(temporary_directory) / "night_loop.mp4"
+            with patch(
+                "programs.night_schedule.night_loop_file_path",
+                return_value=missing_media,
+            ):
+                self.assertEqual(
+                    radio_now_playing_text(
+                        datetime(2026, 7, 19, 12, 0, tzinfo=timezone.utc),
+                        locale="en",
+                    ),
+                    "**Now playing:** regular broadcast.",
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

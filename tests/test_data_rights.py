@@ -8,11 +8,12 @@ from telethon import TelegramClient
 from telethon.sessions import MemorySession
 from telethon.tl.types import ReplyInlineMarkup
 
-from content.content import common_tree
+from content.content import common_tree, common_trees
 from programs import data_rights
 
 
 DATA_RIGHTS_UI = common_tree["children"]["other"]["children"]["my_data"]
+DATA_RIGHTS_UI_EN = common_trees["en"]["children"]["other"]["children"]["my_data"]
 
 
 class DataRightsArtifactsTests(unittest.TestCase):
@@ -86,7 +87,13 @@ class DataRightsCallbackTests(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(result, "handled")
         event.answer.assert_awaited_once_with("Начинаю аудит")
-        run_audit.assert_awaited_once_with("client", 7, message, DATA_RIGHTS_UI)
+        run_audit.assert_awaited_once_with(
+            "client",
+            7,
+            message,
+            DATA_RIGHTS_UI,
+            locale="ru",
+        )
 
     async def test_failed_workflow_leaves_retry_ui_without_personal_log_data(self):
         event, message = self._event(data_rights.CALLBACK_TAKEOUT)
@@ -103,6 +110,26 @@ class DataRightsCallbackTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("private payload", "\n".join(captured.output))
         message.edit.assert_awaited_once()
         self.assertIn("Операция прервана", message.edit.await_args.args[0])
+
+    async def test_english_callback_uses_english_copy_and_workflow(self):
+        event, message = self._event(data_rights.CALLBACK_AUDIT)
+        with patch.object(data_rights, "_run_audit", new=AsyncMock()) as run_audit:
+            result = await data_rights.handle_data_rights_callback(
+                event,
+                "client",
+                DATA_RIGHTS_UI_EN,
+                locale="en",
+            )
+
+        self.assertEqual(result, "handled")
+        event.answer.assert_awaited_once_with("Starting audit")
+        run_audit.assert_awaited_once_with(
+            "client",
+            7,
+            message,
+            DATA_RIGHTS_UI_EN,
+            locale="en",
+        )
 
 
 if __name__ == "__main__":

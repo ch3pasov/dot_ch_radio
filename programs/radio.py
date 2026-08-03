@@ -1,5 +1,6 @@
 from config.debug import disable_radio
-from get_hashdict import common_hashdict
+from get_hashdict import common_hashdict, common_hashdicts
+from libs.i18n import RU, normalize_locale
 from programs.radio_status import RadioPlaybackStatus
 from programs.radio_socket_guard import (
     DEFAULT_SOCKET_RECYCLE_THRESHOLD,
@@ -9,10 +10,14 @@ from programs.radio_socket_guard import (
 
 
 _playback_status = RadioPlaybackStatus(common_hashdict)
+_playback_statuses = {
+    locale: _playback_status if locale == RU else RadioPlaybackStatus(routes)
+    for locale, routes in common_hashdicts.items()
+}
 
 
-def current_station_name() -> str | None:
-    return _playback_status.current_station_name
+def current_station_name(locale=RU) -> str | None:
+    return _playback_statuses[normalize_locale(locale)].current_station_name
 
 
 if not disable_radio:
@@ -149,7 +154,8 @@ if not disable_radio:
                 join_as=_RADIO_JOIN_AS,
             ),
         )
-        _playback_status.record_stream(media)
+        for playback_status in _playback_statuses.values():
+            playback_status.record_stream(media)
         _current_stream_media = media
 
     async def change_stream(
