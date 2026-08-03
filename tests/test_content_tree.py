@@ -110,6 +110,18 @@ class ContentTreeTests(unittest.TestCase):
             },
         )
 
+    def test_telegram_games_use_direct_main_mini_app_links(self):
+        games = common_tree["children"]["games"]["children"]["telegram"]["children"]
+
+        self.assertEqual(
+            {game_id: game["url"] for game_id, game in games.items()},
+            {
+                "subway_surfers": "https://t.me/PlaySubwaySurfersBot?startapp",
+                "doodle_jump": "https://t.me/PlayDoodleJumpBot?startapp",
+                "math_effect": "https://t.me/PlayMathEffectBot?startapp",
+            },
+        )
+
     def test_data_center_uses_an_sf_icon_in_its_message_title(self):
         my_data = common_tree["children"]["other"]["children"]["my_data"]
 

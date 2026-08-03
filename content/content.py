@@ -815,15 +815,15 @@ common_tree = {
                     "children": {
                         "subway_surfers": {
                             "name": "🏄 Subway Surfers 👮‍♂️",
-                            "url": "https://t.me/PlaySubwaySurfersBot/subway_surfers",
+                            "url": "https://t.me/PlaySubwaySurfersBot?startapp",
                         },
                         "doodle_jump": {
                             "name": "🐸 Doodle Jump 🚀",
-                            "url": "https://t.me/PlayDoodleJumpBot/doodle_jump",
+                            "url": "https://t.me/PlayDoodleJumpBot?startapp",
                         },
                         "math_effect": {
                             "name": "🚄 Math Effect 🏯",
-                            "url": "https://t.me/PlayMathEffectBot/math_effect",
+                            "url": "https://t.me/PlayMathEffectBot?startapp",
                         },
                     },
                 },
