@@ -106,6 +106,7 @@ class ContentIndexTests(unittest.TestCase):
         self.assertEqual(list(root["children"]), [stable_hash(path) for path in expected_root_paths])
         self.assertEqual(aliases["my_data"], stable_hash("/other/my_data"))
         self.assertEqual(aliases["life_grid"], stable_hash("/games/roblox/life_grid"))
+        self.assertEqual(aliases["web_games"], stable_hash("/games/telegram"))
         self.assertEqual(
             aliases["sf7_emojis"],
             stable_hash("/other/my_folder/emojis_and_stickers/sf7_emoji_packs"),

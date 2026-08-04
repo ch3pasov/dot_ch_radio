@@ -812,6 +812,7 @@ common_tree = {
                 "telegram": {
                     "name": "📱 Телеграм веб-игры",
                     "description": "Запускаются прямо в Telegram.",
+                    "aliases": ["web_games"],
                     "children": {
                         "subway_surfers": {
                             "name": "🏄 Subway Surfers 👮‍♂️",
