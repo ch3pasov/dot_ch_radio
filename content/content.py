@@ -826,6 +826,18 @@ common_tree = {
                             "name": "🚄 Math Effect 🏯",
                             "url": "https://t.me/PlayMathEffectBot?startapp",
                         },
+                        "tower_building": {
+                            "name": "🏗 Tower Building 🏢",
+                            "url": "https://t.me/PlayTowerBuildingBot?startapp",
+                        },
+                        "2048": {
+                            "name": "🔢 2048 🧩",
+                            "url": "https://t.me/Play2048PuzzleBot?startapp",
+                        },
+                        "hextris": {
+                            "name": "🔶 Hextris ⬡",
+                            "url": "https://t.me/PlayHextrisBot?startapp",
+                        },
                     },
                 },
                 "roblox": {

@@ -119,6 +119,9 @@ class ContentTreeTests(unittest.TestCase):
                 "subway_surfers": "https://t.me/PlaySubwaySurfersBot?startapp",
                 "doodle_jump": "https://t.me/PlayDoodleJumpBot?startapp",
                 "math_effect": "https://t.me/PlayMathEffectBot?startapp",
+                "tower_building": "https://t.me/PlayTowerBuildingBot?startapp",
+                "2048": "https://t.me/Play2048PuzzleBot?startapp",
+                "hextris": "https://t.me/PlayHextrisBot?startapp",
             },
         )
 
