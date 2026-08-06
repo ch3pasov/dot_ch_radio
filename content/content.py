@@ -838,6 +838,10 @@ common_tree = {
                             "name": "🔶 Hextris ⬡",
                             "url": "https://t.me/PlayHextrisBot?startapp",
                         },
+                        "oh_n0": {
+                            "name": "🔵 0h n0 🔴",
+                            "url": "https://t.me/Play0hn0Bot?startapp",
+                        },
                     },
                 },
                 "roblox": {

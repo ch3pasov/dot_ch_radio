@@ -122,6 +122,7 @@ class ContentTreeTests(unittest.TestCase):
                 "tower_building": "https://t.me/PlayTowerBuildingBot?startapp",
                 "2048": "https://t.me/Play2048PuzzleBot?startapp",
                 "hextris": "https://t.me/PlayHextrisBot?startapp",
+                "oh_n0": "https://t.me/Play0hn0Bot?startapp",
             },
         )
 
