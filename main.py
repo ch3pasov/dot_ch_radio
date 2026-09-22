@@ -28,6 +28,12 @@ from programs.night_schedule import (
 )
 from programs.other import get_bashkir_haiku, get_weather_response, get_minecraft_server_info, rus_to_katakana, invert_picture, get_turkic_name
 from programs.video_inversion import VideoInversionError, invert_video_note
+from programs.img_fortune import (
+    fortune_argument,
+    handle_fortune_callback,
+    is_fortune_callback,
+    reply_to_fortune,
+)
 from programs.data_rights import (
     handle_data_rights_callback,
     is_data_rights_callback,
@@ -260,6 +266,9 @@ async def answer_common_hashdict(event):
         return
     data = event.data.decode()
     locale = await locale_from_event(event)
+    if is_fortune_callback(data):
+        await handle_fortune_callback(event, locale=locale)
+        return
     if is_data_rights_callback(data):
         result = await handle_data_rights_callback(
             event,
@@ -280,6 +289,21 @@ async def answer_common_hashdict(event):
         await event.answer(answer)
     else:
         await event.answer()
+
+
+@app_robot.on(events.NewMessage(
+    incoming=True,
+    func=lambda e: _not_channel(e) and e.message.media is None and fortune_argument(
+        e.raw_text or "", bot_username=bot_username, is_private=_is_private(e),
+    ) is not None,
+))
+async def answer_img_fortune(event):
+    argument = fortune_argument(
+        event.raw_text or "", bot_username=bot_username, is_private=_is_private(event),
+    )
+    locale = await locale_from_event(event)
+    await reply_to_fortune(event, argument, bot_username=bot_username, locale=locale)
+    raise events.StopPropagation
 
 
 async def answer_rus_to_katakana_common(event, message_with_content):

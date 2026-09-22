@@ -21,6 +21,7 @@ stations into the channel's group call.
   each sender's current Telegram interface language, with English as fallback;
 - performs geometric circle inversion on photographs and Telegram video notes;
 - searches the project's SF Symbols 7 custom-emoji catalogue;
+- turns a chosen date into an `IMG_DDMM` YouTube search for home-video divination;
 - provides small channel tools: weather, text generators, games and a
   deliberately empty application-side data takeout.
 
@@ -50,6 +51,21 @@ Video-note support was proposed by
 [PR #1](https://github.com/ch3pasov/dot_ch_radio/pull/1). The current Telethon
 implementation is independent and does not require OpenCV or a native
 extension.
+
+## Date divination
+
+Open **Tools and generators → Date divination**, or use the
+[direct link](https://t.me/dot_ch_bot?start=img_fortune). Choose a month and day
+using the buttons, or send `/fortune 21.09`. In a private chat, a standalone
+`21.09` also works. An optional year (`21.09.1990`) is validated but does not
+affect the search; February 29 is accepted when no year is provided.
+
+The date becomes `IMG_2109`. The result links to a YouTube search for that exact
+filename; the user opens a matching home video and interprets it. The bot does
+not fetch, rank or guarantee the age of videos. No YouTube API key is needed,
+and dates are not stored. Calendar navigation is encoded in callback payloads.
+In groups, use `/fortune 21.09` or `/fortune@dot_ch_bot 21.09`; ordinary dates
+are ignored and date-picker buttons link to the private bot menu.
 
 ## Runtime layout
 

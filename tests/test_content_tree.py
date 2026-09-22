@@ -29,6 +29,7 @@ class ContentTreeTests(unittest.TestCase):
             [
                 "invert_picture",
                 "foreign_languages",
+                "img_fortune",
                 "is_this_true",
                 "weather",
                 "search_wanted",
@@ -139,6 +140,7 @@ class ContentTreeTests(unittest.TestCase):
             "root/radio/go_to_radio": "success",
             "root/tools/invert_picture/invert_picture_command": "primary",
             "root/tools/foreign_languages/katakana_racism/rus_to_katakana_command": "primary",
+            "root/tools/img_fortune/choose_date": "primary",
             "root/tools/search_wanted/search_wanted_command": "primary",
             "root/games/roblox/life_grid/go_to_life_grid": "primary",
             "root/other/my_data/audit": "primary",
@@ -274,8 +276,8 @@ class ContentTreeTests(unittest.TestCase):
             else:
                 self.assertEqual(button.text, original, path)
 
-        self.assertEqual(icon_count, 77)
-        self.assertEqual(stripped_count, 28)
+        self.assertEqual(icon_count, 79)
+        self.assertEqual(stripped_count, 29)
 
     def test_every_tree_markup_builds_offline_with_telegram_limits(self):
         client = TelegramClient(MemorySession(), 1, "0" * 32)

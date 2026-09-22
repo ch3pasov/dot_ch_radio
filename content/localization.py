@@ -107,8 +107,8 @@ ENGLISH_TEXT = {
         "Details and notes are in the [channel post](https://t.me/ch_an/2387)."
     ),
     "🛠 Инструменты и генераторы": "🛠 Tools and generators",
-    "Инверсия фотографий и видеокружков, языковые генераторы, проверка истинности, погода и поиск по фотографии.": (
-        "Circle inversion for photos and video notes, language generators, truth checks, weather and photo search."
+    "Инверсия фотографий и видеокружков, языковые генераторы, гадание по дате, проверка истинности, погода и поиск по фотографии.": (
+        "Circle inversion for photos and video notes, language generators, date divination, truth checks, weather and photo search."
     ),
     "💫 Правильная инверсия™️": "💫 Proper Inversion™️",
     (
@@ -157,6 +157,25 @@ ENGLISH_TEXT = {
     "Сгенерируй себе тюркское (мужское) имя!\n\nНажми: /start_turkic_name_game": (
         "Generate a Turkic masculine name.\n\nSend: /start_turkic_name_game"
     ),
+    "🔮 Гадание по дате": "🔮 Date divination",
+    (
+        "Старые домашние видео иногда остаются на YouTube под именами `IMG_XXXX`.\n\n"
+        "Выбери любую дату — например, день рождения. День и месяц превратятся "
+        "в название ролика: `21.09 → IMG_2109`. Год не участвует.\n\n"
+        "Открой поиск и выбери первое домашнее видео с таким названием. "
+        "Это твоё предсказание. Толкование самостоятельное.\n\n"
+        "Выбери дату кнопками или пришли `/fortune 21.09`. "
+        "В личном чате можно просто `21.09`."
+    ): (
+        "Old home videos sometimes remain on YouTube under names like `IMG_XXXX`.\n\n"
+        "Choose any date, such as your birthday. The day and month become "
+        "a video name: `21.09 → IMG_2109`. The year isn't used.\n\n"
+        "Open the search and pick the first home video with this name. "
+        "That's your prediction. Interpretation is up to you.\n\n"
+        "Choose a date using the buttons or send `/fortune 21.09`. "
+        "In a private chat, just `21.09` works too."
+    ),
+    "Выбрать дату": "Choose a date",
     "Ответь на любое сообщение фразой `@dot_ch_bot is this true?`. Бот вынесет решение.": (
         "Reply to any message with `@dot_ch_bot is this true?`. The bot will decide."
     ),
