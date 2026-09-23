@@ -1,8 +1,7 @@
 import unittest
 from datetime import date, timedelta
 from types import SimpleNamespace
-from unittest.mock import AsyncMock
-from urllib.parse import parse_qs, urlsplit
+from unittest.mock import AsyncMock, patch
 
 from telethon import TelegramClient
 from telethon.errors import MessageNotModifiedError
@@ -13,13 +12,27 @@ from programs.img_fortune import (
     day_picker_view,
     fortune_argument,
     fortune_query,
-    fortune_search_url,
+    fortune_code,
     fortune_view,
     handle_fortune_callback,
     month_picker_view,
     parse_fortune_date,
     reply_to_fortune,
 )
+
+
+# Synthetic IDs are test fixtures only; production uses the collected catalogue.
+_CATALOG_PATCH = patch("libs.img_fortune_catalog.load_fortune_catalog", return_value={
+    f"{number:04d}": {"video_id": f"test{number:07d}"} for number in range(10000)
+})
+
+
+def setUpModule():
+    _CATALOG_PATCH.start()
+
+
+def tearDownModule():
+    _CATALOG_PATCH.stop()
 
 
 class FortuneDateTests(unittest.TestCase):
@@ -43,12 +56,19 @@ class FortuneDateTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     parse_fortune_date(value)
 
-    def test_search_url_quotes_the_exact_filename(self):
-        url = urlsplit(fortune_search_url(date(2000, 2, 1)))
-        self.assertEqual((url.scheme, url.netloc, url.path), (
-            "https", "www.youtube.com", "/results",
-        ))
-        self.assertEqual(parse_qs(url.query), {"search_query": ['"IMG_0102"']})
+    def test_all_four_digit_combinations_are_accepted_without_date_validation(self):
+        for number in range(10000):
+            code = f"{number:04d}"
+            self.assertEqual(fortune_code(code), code)
+        for invalid in ("123", "12345", "12a4", "１２３４", "-123"):
+            with self.assertRaises(ValueError):
+                fortune_code(invalid)
+
+    def test_number_returns_a_direct_video_link(self):
+        text, buttons = fortune_view("6789", locale="en")
+        self.assertIn("IMG_6789", text)
+        self.assertIn("https://www.youtube.com/watch?v=test0006789", text)
+        self.assertEqual(buttons[0][0].url, "https://www.youtube.com/watch?v=test0006789")
 
     def test_every_day_has_a_distinct_four_digit_query(self):
         dates = [date(2000, 1, 1) + timedelta(days=i) for i in range(366)]
@@ -111,8 +131,8 @@ class FortuneHandlerTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("IMG_2109", args[0])
         self.assertNotIn("1990", args[0])
         self.assertEqual(kwargs["parse_mode"], "html")
-        self.assertFalse(kwargs["link_preview"])
-        self.assertIn("youtube.com/results?", kwargs["buttons"][0][0].url)
+        self.assertTrue(kwargs["link_preview"])
+        self.assertIn("youtube.com/watch?v=", kwargs["buttons"][0][0].url)
 
     async def test_invalid_input_is_not_echoed_as_html(self):
         event = SimpleNamespace(is_private=True, reply=AsyncMock())
@@ -123,14 +143,14 @@ class FortuneHandlerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(kwargs["buttons"][0][0].data, b"img_fortune:months")
 
     async def test_group_replies_have_working_urls_instead_of_private_callbacks(self):
-        for argument in ("", "21.09", "31.02"):
+        for argument in ("", "21.09", "6789", "31.02"):
             with self.subTest(argument=argument):
                 event = SimpleNamespace(is_private=False, reply=AsyncMock())
                 await reply_to_fortune(event, argument, bot_username="dot_ch_bot", locale="en")
                 buttons = event.reply.call_args.kwargs["buttons"]
                 self.assertEqual(buttons[-1][0].url, "https://t.me/dot_ch_bot?start=img_fortune")
                 self.assertTrue(all(hasattr(button, "url") for row in buttons for button in row))
-                self.assertEqual(len(buttons), 2 if argument == "21.09" else 1)
+                self.assertEqual(len(buttons), 2 if argument in ("21.09", "6789") else 1)
 
     async def test_calendar_callbacks_work_using_only_the_payload(self):
         for data, expected in (

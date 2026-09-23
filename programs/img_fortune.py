@@ -1,14 +1,15 @@
 """Date-based YouTube divination without user or navigation state."""
 
 import calendar
+import html
 import re
 from datetime import date
-from urllib.parse import urlencode
 
 from telethon import Button
 from telethon.errors import MessageNotModifiedError
 
 from libs.i18n import RU, localized, normalize_locale
+from libs.img_fortune_catalog import CODE_PATTERN, fortune_video_entry, fortune_video_url
 
 
 CALLBACK_PREFIX = "img_fortune:"
@@ -49,14 +50,17 @@ def fortune_argument(text: str, *, bot_username: str, is_private: bool) -> str |
     return None
 
 
-def fortune_query(chosen_date: date) -> str:
-    return f"IMG_{chosen_date.day:02d}{chosen_date.month:02d}"
+def fortune_code(value: str | date) -> str:
+    if isinstance(value, date):
+        return f"{value.day:02d}{value.month:02d}"
+    value = value.strip()
+    if CODE_PATTERN.fullmatch(value):
+        return value
+    return fortune_code(parse_fortune_date(value))
 
 
-def fortune_search_url(chosen_date: date) -> str:
-    return "https://www.youtube.com/results?" + urlencode({
-        "search_query": f'"{fortune_query(chosen_date)}"',
-    })
+def fortune_query(value: str | date) -> str:
+    return f"IMG_{fortune_code(value)}"
 
 
 def _back_button(locale):
@@ -73,31 +77,42 @@ def _choose_date_button(locale):
     )
 
 
-def fortune_view(chosen_date: date, *, locale=RU):
+def fortune_view(value: str | date, *, locale=RU):
+    code = fortune_code(value)
+    video = fortune_video_entry(code)
+    video_url = fortune_video_url(code)
+    label = f"{value.day:02d}.{value.month:02d} → " if isinstance(value, date) else ""
+    exception_note = ""
+    if video.get("match_type") == "descriptive_title":
+        exception_note = localized(
+            locale,
+            ru="\n\nНазвание найденного ролика: <code>{title}</code>",
+            en="\n\nFound video title: <code>{title}</code>",
+            title=html.escape(video["title"], quote=False),
+        )
     text = localized(
         locale,
         ru=(
             "🔮 <b>Гадание по дате</b>\n\n"
-            "{day:02d}.{month:02d} → <code>{query}</code>\n\n"
-            "Открой поиск и выбери первое домашнее видео с таким названием. "
-            "Это твоё предсказание. Толкование самостоятельное.\n\n"
-            "Если ничего не нашлось, попробуй другую дату."
+            "{label}<code>{query}</code>\n\n"
+            "Вот твоё предсказание. Толкование самостоятельное.\n\n"
+            "{video_url}{exception_note}"
         ),
         en=(
             "🔮 <b>Date divination</b>\n\n"
-            "{day:02d}.{month:02d} → <code>{query}</code>\n\n"
-            "Open the search and pick the first home video with this name. "
-            "That's your prediction. Interpretation is up to you.\n\n"
-            "If nothing turns up, try another date."
+            "{label}<code>{query}</code>\n\n"
+            "Here's your prediction. Interpretation is up to you.\n\n"
+            "{video_url}{exception_note}"
         ),
-        day=chosen_date.day,
-        month=chosen_date.month,
-        query=fortune_query(chosen_date),
+        label=label,
+        query=f"IMG_{code}",
+        video_url=video_url,
+        exception_note=exception_note,
     )
     buttons = [
         [Button.url(
             localized(locale, ru="Открыть YouTube", en="Open YouTube"),
-            fortune_search_url(chosen_date),
+            video_url,
         )],
         [_choose_date_button(locale), _back_button(locale)],
     ]
@@ -139,29 +154,30 @@ def day_picker_view(month: int, *, locale=RU):
 
 
 async def reply_to_fortune(event, argument: str, *, bot_username: str, locale=RU):
-    chosen_date = None
+    chosen_value = None
     if not argument:
         text, buttons = month_picker_view(locale=locale)
     else:
         try:
-            chosen_date = parse_fortune_date(argument)
+            code = fortune_code(argument)
+            chosen_value = code if CODE_PATTERN.fullmatch(argument.strip()) else parse_fortune_date(argument)
         except ValueError:
             text = localized(
                 locale,
                 ru=(
-                    "Пришли существующую дату в формате <code>ДД.ММ</code>, "
-                    "например <code>/fortune 21.09</code>. "
+                    "Пришли четыре цифры: <code>/fortune 6789</code>, "
+                    "или существующую дату: <code>/fortune 21.09</code>. "
                     "Можно добавить год: <code>21.09.1990</code>; в гадании участвуют только день и месяц."
                 ),
                 en=(
-                    "Send a valid date as <code>DD.MM</code>, "
-                    "for example <code>/fortune 21.09</code>. "
+                    "Send four digits: <code>/fortune 6789</code>, "
+                    "or a valid date: <code>/fortune 21.09</code>. "
                     "You can include a year: <code>21.09.1990</code>; only the day and month are used."
                 ),
             )
             buttons = [[_choose_date_button(locale)]]
         else:
-            text, buttons = fortune_view(chosen_date, locale=locale)
+            text, buttons = fortune_view(chosen_value, locale=locale)
     if not event.is_private:
         # Calendar callbacks edit private bot menus. Group replies link there
         # instead of displaying buttons the private callback router will ignore.
@@ -169,14 +185,14 @@ async def reply_to_fortune(event, argument: str, *, bot_username: str, locale=RU
             localized(locale, ru="Выбрать дату в боте", en="Choose a date in the bot"),
             f"https://t.me/{bot_username}?start=img_fortune",
         )
-        buttons = ([buttons[0]] if chosen_date is not None else []) + [[open_bot]]
+        buttons = ([buttons[0]] if chosen_value is not None else []) + [[open_bot]]
         if not argument:
             text = localized(
                 locale,
-                ru="Пришли <code>/fortune 21.09</code> или выбери дату в личном чате с ботом.",
-                en="Send <code>/fortune 21.09</code> or choose a date in a private chat with the bot.",
+                ru="Пришли <code>/fortune 6789</code>, <code>/fortune 21.09</code> или выбери дату в личном чате с ботом.",
+                en="Send <code>/fortune 6789</code>, <code>/fortune 21.09</code> or choose a date in a private chat with the bot.",
             )
-    await event.reply(text, buttons=buttons, parse_mode="html", link_preview=False)
+    await event.reply(text, buttons=buttons, parse_mode="html", link_preview=chosen_value is not None)
 
 
 def is_fortune_callback(data: str) -> bool:
@@ -206,7 +222,7 @@ async def handle_fortune_callback(event, *, locale=RU):
         ))
         return
     try:
-        await event.edit(text, buttons=buttons, parse_mode="html", link_preview=False)
+        await event.edit(text, buttons=buttons, parse_mode="html", link_preview=":date:" in data)
     except MessageNotModifiedError:
         pass
     await event.answer()

@@ -162,18 +162,20 @@ ENGLISH_TEXT = {
         "Старые домашние видео иногда остаются на YouTube под именами `IMG_XXXX`.\n\n"
         "Выбери любую дату — например, день рождения. День и месяц превратятся "
         "в название ролика: `21.09 → IMG_2109`. Год не участвует.\n\n"
-        "Открой поиск и выбери первое домашнее видео с таким названием. "
+        "Бот сразу пришлёт ссылку на видео с таким названием. "
+        "Иногда в названии добавлена подпись — бот покажет её отдельно. "
         "Это твоё предсказание. Толкование самостоятельное.\n\n"
         "Выбери дату кнопками или пришли `/fortune 21.09`. "
-        "В личном чате можно просто `21.09`."
+        "Для любых четырёх цифр: `/fortune 6789`. В личном чате можно просто `21.09`."
     ): (
         "Old home videos sometimes remain on YouTube under names like `IMG_XXXX`.\n\n"
         "Choose any date, such as your birthday. The day and month become "
         "a video name: `21.09 → IMG_2109`. The year isn't used.\n\n"
-        "Open the search and pick the first home video with this name. "
+        "The bot sends a direct link to a video with this name. "
+        "Some titles add a description, which the bot will show. "
         "That's your prediction. Interpretation is up to you.\n\n"
         "Choose a date using the buttons or send `/fortune 21.09`. "
-        "In a private chat, just `21.09` works too."
+        "For any four digits, send `/fortune 6789`. In a private chat, just `21.09` works too."
     ),
     "Выбрать дату": "Choose a date",
     "Ответь на любое сообщение фразой `@dot_ch_bot is this true?`. Бот вынесет решение.": (

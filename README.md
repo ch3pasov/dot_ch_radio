@@ -21,7 +21,7 @@ stations into the channel's group call.
   each sender's current Telegram interface language, with English as fallback;
 - performs geometric circle inversion on photographs and Telegram video notes;
 - searches the project's SF Symbols 7 custom-emoji catalogue;
-- turns a chosen date into an `IMG_DDMM` YouTube search for home-video divination;
+- turns a date or four digits into a direct `IMG_XXXX` home-video link;
 - provides small channel tools: weather, text generators, games and a
   deliberately empty application-side data takeout.
 
@@ -60,12 +60,39 @@ using the buttons, or send `/fortune 21.09`. In a private chat, a standalone
 `21.09` also works. An optional year (`21.09.1990`) is validated but does not
 affect the search; February 29 is accepted when no year is provided.
 
-The date becomes `IMG_2109`. The result links to a YouTube search for that exact
-filename; the user opens a matching home video and interprets it. The bot does
-not fetch, rank or guarantee the age of videos. No YouTube API key is needed,
-and dates are not stored. Calendar navigation is encoded in callback payloads.
-In groups, use `/fortune 21.09` or `/fortune@dot_ch_bot 21.09`; ordinary dates
-are ignored and date-picker buttons link to the private bot menu.
+The date becomes `IMG_2109`. YouTube titles can use the bare filename or a
+common video extension such as `.MOV`, `.MP4` or `.AVI`. Any four ASCII digits also work, including
+`/fortune 6789`, `/fortune 0000` and `/fortune 9999`. The bot returns a direct
+YouTube video link with a preview, using a static catalogue rather than a live
+search. Dates and navigation state are not stored. In groups, use
+`/fortune 6789` or `/fortune@dot_ch_bot 21.09`; ordinary dates are ignored.
+
+The deployment requires `content/img-fortune-videos.json` with exactly 10,000
+entries. Startup rejects missing or incomplete catalogues. Each entry records
+the actual video title, ID, verification time and verification source. Nearly
+all titles match `IMG_XXXX` exactly (case-insensitive), with an optional known
+video extension. A small, marked exception set allows descriptive YouTube
+titles when the same `IMG_XXXX` filename appears in the title; the bot shows
+that full title with the link. Image extensions and unrelated recommendations
+are excluded. YouTube search verification confirms the indexed title and
+link; oEmbed verification additionally confirms public embed metadata. Neither
+guarantees that a video will remain available later.
+
+The offline collector is resumable and never runs inside the bot. Keep its
+checkpoint and draft output outside the live content directory:
+
+```bash
+python3 scripts/build_img_fortune_catalog.py \
+  --checkpoint /tmp/img-fortune-catalog-progress.json \
+  --output /tmp/img-fortune-videos.json \
+  --verification search --search-batch-size 2
+```
+
+It only writes the output once all 10,000 codes are covered. Review and copy that
+file into `content/`, then rebuild and recreate the service. Use
+`--verification oembed` to verify newly collected candidates through oEmbed.
+A saved checkpoint keeps the verification source and any explicitly marked
+descriptive-title exceptions for entries already collected.
 
 ## Runtime layout
 

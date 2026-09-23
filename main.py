@@ -40,6 +40,7 @@ from programs.data_rights import (
 )
 from libs.message_effects import load_message_effects
 from libs.i18n import EN, RU, locale_from_event, localized
+from libs.img_fortune_catalog import load_fortune_catalog
 from libs.telegram_delivery import (
     deliver_message,
     deliver_video_note_with_fallback,
@@ -730,6 +731,7 @@ async def test_handler(event):
 
 
 async def amain():
+    load_fortune_catalog()
     print('login in dj account')
     await app_dj.start()
     effects_count = await load_message_effects(app_dj)
